@@ -26,9 +26,6 @@ const Task = mongoose.model('Task', {
         type: Date,
         required: true
     },
-    location: {
-        type: location
-    },
     completed: {
         type: Boolean,
         default: false

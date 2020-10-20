@@ -31,7 +31,7 @@ const User = mongoose.model('User', {
     },
     timeJoined:{
         type: Date,
-        required: true
+        // required: true
     }
 })
 
