@@ -9,11 +9,43 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 
+
+/*
+ * JSON FORMATTING:
+ * (put JSON field names here for reference later)
+ */
+
+// Post function
+// Receives JSON file, stores data to DB according to JSON format
+app.post("/", function (req, res) {
+    
+});
+
+// Get function
+// parse request and send back data
+app.get("/", (req, res) => {
+    
+});
+
+// Put function
+// put requested data into DB
+app.put("/", function (req, res) {
+});
+
+// Delete function
+// delete data from DB
+app.delete("/", function (req, res) {
+});
+
 app.use(userRouter)
 
 app.use(taskRouter)
 
 
-app.listen(port, ()=>{
-    console.log('Server is up on port'+port)
+var server = app.listen(port, () => {
+    console.log('Server is up on port' + port)
 })
+
+var express = require("express");
+
+var app = express();
