@@ -9,7 +9,7 @@ CREATE TABLE TaskListWithOwner (
 	PRIMARY KEY (taskListID),
 	UNIQUE (userID),
 	UNIQUE (chatID),
-	FOREIGN KEY (userID) REFERENCES User
+	FOREIGN KEY (userID) REFERENCES User(userID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 )
@@ -18,14 +18,14 @@ CREATE TABLE TaskHasTaskList (
 	taskID				int,
 	chatID				int NOT NULL,
 	taskBudget			int,
-	taskDescription		char(1000),
-	address				char(600),
+	taskDescription		TEXT,
+	address				TEXT,
 	taskName  			char(100),
 	taskListID			int NOT NULL,
 	UNIQUE				(taskListID),
 	UNIQUE				(chatID),
 	PRIMARY KEY 		(taskID),
-	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner
+	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 )
@@ -39,5 +39,11 @@ CREATE TABLE User (
 CREATE TABLE HasAccess (
 	userID				int,
 	taskListID			int,
-	PRIMARY KEY (userID, taskListID)
+	PRIMARY KEY (userID, taskListID),
+	FOREIGN KEY (userID) REFERENCES User(userID)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
 )
