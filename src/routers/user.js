@@ -46,12 +46,17 @@ router.get('/users/:id', async (req, res)=>{
     })
 })
 
-// router.put("/user/:id", function (req, res) {
-//     const key = Object.keys(req.body)
+router.put("/user/:id", function (req, res) {
+    //const key = Object.keys(req.body)
 
-//     const _id = req.params.id
-//     con.query('UPDATE User SET ')
-// });
+    const _id = req.params.id
+    const obj = req.body
+    con.query('UPDATE User SET ? WHERE userID = ?',[obj,_id], (err,result)=>{
+        if(err) return res.status(404).send()
+
+        res.send(result)
+    })
+})
 
 // router.patch('/users/:id', async (req, res)=>{
 //     const updates = Object.keys(req.body)
