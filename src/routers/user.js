@@ -1,6 +1,7 @@
 const express = require('express')
 const connection = require('../db/mysql')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const router = new express.Router()
 
 router.post('/user/signup', async (req, res)=>{
