@@ -1,70 +1,76 @@
 const express = require('express')
-const Task = require('../models/task')
 const router = new express.Router()
+const connection = require('../db/mysql')
 
-router.post('/tasks', async (req, res)=>{
-    const task = new Task(req.body)
+router.post('/tasks', (req, res)=>{
+    const task = req.body
 
-    try {
-        await task.save()
-        res.status(201).send(task)
-    } catch(e) {
-        res.status(400).send(e)
-    }
+    connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err,user)=>{
+        if(err) return console.log(err) 
 
-})
-
-router.get('/tasks', async (req, res)=>{
-    try {
-        const tasks = await Task.find({})
-        res.send(tasks)
-    } catch(e) {
-        res.status(500).send(e)
-    }
-})
-
-router.get('/tasks/:id', async (req, res)=>{
-    const _id = req.params.id
-
-    try {
-        const task = await Task.findById(_id)
-        res.send(task)
-    } catch(e) {
-        res.status(500).send(e)
-    }
-
-})
-
-router.patch('/tasks/:id', async (req, res)=>{
-    const updates = Object.keys(req)
-    const allowedUpdates  = ['name', 'description', 'completed']
-    const isValidOperation = updates.every((update)=>{
-        return allowedUpdates.includes(update)
+       res.status(201).send(task)
     })
-
-    if(!isValidOperation) return res.status(400).send({error: 'Invalid updates!'})
-
-    try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, {new:true, runValidators:true})
-
-        if(!task) return res.status(404).send()
-
-        res.send(task)
-    } catch(e) {
-        res.status(400).send()
-    }
 })
 
-router.delete('/tasks/:id', async (req, res)=>{
-    try {
-        const task = await Task.findByIdAndDelete(req.params.id)
+router.get('/tasks', (req, res)=>{
+    connection.query('SELECT * FROM TaskHasTaskList', (err, tasks)=>{
+        if(err) return res.status(500).send(err)
+        console.log('Successfully get user information')
+        res.send(tasks)
+    })
+})
 
-        if(!task) return res.status(404).send()
 
-        res.send(task)
-    } catch(e) {
-        res.status(500).send()
-    }
+router.get('/tasks/:id', (req, res)=>{
+    const _id = req.params.id
+    connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?',_id, (err, result)=>{
+        if(err || !result) return res.status(500).send(err)
+        console.log('Successfully specific user id information')
+        res.send(result)
+    })
+})
+
+router.put("/task/:id", (req, res)=>{
+
+    const _id = req.params.id
+    const obj = req.body
+    connection.query('UPDATE TaskHasTaskList SET ? WHERE taskID = ?',[obj,_id], (err,result)=>{
+        if(err){
+		console.log(err)
+		return res.send(err)
+	}
+	console.log('Successfully update user information')
+        res.send(result)
+    })
+})
+
+router.delete('/tasks/:id', (req, res)=>{
+    connection.query('DELETE FROM TaskHasTaskList WHERE id = ?', req.params.id, (err, result)=>{
+        if(err) return res.status(500).send()
+
+        res.send('Successfully delete the user with id '+req.params.id)
+    })
  })
 
 module.exports = router
+
+
+// router.patch('/tasks/:id', async (req, res)=>{
+    //     const updates = Object.keys(req)
+    //     const allowedUpdates  = ['name', 'description', 'completed']
+    //     const isValidOperation = updates.every((update)=>{
+    //         return allowedUpdates.includes(update)
+    //     })
+    
+    //     if(!isValidOperation) return res.status(400).send({error: 'Invalid updates!'})
+    
+    //     try {
+    //         const task = await Task.findByIdAndUpdate(req.params.id, req.body, {new:true, runValidators:true})
+    
+    //         if(!task) return res.status(404).send()
+    
+    //         res.send(task)
+    //     } catch(e) {
+    //         res.status(400).send()
+    //     }
+    // })
