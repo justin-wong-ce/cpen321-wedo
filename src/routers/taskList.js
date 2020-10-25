@@ -2,17 +2,15 @@ const express = require('express')
 const router = new express.Router()
 const connection = require('../db/mysql')
 
-router.post('/taskList', (req, res)=>{
+router.post('/taskList', async (req, res)=>{
     const taskList = req.body
 
-    connection.query('INSERT INTO TaskListWithOwner SET ?', taskList, (err,taskList)=>{
+    await connection.query('INSERT INTO TaskListWithOwner SET ?', taskList, (err,taskList)=>{
         if(err) return console.log(err) 
-
-       res.status(201).send(taskList)
     })
 
     const hasAccess = {userID: req.body.userID, taskListID: req.body.taskListID}
-    connection.query('INSERT INTO HasAccess SET ?', hasAccess, (err,result)=>{
+    await connection.query('INSERT INTO HasAccess SET ?', hasAccess, (err,result)=>{
         if(err) return console.log(err) 
 
        res.status(201).send(result)
