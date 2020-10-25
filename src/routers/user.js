@@ -34,34 +34,20 @@ router.post('/user/signup', async (req, res)=>{
     
 })
 
-userSchema.statics.findByCredentials = async (email, password)=>{
-    const user = await User.findOne({email})
-
-    if(!user){
-        throw new Error('Unable to log in')
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password)
-
-    if(!isMatch){
-        throw new Error('Unable to log in')
-    }
-
-    return user
-}
 
 // to log in, must provide account info + password
 router.post('/user/login', (req, res)=>{
 
     try{
-        connection.query('SELECT * FROM User WHERE userID = ?',req.body.userID, async (err, user)=>{
-            if(err || !user) return res.status(500).send('Unable to log in')
-
+        connection.query('SELECT * FROM User WHERE userID = ?',req.body.userID, async (err, users)=>{
+            if(err || !users) return res.status(500).send('Unable to log in')
+	    
+	    const user = users[0]
             const isMatch = await bcrypt.compare(req.body.password, user.password)
             if(!isMatch) return res.status(500).send('Unable to log in')
 
             const token = await jwt.sign({userID: user.userID.toString()}, 'userLogIn')
-            connection.query('UPDATE User SET token = ? WHERE userID = ?',[token,_id], (err,result)=>{
+            connection.query('UPDATE User SET token = ? WHERE userID = ?',[token,user.userID], (err,result)=>{
                 if(err){
                     console.log(err)
                     return res.send('Unable to log in')
@@ -72,6 +58,7 @@ router.post('/user/login', (req, res)=>{
         })
     } catch(e){
         console.log(e)
+	return res.status(500).send('Unable to log in')
     }
     
 })
@@ -91,6 +78,7 @@ router.get('/user/:id', async (req, res)=>{
     connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, user)=>{
         if(err || !user) return res.status(500).send(err)
         console.log('Successfully specific user id information')
+	    console.log(user[0].password)
         res.send(user)
     })
 })
