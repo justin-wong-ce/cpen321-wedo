@@ -4,6 +4,17 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const router = new express.Router()
 
+// helper function:
+// const getUser = (id)=>{
+//     return new Promise((resolve, reject)=>{
+//         connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, user)=>{
+//             if(err || !result) reject(err)
+//             console.log('Successfully find user')
+//             resolve(user)
+//         })
+//     })
+// }
+
 router.post('/user/signup', async (req, res)=>{
     const user = req.body
     try{
@@ -11,10 +22,53 @@ router.post('/user/signup', async (req, res)=>{
         const token = await jwt.sign({userID: user.userID.toString()}, 'userLogIn')
         user["token"] = token
 
-        connection.query('INSERT INTO User SET ?', user, (err,user)=>{
+        connection.query('INSERT INTO User SET ?', user, (err,result)=>{
             if(err) return console.log(err) 
 
-        res.status(201).send(user)
+            // the token is very important to identifying you as a valid user
+            res.status(201).send(token)
+        })
+    } catch(e){
+        console.log(e)
+    }
+    
+})
+
+userSchema.statics.findByCredentials = async (email, password)=>{
+    const user = await User.findOne({email})
+
+    if(!user){
+        throw new Error('Unable to log in')
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if(!isMatch){
+        throw new Error('Unable to log in')
+    }
+
+    return user
+}
+
+// to log in, must provide account info + password
+router.post('/user/login', (req, res)=>{
+
+    try{
+        connection.query('SELECT * FROM User WHERE userID = ?',req.body.userID, async (err, user)=>{
+            if(err || !user) return res.status(500).send('Unable to log in')
+
+            const isMatch = await bcrypt.compare(req.body.password, user.password)
+            if(!isMatch) return res.status(500).send('Unable to log in')
+
+            const token = await jwt.sign({userID: user.userID.toString()}, 'userLogIn')
+            connection.query('UPDATE User SET token = ? WHERE userID = ?',[token,_id], (err,result)=>{
+                if(err){
+                    console.log(err)
+                    return res.send('Unable to log in')
+                }
+                res.send(token)
+            })
+            
         })
     } catch(e){
         console.log(e)
@@ -32,12 +86,12 @@ router.get('/user', (req, res)=>{
     })
 })
 
-router.get('/user/:id', (req, res)=>{
+router.get('/user/:id', async (req, res)=>{
     const _id = req.params.id
-    connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
-        if(err || !result) return res.status(500).send(err)
+    connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, user)=>{
+        if(err || !user) return res.status(500).send(err)
         console.log('Successfully specific user id information')
-        res.send(result)
+        res.send(user)
     })
 })
 
