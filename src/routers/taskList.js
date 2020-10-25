@@ -19,7 +19,7 @@ router.post('/taskList', (req, res)=>{
     })
 })
 
-router.get('/task', (req, res)=>{
+router.get('/taskList', (req, res)=>{
     connection.query('SELECT * FROM TaskListWithOwner', (err, taskList)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
@@ -28,7 +28,7 @@ router.get('/task', (req, res)=>{
 })
 
 
-router.get('/task/:id', (req, res)=>{
+router.get('/taskList/:id', (req, res)=>{
     const _id = req.params.id
     connection.query('SELECT * FROM TaskListWithOwner WHERE taskListID = ?',_id, (err, taskList)=>{
         if(err || !result) return res.status(500).send(err)
@@ -37,7 +37,7 @@ router.get('/task/:id', (req, res)=>{
     })
 })
 
-router.put("/task/:id", (req, res)=>{
+router.put("/taskList/:id", (req, res)=>{
 
     const _id = req.params.id
     const obj = req.body
@@ -51,7 +51,7 @@ router.put("/task/:id", (req, res)=>{
     })
 })
 
-router.delete('/task/:id', (req, res)=>{
+router.delete('/ttaskListsk/:id', (req, res)=>{
     connection.query('DELETE FROM TaskHasTaskList WHERE taskListID = ?', req.params.id, (err, result)=>{
         if(err) return res.status(500).send()
 
