@@ -3,6 +3,7 @@ CREATE TABLE User (
 	isPremium			boolean DEFAULT false,
 	userName            char(100) NOT NULL,
 	password            char(100) NOT NULL,
+	token               char(100),
 	PRIMARY KEY (userID)
 )
 

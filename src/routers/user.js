@@ -3,11 +3,12 @@ const connection = require('../db/mysql')
 const bcrypt = require('bcryptjs')
 const router = new express.Router()
 
-
-router.post('/user', (req, res)=>{
+router.post('/user/signup', async (req, res)=>{
     const user = req.body
 
     user.password = await bcrypt.hash(user.password, 8)
+    const token = await jwt.sign({userID: user.userID.toString()}, 'userLogIn')
+    user["token"] = token
 
     connection.query('INSERT INTO User SET ?', user, (err,user)=>{
         if(err) return console.log(err) 
