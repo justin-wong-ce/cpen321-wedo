@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const router = new express.Router()
 
 
-router.post('/user', (req, res)=>{
+router.post('/user', async (req, res)=>{
     const user = req.body
 
     user.password = await bcrypt.hash(user.password, 8)
