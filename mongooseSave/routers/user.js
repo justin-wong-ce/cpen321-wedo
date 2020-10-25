@@ -18,14 +18,16 @@ connection.connect((err)=>{
 })
 
 router.post('/users', (req, res)=>{
-    const user = req.body
+    console.log("fffff")
+    res.send("fdfsds")
+    // const user = req.body
 
-    connection.query('INSWER INTO User SET ?', user, (err,res)=>{
-        if(err) return res.status(400).send(err)
+    // connection.query('INSWER INTO User SET ?', user, (err,res)=>{
+    //     if(err) return res.status(400).send(err)
 
-        console.log('Last insert ID: ', res)
-        res.status(201).send(user)
-    })
+    //     console.log('Last insert ID: ', res)
+    //     res.status(201).send(user)
+    // })
 })
 
 
