@@ -31,7 +31,7 @@ router.post('/users', (req, res)=>{
 
 router.get('/users', async (req, res)=>{
 
-    con.query('SELECT * FROM User', (err, users)=>{
+    connection.query('SELECT * FROM User', (err, users)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
         res.send(users)
@@ -40,7 +40,7 @@ router.get('/users', async (req, res)=>{
 
 router.get('/users/:id', async (req, res)=>{
     const _id = req.params.id
-    con.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
+    connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
         if(err || !result) return res.status(500).send(err)
         console.log('Successfully specific user id information')
         res.send(result)
