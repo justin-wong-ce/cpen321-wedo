@@ -22,11 +22,8 @@ router.post('/users', (req, res)=>{
 console.log(user)
     connection.query('INSERT INTO User SET ?', user, (err,user)=>{
         if(err) return console.log(err) 
-	    //return res.status(400).send(err)
 
-	//console.log(user)
-	  res.send(user)
-       // res.status(201).send(user)
+       res.status(201).send(user)
     })
 })
 
