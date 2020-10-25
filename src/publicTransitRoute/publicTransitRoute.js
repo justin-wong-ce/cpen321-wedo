@@ -1,25 +1,26 @@
-// JS file for generating a public transit route for given route
-import priorityQueue, { PriorityQueue } from './PriorityQueue.js';
-const { response } = require("express");
+// route: routes[0] of response (from google api)
 
+// TODO: Port to using standard API calls and use promises to ensure synchronization
+
+// Returns an array of requests to make
 function transformToPublicRoute(route, walkDistanceThreshold, res, err) {
     let farApartCoor = [];
     let closeByGroups = [];
     let currCloseBy = [];
     // Get far apart locations and groups of close-by locations
-    for (let legIter = 0; legIter < route.length; legIter++) {
-
-        if (route.legs[legIter] > walkDistanceThreshold && farApartLocations) {
-            currCloseBy.push(route.legs[legIter].start_location);
+    for (let legIter = 0; legIter < route.legs.length; legIter++) {
+        if (route.legs[legIter].distance.value > walkDistanceThreshold) {
+            if (currCloseBy.length != 0)
+                currCloseBy.push(route.legs[legIter].start_location);
             // Make deep copy of currCloseBy and store group
-            closeByGroups.push($.append({}, currCloseBy));
+            closeByGroups.push([...currCloseBy]);
             currCloseBy = [];
 
             // Make sure starting coordinates are added
             if (farApartCoor.length == 0) {
-                farApartLocations.push(route.legs[legIter].start_location);
+                farApartCoor.push(route.legs[legIter].start_location);
             }
-            farApartLocations.push(route.legs[legIter].end_location);
+            farApartCoor.push(route.legs[legIter].end_location);
         }
         else {
             currCloseBy.push(route.legs[legIter].start_location);
@@ -27,7 +28,7 @@ function transformToPublicRoute(route, walkDistanceThreshold, res, err) {
             // Make sure to add final destination to group
             if (legIter == route.length - 1) {
                 currCloseBy.push(route.legs[legIter].end_location);
-                closeByGroups.push($.append({}, currCloseBy));
+                closeByGroups.push([...currCloseBy]);
             }
         }
     }
@@ -38,120 +39,196 @@ function transformToPublicRoute(route, walkDistanceThreshold, res, err) {
     getShortestTransitRoute(farApartCoor, transitRoutes, err);
     let transitRouteIter = 0;
 
+    if (transitRoutes == null) {
+        res = null;
+        return;
+    }
+    console.log("transitRoutes:", transitRoutes);
+
+    var requests = [];
+
     // Make array
-    var resultResponses = [];
     for (let closeGroup of closeByGroups) {
-        if (![].equals(closeGroup)) {
-            directionsService.route(
-                {
-                    origin: closeGroup.shift(),
-                    destination: closeGroup.pop(),
-                    travelMode: google.maps.TravelMode.WALKING,
-                },
-                (response, status) => {
-                    if ("OK".equals(status)) {
-                        resultResponses.push(response);
-                    } else {
-                        console.log("ERROR IN GENERATING ROUTE FOR WALKING: Error was: " + status);
-                        res = [];
-                        err = status;
-                        return;
-                    }
-                }
-            );
+        var pointGroup = [];
+        if (closeGroup.length > 2) {
+            for (let pointIter = 1; pointIter < closeGroup.length - 2; pointIter++) {
+                pointGroup.push(closeGroup[pointIter].toUrlValue);
+            }
+        }
+        if (closeGroup.length != 0) {
+            requests.push({
+                origin: closeGroup[0].toUrlValue,
+                destination: closeGroup[closeGroup.length - 1].toUrlValue,
+                mode: "walking",
+                waypoints: pointGroup,
+            })
         }
         if (transitRouteIter < transitRoutes.length) {
-            resultResponses.push(transitRoutes[transitRouteIter]);
+            requests.push({
+                origin: transitRoutes[transitRouteIter].route[0].legs[0].start_location.toUrlValue(),
+                destination: transitRoutes[transitRouteIter].route[0].legs[0].end_location.toUrlValue(),
+                mode: "transit",
+            });
             transitRouteIter++;
         }
     }
-    res = resultResponses;
+    res = requests;
 }
 
 
 function getShortestTransitRoute(locations, res, err) {
-    // Uses Dijkstra's algorithm to find shortest path
-    // Node ID: LatLng type of location, key of locationGraph
-    // Node neighbours and edge weight saved in locationGraph value
-    const locationGraph = new Map();
-    const start_latlng = locations[0];
-    const end_latlng = location[locations.length - 1];
+    // Basically a travelling postman problem
+    // Using naive approach for now
+
+    // Make array without starting location, with dummy location
+    let noStartingLocation = [];
+    let startingLoc = locations[0].toString();
+    let endingLoc = locations[locations.length - 1].toString();
+    for (let locationNumber = 1; locationNumber < locations.length; locationNumber++) {
+        noStartingLocation.push(locations[locationNumber].toString());
+    }
+    // Insert dummy address to achieve custom ending node, instead of returning to starting point
+    noStartingLocation.push("DUMMY");
+
+    // Get array of permuations of locations
+    let permutations = permutate(noStartingLocation);
 
     // get transit route for every possible combination
+    const locationGraph = new Map();
+    const responsesMap = new Map();
+
     for (let locIter0 = 0; locIter0 < locations.length - 1; locIter0++) {
-        var neighbours = new Set();
+
+        var neighbours = new Map();
+
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
-            if (locIter1 == locIter0) continue;
-            directionsService.route(
-                {
-                    origin: locations[locIter0],
-                    destination: locations[locIter1],
-                    travelMode: google.maps.TravelMode.TRANSIT,
-                    // Can add further transit options later on
-                },
-                (response, status) => {
-                    if ("OK".equals(status)) {
-                        neighbours.add({ nodeID: response.routes[0].legs[0].end_location, weight: response.routes[0].legs[0].distance })
-                    }
-                    else {
-                        console.log("ERROR IN GETTING SHORT TRANSIT ROUTE: Error was: " + status);
-                        res = [];
-                        err = status;
-                        return;
-                    }
-                }
-            );
-        }
-        locationGraph.set(locations[locIter0], { neighbours: neighbours, response: response });
-    }
+            if (locIter1.toString() === locIter0.toString()) continue;
 
-    res = dijkstraAlgo(start_latlng, end_latlng, locationGraph);
-}
+            response = callDirectionsApi({
+                origin: locations[locIter0].toUrlValue(),
+                destination: locations[locIter1].toUrlValue(),
+                mode: "transit"
+            }, err);
 
-function dijkstraAlgo(start_latlng, end_latlng, locationGraph) {
-    let distance = new Map();
-    let backTrace = new Map();
-    let priorityQ = new PriorityQueue();
-
-    for (let node of locationGraph.keys()) {
-        distance.set(node, Number.MAX_VALUE);
-    }
-    distance.set(start_latlng, 0);
-    priorityQ.enqueue([start_latlng, 0]);
-
-    while (!priorityQ.isEmpty()) {
-        let closestNeighbour = priorityQ.dequeue();
-        let currNode = closestNeighbour[0];
-
-        for (let neighbour of locationGraph.get(currNode).values().neighbours) {
-            let newDistance = distance.get(currNode) + neighbour.weight;
-            if (newDistance < distance.get(neighbour.nodeID)) {
-                distance.set(neighbour.nodeID, newDistance);
-                backTrace.set(neighbour.nodeID, currNode);
-                priorityQ.enqueue([neighbour.nodeID, newDistance]);
+            if (response == null) {
+                res = null;
+                return;
             }
+
+            neighbours.set(response.routes[0].legs[0].end_location.toString(), response.routes[0].legs[0].distance.value);
+            responsesMap.set(locations[locIter0].toString() + locations[locIter1].toString(), response);
+        }
+        locationGraph.set(locations[locIter0].toString(), neighbours);
+    }
+
+    // Get optimal path
+    let minDistance = Number.MAX_VALUE;
+    let onPermutation = 0;
+    var minPath = [];
+
+    do {
+        let currPerm = permutations[onPermutation];
+        onPermutation++;
+        if (currPerm[currPerm.length - 1] !== "DUMMY" || currPerm[currPerm.length - 2] !== endingLoc) {
+
+            continue;
+        }
+
+        var currPath = [];
+
+        let currWeight = 0;
+        let currLoc = startingLoc;
+        for (let iter = 0; iter < currPerm.length; iter++) {
+            if (currPerm[iter] === "DUMMY" && currLoc != endingLoc) {
+                currWeight += Number.MAX_VALUE;
+            } else if (currPerm[iter] !== "DUMMY") {
+                console.log("responsemap", currLoc + currPerm[iter], responsesMap.get(currLoc + currPerm[iter]), responsesMap);
+
+                currWeight += locationGraph.get(currLoc).get(currPerm[iter]);
+                currPath.push(responsesMap.get(currLoc + currPerm[iter]));
+
+                console.log("have key", responsesMap.has(currLoc + currPerm[iter]));
+                console.log("key:", responsesMap.keys().next().value);
+            }
+
+            currLoc = currPerm[iter];
+        }
+
+        if (currLoc !== "DUMMY") {
+            console.log("should not happen");
+            currWeight += locationGraph.get(start_location).get(currLoc);
+        }
+
+        if (currWeight < minDistance) {
+            minDistance = currWeight;
+            minPath = currPath;
+        }
+    } while (onPermutation < permutations.length)
+
+    res = minPath;
+    console.log(res);
+}
+
+function permutate(list) {
+    var res = [];
+    var recurseList = [];
+    function permuteRecurse(subList, recurseList) {
+        var cur, recurseList = recurseList;
+
+        for (var iter = 0; iter < subList.length; iter++) {
+            cur = subList.splice(iter, 1);
+            if (subList.length == 0) {
+                res.push(recurseList.concat(cur));
+            }
+            permuteRecurse(subList.slice(), recurseList.concat(cur));
+            subList.splice(iter, 0, cur[0]);
+        }
+        return res;
+    }
+    return permuteRecurse(list, recurseList);
+}
+
+function callDirectionsApi(request, err) {
+    var request = new XMLHttpRequest();
+    request.open('GET', getRequestUrl(request), false);
+    request.responeType = 'json';
+    request.send(null);
+    if (request.status != 200) {
+        console.log(request.statusText);
+        err = request.statusText;
+        return null;
+    }
+    else {
+        var response = request.responseText;
+        return response;
+    }
+}
+
+// Currently supported parameters:
+// - origin (required)
+// - destination (required)
+// - mode
+// - waypoints (with stopover) (with optimized route)
+// ADD MORE IF NEEDED
+function generateUrlCall(request) {
+    var baseURL = "https://maps.googleapis.com/maps/api/directions/json?";
+    var keyComponent = "&key=AIzaSyBrb9k24pVXs1LP1gTO-jP8xOddObkvqpA";
+
+    baseURL.concat("origin=" + request.origin);
+    baseURL.concat("&destination=" + request.destination);
+
+    if ("mode" in request)
+        baseURL.concat("&mode=" + request.mode);
+
+    if ("waypoints" in request) {
+        if (request.waypoints.length == 0) break;
+
+        baseURL.concat("&waypoints=optimize:true");
+        for (let points = 0; request.waypoints.length; points++) {
+            baseURL.concat("|" + request.waypoints[points]);
         }
     }
 
-    let responsePath = [locationGraph.get(end_latlng).values().response];
-    let stepBack = end_latlng;
-    while (!end_latlng.equals(start_latlng)) {
-        responsePath.unshift(locationGraph.get(backTrace.get(stepBack)).values().response);
-        stepBack = backTrace.get(stepBack);
-    }
-
-    return responsePath;
-}
-
-// TESTING ONLY
-function initMap() {
-    const directionsRenderer = new google.maps.directionsRenderer();
-    const directionsService = new google.maps.DirectionsService();
-    const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 14,
-        center: { lat: 37.77, lng: -122.447 },
-    });
-    directionsRenderer.setMap(map);
-
-
+    baseURL.concat(keyComponent);
+    return baseURL;
 }
