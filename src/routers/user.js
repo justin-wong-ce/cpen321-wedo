@@ -19,19 +19,21 @@ connection.connect((err)=>{
 
 router.post('/users', (req, res)=>{
     const user = req.body
+console.log(user)
+    connection.query('INSERT INTO User SET ?', user, (err,user)=>{
+        if(err) return console.log(err) 
+	    //return res.status(400).send(err)
 
-    connection.query('INSWER INTO User SET ?', user, (err,res)=>{
-        if(err) return res.status(400).send(err)
-
-        console.log('Last insert ID: ', res)
-        res.status(201).send(user)
+	//console.log(user)
+	  res.send(user)
+       // res.status(201).send(user)
     })
 })
 
 
 router.get('/users', async (req, res)=>{
 
-    con.query('SELECT * FROM User', (err, users)=>{
+    connection.query('SELECT * FROM User', (err, users)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
         res.send(users)
@@ -40,7 +42,7 @@ router.get('/users', async (req, res)=>{
 
 router.get('/users/:id', async (req, res)=>{
     const _id = req.params.id
-    con.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
+    connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
         if(err || !result) return res.status(500).send(err)
         console.log('Successfully specific user id information')
         res.send(result)
