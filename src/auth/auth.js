@@ -4,11 +4,12 @@ const connection = require('../db/mysql')
 const auth  = (req, res, next)=>{
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
-        const decoder = jwt.verify(req.body.token, 'userLogIn')
+        const decoder = jwt.verify(token, 'userLogIn')
 
-        connection.query('SELECT * FROM User WHERE userID = ? AND token = ?',[decoder.userID,token], (err, users)=>{
+	    console.log('helllo')
+        connection.query('SELECT * FROM User WHERE userID = ?',decoder.userID, (err, users)=>{
             if(err || !users) return res.status(500).send('Please log in before seeing your personal information')
-            
+            console.log('hhhhhh')
             req.user = users[0]
             next()
         })
