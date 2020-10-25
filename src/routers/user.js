@@ -51,9 +51,14 @@ router.put("/user/:id", function (req, res) {
 
     const _id = req.params.id
     const obj = req.body
-    con.query('UPDATE User SET ? WHERE userID = ?',[obj,_id], (err,result)=>{
-        if(err) return res.status(404).send()
-
+	console.log(_id)
+	console.log(obj)
+    connection.query('UPDATE User SET ? WHERE userID = ?',[obj,_id], (err,result)=>{
+        if(err){
+		console.log(err)
+		return res.send(err)
+	}
+	console.log('Successfully update user information')
         res.send(result)
     })
 })
