@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import MapScreen from './screens/MapScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import Stack from './routes/Stack';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <MapScreen />
-    </View>
+    <NavigationContainer>
+      <Stack />
+    </NavigationContainer>
   );
 }
 
