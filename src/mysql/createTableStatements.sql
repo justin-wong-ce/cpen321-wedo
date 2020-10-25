@@ -32,7 +32,9 @@ CREATE TABLE TaskHasTaskList (
 
 CREATE TABLE User (
 	userID				int,
-	isPremium			boolean,
+	isPremium			boolean DEFAULT false,
+	userName            char(100) NOT NULL,
+	password            char(100) NOT NULL,
 	PRIMARY KEY (userID)
 )
 

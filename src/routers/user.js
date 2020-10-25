@@ -1,10 +1,13 @@
 const express = require('express')
 const connection = require('../db/mysql')
+const bcrypt = require('bcryptjs')
 const router = new express.Router()
 
 
 router.post('/user', (req, res)=>{
     const user = req.body
+
+    user.password = await bcrypt.hash(user.password, 8)
 
     connection.query('INSERT INTO User SET ?', user, (err,user)=>{
         if(err) return console.log(err) 
@@ -33,8 +36,6 @@ router.get('/user/:id', (req, res)=>{
 })
 
 router.put("/user/:id", (req, res)=>{
-    //const key = Object.keys(req.body)
-
     const _id = req.params.id
     const obj = req.body
     connection.query('UPDATE User SET ? WHERE userID = ?',[obj,_id], (err,result)=>{
