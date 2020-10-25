@@ -3,9 +3,11 @@ const router = new express.Router()
 const connection = require('../db/mysql')
 const auth = require('../auth/auth')
 
-router.post('/taskList', (req, res)=>{
+// do not include userID in the task pls.
+router.post('/taskList', auth, (req, res)=>{
     const taskList = req.body
 
+    taskList["userID"] = req.user.userID
     connection.query('INSERT INTO TaskListWithOwner SET ?', taskList, (err,taskList)=>{
         if(err) return console.log(err) 
 
@@ -37,7 +39,7 @@ router.get('/taskList/admin', (req, res)=>{
     })
 })
 
-
+// delete this later
 router.get('/taskList/:id', (req, res)=>{
     const _id = req.params.id
     connection.query('SELECT * FROM TaskListWithOwner WHERE taskListID = ?',_id, (err, taskList)=>{
@@ -47,10 +49,11 @@ router.get('/taskList/:id', (req, res)=>{
     })
 })
 
-router.put("/taskList/:id", (req, res)=>{
+router.put("/taskList/:id", auth, (req, res)=>{
 
     const _id = req.params.id
     const obj = req.body
+    
     connection.query('UPDATE TaskListWithOwner SET ? WHERE taskListID = ?',[obj,_id], (err,result)=>{
         if(err){
 		console.log(err)
