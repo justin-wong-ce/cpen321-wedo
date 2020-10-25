@@ -1,6 +1,7 @@
 const express = require('express')
-require('./db/mongoose')
-const userRouter = require('./routers/user')
+const mysql = require('mysql')
+//require('./db/mongoose')
+// const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
 const app = express()
@@ -17,35 +18,32 @@ app.use(express.json())
 
 // Post function
 // Receives JSON file, stores data to DB according to JSON format
-app.post("/", function (req, res) {
+// app.post("/", function (req, res) {
     
-});
+// });
 
 // Get function
 // parse request and send back data
-app.get("/", (req, res) => {
+// app.get("/", (req, res) => {
     
-});
+// });
 
 // Put function
 // put requested data into DB
-app.put("/", function (req, res) {
-});
+// app.put("/", function (req, res) {
+// });
 
 // Delete function
 // delete data from DB
-app.delete("/", function (req, res) {
-});
+// app.delete("/", function (req, res) {
+// });
 
 app.use(userRouter)
 
-app.use(taskRouter)
+// app.use(taskRouter)
 
 
 var server = app.listen(port, () => {
     console.log('Server is up on port' + port)
 })
 
-var express = require("express");
-
-var app = express();
