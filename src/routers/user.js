@@ -3,7 +3,7 @@ const connection = require('../db/mysql')
 const router = new express.Router()
 
 
-router.post('/users', (req, res)=>{
+router.post('/user', (req, res)=>{
     const user = req.body
 
     connection.query('INSERT INTO User SET ?', user, (err,user)=>{
@@ -14,7 +14,7 @@ router.post('/users', (req, res)=>{
 })
 
 
-router.get('/users', (req, res)=>{
+router.get('/user', (req, res)=>{
 
     connection.query('SELECT * FROM User', (err, users)=>{
         if(err) return res.status(500).send(err)
@@ -23,7 +23,7 @@ router.get('/users', (req, res)=>{
     })
 })
 
-router.get('/users/:id', (req, res)=>{
+router.get('/user/:id', (req, res)=>{
     const _id = req.params.id
     connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, result)=>{
         if(err || !result) return res.status(500).send(err)
@@ -47,7 +47,7 @@ router.put("/user/:id", (req, res)=>{
     })
 })
 
-router.delete('/users/:id', (req, res)=>{
+router.delete('/user/:id', (req, res)=>{
     connection.query('DELETE FROM User WHERE id = ?', req.params.id, (err, result)=>{
         if(err) return res.status(500).send()
 

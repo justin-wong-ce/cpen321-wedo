@@ -2,17 +2,17 @@ const express = require('express')
 const router = new express.Router()
 const connection = require('../db/mysql')
 
-router.post('/tasks', (req, res)=>{
+router.post('/task', (req, res)=>{
     const task = req.body
 
-    connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err,user)=>{
+    connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err,task)=>{
         if(err) return console.log(err) 
 
        res.status(201).send(task)
     })
 })
 
-router.get('/tasks', (req, res)=>{
+router.get('/task', (req, res)=>{
     connection.query('SELECT * FROM TaskHasTaskList', (err, tasks)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
@@ -21,12 +21,12 @@ router.get('/tasks', (req, res)=>{
 })
 
 
-router.get('/tasks/:id', (req, res)=>{
+router.get('/task/:id', (req, res)=>{
     const _id = req.params.id
-    connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?',_id, (err, result)=>{
+    connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?',_id, (err, task)=>{
         if(err || !result) return res.status(500).send(err)
         console.log('Successfully specific user id information')
-        res.send(result)
+        res.send(task)
     })
 })
 
@@ -44,11 +44,11 @@ router.put("/task/:id", (req, res)=>{
     })
 })
 
-router.delete('/tasks/:id', (req, res)=>{
-    connection.query('DELETE FROM TaskHasTaskList WHERE id = ?', req.params.id, (err, result)=>{
+router.delete('/task/:id', (req, res)=>{
+    connection.query('DELETE FROM TaskHasTaskList WHERE taskID = ?', req.params.id, (err, result)=>{
         if(err) return res.status(500).send()
 
-        res.send('Successfully delete the user with id '+req.params.id)
+        res.send('Successfully delete the task with id '+req.params.id)
     })
  })
 

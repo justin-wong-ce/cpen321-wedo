@@ -1,7 +1,8 @@
 const express = require('express')
+const app = express()
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
-const app = express()
+const taskListRouter = require('./routers/taskList')
 
 const port = process.env.PORT || 3000
 
@@ -37,8 +38,9 @@ app.use(express.json())
 
 app.use(userRouter)
 app.use(taskRouter)
+app.use(taskListRouter)
 
-var server = app.listen(port, () => {
+app.listen(port, () => {
     console.log('Server is up on port' + port)
 })
 
