@@ -1,3 +1,11 @@
+CREATE TABLE User (
+	userID				int,
+	isPremium			boolean DEFAULT false,
+	userName            char(100) NOT NULL,
+	password            char(100) NOT NULL,
+	PRIMARY KEY (userID)
+)
+
 CREATE TABLE TaskListWithOwner (
 	taskListID 			int,
 	taskListName 		char(100),
@@ -30,13 +38,7 @@ CREATE TABLE TaskHasTaskList (
 		ON UPDATE CASCADE
 )
 
-CREATE TABLE User (
-	userID				int,
-	isPremium			boolean DEFAULT false,
-	userName            char(100) NOT NULL,
-	password            char(100) NOT NULL,
-	PRIMARY KEY (userID)
-)
+
 
 CREATE TABLE HasAccess (
 	userID				int,
