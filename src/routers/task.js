@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const connection = require('../db/mysql')
+const auth = require('../auth/auth')
 
 router.post('/task', (req, res)=>{
     const task = req.body

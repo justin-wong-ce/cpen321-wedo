@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const connection = require('../db/mysql')
+const auth = require('../auth/auth')
 
 router.post('/taskList', (req, res)=>{
     const taskList = req.body
@@ -19,13 +20,21 @@ router.post('/taskList', (req, res)=>{
     
 })
 
-router.get('/taskList', (req, res)=>{
-    connection.query('SELECT * FROM TaskListWithOwner', (err, taskList)=>{
+router.get('/taskList', auth, (req, res)=>{
+    connection.query('SELECT * FROM TaskListWithOwner WHERE userID = ?', req.user.userID, (err, taskList)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
         res.send(taskList)
     })
 })
+
+// router.get('/taskList', (req, res)=>{
+//     connection.query('SELECT * FROM TaskListWithOwner', (err, taskList)=>{
+//         if(err) return res.status(500).send(err)
+//         console.log('Successfully get user information')
+//         res.send(taskList)
+//     })
+// })
 
 
 router.get('/taskList/:id', (req, res)=>{

@@ -42,7 +42,7 @@ router.post('/user/login', (req, res)=>{
         connection.query('SELECT * FROM User WHERE userID = ?',req.body.userID, async (err, users)=>{
             if(err || !users) return res.status(500).send('Unable to log in')
 	    
-	    const user = users[0]
+	        const user = users[0]
             const isMatch = await bcrypt.compare(req.body.password, user.password)
             if(!isMatch) return res.status(500).send('Unable to log in')
 
@@ -58,10 +58,22 @@ router.post('/user/login', (req, res)=>{
         })
     } catch(e){
         console.log(e)
-	return res.status(500).send('Unable to log in')
+	    return res.status(500).send('Unable to log in')
     }
     
 })
+
+// given the userID and token
+router.get('/user/me', async (req, res)=>{
+    const id = req.body.userID
+    const token = req.body.token
+    res.send(user)
+    connection.query('SELECT * FROM User WHERE userID = ? AND token = ?',[id,token], (err, user)=>{
+        if(err || !user) return res.status(500).send('Please log in before seeing your personal information')
+        res.send(user)
+    })
+})
+
 
 
 router.get('/user', (req, res)=>{
