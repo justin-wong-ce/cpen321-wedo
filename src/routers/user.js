@@ -2,6 +2,7 @@ const express = require('express')
 const connection = require('../db/mysql')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const auth = require('../auth/auth')
 const router = new express.Router()
 
 // helper function:
