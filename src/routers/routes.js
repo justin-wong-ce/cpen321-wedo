@@ -1,4 +1,4 @@
-import { Client } from "@googlemaps/google-maps-services-js";
+const { Client } = require("@googlemaps/google-maps-services-js");
 var APIKEY = "AIzaSyBrb9k24pVXs1LP1gTO-jP8xOddObkvqpA";
 const express = require('express')
 const router = new express.Router()
@@ -7,7 +7,10 @@ const client = new Client({})
 // PUT FUNCTIONS INTO SEPARATE FILE AND CALL REQUIRE LATER
 
 router.get('/routes/driving', (req, res) => {
-    getDrivingRoute(req.locations).then((result) => {
+    console.log("Get driving route");
+    console.log("req: ", req.body);
+    console.log("req.locations: ", req.body.locations);
+    getDrivingRoute(req.body.locations).then((result) => {
         res.status(200).send([result.routes[0]]);
     }).catch((err) => {
         res.status(400).send(err);
@@ -15,8 +18,7 @@ router.get('/routes/driving', (req, res) => {
 })
 
 router.get('/routes/transit', (req, res) => {
-    var result = [];
-    getTransitRoute(req.locations, req.distanceThreshold)
+    getTransitRoute(req.body.locations, req.body.distanceThreshold)
         .then((result) => {
             res.status(200).send(result)
         }).catch((err) => {
@@ -26,17 +28,37 @@ router.get('/routes/transit', (req, res) => {
 
 // Returns a driving route with locations converted to waypoints
 async function getDrivingRoute(locations) {
+    console.log(locations);
+
     var waypoints = [];
     for (let iter = 1; iter < req.locations.length - 2; iter++) {
         waypoints.push(req.locations[iter]);
     }
-    return client.directions({
-        origin: req.locations[0],
-        destination: req.locations[locations.length - 1],
-        waypoints: waypoints,
-        mode: "driving",
-        key: APIKEY,
-    })
+
+    console.log(waypoints);
+    if (waypoints.length != 0) {
+        return client.directions({
+            params: {
+                origin: locations[0],
+                destination: locations[locations.length - 1],
+                waypoints: waypoints,
+                mode: "driving",
+                key: APIKEY,
+            },
+            timeout: 2000,
+        })
+    }
+    else {
+        return client.directions({
+            params: {
+                origin: locations[0],
+                destination: locations[locations.length - 1],
+                mode: "driving",
+                key: APIKEY,
+            },
+            timeout: 2000,
+        })
+    }
 }
 
 // Transforms a list of locations into an array of routes
@@ -44,12 +66,15 @@ async function getDrivingRoute(locations) {
 async function getTransitRoute(locations, distanceThreshold) {
     if (locations.length == 2) {
         var result = await client.directions({
-            origin: locations[0],
-            destination: locations[1],
-            mode: "transit",
-            key: APIKEY,
+            params: {
+                origin: locations[0],
+                destination: locations[1],
+                mode: "transit",
+                key: APIKEY,
+            },
+            timeout: 2000,
         });
-        return [result.routes[0]];
+        return [result.data.routes[0]];
     }
 
     var response = await getDrivingRoute(locations);
@@ -80,22 +105,28 @@ async function getTransitRoute(locations, distanceThreshold) {
         }
         if (closeGroup.length != 0) {
             let response = await client.directions({
-                origin: closeGroup[0].toUrlValue,
-                destination: closeGroup[closeGroup.length - 1].toUrlValue,
-                mode: "walking",
-                waypoints: pointGroup,
-                key: APIKEY,
+                params: {
+                    origin: closeGroup[0].toUrlValue,
+                    destination: closeGroup[closeGroup.length - 1].toUrlValue,
+                    mode: "walking",
+                    waypoints: pointGroup,
+                    key: APIKEY,
+                },
+                timeout: 2000
             });
-            results.push(response);
+            results.push(response.data);
         }
         if (transitRouteIter < transitRoutes.length) {
             let response = await client.directions({
-                origin: transitRoutes[transitRouteIter].route[0].legs[0].start_location.toUrlValue(),
-                destination: transitRoutes[transitRouteIter].route[0].legs[0].end_location.toUrlValue(),
-                mode: "transit",
-                key: APIKEY,
+                params: {
+                    origin: transitRoutes[transitRouteIter].route[0].legs[0].start_location.toUrlValue(),
+                    destination: transitRoutes[transitRouteIter].route[0].legs[0].end_location.toUrlValue(),
+                    mode: "transit",
+                    key: APIKEY,
+                },
+                timeout: 2000
             });
-            results.push(response);
+            results.push(response.data);
             transitRouteIter++;
         }
     }
@@ -160,14 +191,17 @@ async function getBestTransitRoutes(locations) {
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
             if (locIter1.toString() === locIter0.toString()) continue;
             var response = await client.directions({
-                origin: locations[locIter0].toUrlValue(),
-                destination: locations[locIter1].toUrlValue(),
-                mode: "transit",
-                key = APIKEY,
+                params: {
+                    origin: locations[locIter0].toUrlValue(),
+                    destination: locations[locIter1].toUrlValue(),
+                    mode: "transit",
+                    key: APIKEY,
+                },
+                timeout: 2000
             });
             // can make entire inner for loop asynchronously later on
-            neighbours.set(response.routes[0].legs[0].end_location.toString(), response.routes[0].legs[0].distance.value);
-            responsesMap.set(locations[locIter0].toString() + locations[locIter1].toString(), response);
+            neighbours.set(response.data.routes[0].legs[0].end_location.toString(), response.data.routes[0].legs[0].distance.value);
+            responsesMap.set(locations[locIter0].toString() + locations[locIter1].toString(), response.data);
         }
         locationGraph.set(locations[locIter0].toString(), neighbours);
     }

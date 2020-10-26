@@ -83,7 +83,7 @@ router.get('/user', (req, res)=>{
 // should delete this later
 router.get('/user/:id', async (req, res)=>{
     const _id = req.params.id
-    connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, user)=>{
+    connection.query('SELECT taskListID FROM User WHERE userID = ?',_id, (err, user)=>{
         if(err || !user) return res.status(500).send(err)
         console.log('Successfully specific user id information')
 	    console.log(user[0].password)
