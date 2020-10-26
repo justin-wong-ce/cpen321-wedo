@@ -22,9 +22,10 @@ router.get('/routes/transit', (req, res) => {
         .then((result) => {
             res.status(200).send(result)
         })
-    // .catch((err) => {
-    //     res.status(400).send(err);
-    // })
+        .catch((err) => {
+            console.log(err);
+            res.status(400).send(err.message);
+        })
 })
 
 // Returns a driving route with locations converted to waypoints
@@ -186,6 +187,8 @@ async function getBestTransitRoutes(locations) {
                 },
                 timeout: 2000
             });
+
+            if (response.data.status !== "OK") throw Error(response.data.status);
 
             // can make entire inner for loop asynchronously later on
             neighbours.set(locIter1.toString(), response.data.routes[0].legs[0].distance.value);
