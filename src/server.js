@@ -3,21 +3,62 @@ const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 const taskListRouter = require('./routers/taskList')
 const routeRouter = require('./routers/routes')
-const connection = require('./db/mysql')
 
 const socketio = require('socket.io')
 const http = require('http')
-const path = require('path')
+// const path = require('path')
 const port = process.env.PORT || 3000
 
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
 //const io = socketio(http)
-const publicDirectoryPath = path.join(__dirname, '../public')
+// const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.json())
-app.use(express.static(publicDirectoryPath))
+
+
+app.use(userRouter)
+app.use(taskRouter)
+app.use(taskListRouter)
+app.use(routeRouter)
+
+app.get("/", function (req, res) {
+    console.log('co')
+    res.send('hello')
+});
+
+io.on('connection', (socket) => {
+    console.log('New WebSocket connection')
+
+    socket.emit('You\'v successfully received the push notifications')
+
+    // before doing something, join the user to every room they should be:
+    socket.on('join', (chatID)=>{
+        console.log('User has joined '+chatID)
+        socket.join(chatID)
+    })
+
+    // TODO: if a user send message, get the user ID, send to the other user who is in the chat room
+    // with chatID:
+    socket.on('sendMessages', (chatID, message) => {
+        console.log(message)
+        io.to(chatID).emit(message)
+    })
+
+
+    // disconnect the user:
+    socket.on('disconnect', () => {
+        console.log('disconnecting')
+    })
+})
+
+server.listen(port, () => {
+    console.log('Server is up on port' + port)
+})
+
+
+// app.use(express.static(publicDirectoryPath))
 //app.get('/', (req,res)=>{
 //	res.sendFile(__dirname + '/../public/index.html');
 //});
@@ -47,36 +88,3 @@ app.use(express.static(publicDirectoryPath))
 // delete data from DB
 // app.delete("/", function (req, res) {
 // });
-
-app.use(userRouter)
-app.use(taskRouter)
-app.use(taskListRouter)
-app.use(routeRouter)
-
-io.on('connection', (socket) => {
-    console.log('New WebSocket connection')
-
-    socket.emit('You\'v successfully received the push notifications')
-
-    // before doing something, join the user to every room they should be:
-    socket.on('join', (chatID)=>{
-        socket.join(chatID)
-    })
-
-    // TODO: if a user send message, get the user ID, send to the other user who is in the chat room
-    // with chatID:
-    socket.on('sendMessages', (chatID, message) => {
-        io.to(chatID).emit(message)
-    })
-
-
-    // disconnect the user:
-    socket.on('disconnect', () => {
-        console.log('disconnecting')
-    })
-})
-
-server.listen(port, () => {
-    console.log('Server is up on port' + port)
-})
-
