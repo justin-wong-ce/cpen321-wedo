@@ -109,7 +109,12 @@ router.put("/user", auth, async (req, res)=>{
     const obj = req.body
 
     obj["userID"] = req.user.userID
-    obj.password = await bcrypt.hash(req.body.password, 8)
+    const updates = Object.keys(req.body)
+    const shouldUpdatePassword = updates.every((update)=>{
+        return update!='password'
+    })
+    
+    if(shouldUpdatePassword) obj.password = await bcrypt.hash(req.body.password, 8)
     
     connection.query('UPDATE User SET ? WHERE userID = ?',[obj,req.user.userID], (err,result)=>{
         if(err){
