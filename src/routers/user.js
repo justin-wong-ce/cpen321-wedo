@@ -104,7 +104,7 @@ router.put("/user/:id", (req, res)=>{
     })
 })
 
-router.put("/user", auth, (req, res)=>{
+router.put("/user", auth, async (req, res)=>{
     const obj = req.body
 
     obj["userID"] = req.user.userID
