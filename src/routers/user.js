@@ -64,18 +64,12 @@ router.post('/user/login', (req, res)=>{
 })
 
 // given the userID and token
-router.get('/user/me', async (req, res)=>{
-    const id = req.body.userID
-    const token = req.body.token
-    res.send(user)
-    connection.query('SELECT * FROM User WHERE userID = ? AND token = ?',[id,token], (err, user)=>{
-        if(err || !user) return res.status(500).send('Please log in before seeing your personal information')
-        res.send(user)
-    })
+router.get('/user/me', auth, async (req, res)=>{
+    res.send(req.user)
 })
 
 
-
+// should delete this later
 router.get('/user', (req, res)=>{
 
     connection.query('SELECT * FROM User', (err, users)=>{
@@ -85,6 +79,7 @@ router.get('/user', (req, res)=>{
     })
 })
 
+// should delete this later
 router.get('/user/:id', async (req, res)=>{
     const _id = req.params.id
     connection.query('SELECT * FROM User WHERE userID = ?',_id, (err, user)=>{
@@ -95,6 +90,7 @@ router.get('/user/:id', async (req, res)=>{
     })
 })
 
+// should delete this later
 router.put("/user/:id", (req, res)=>{
     const _id = req.params.id
     const obj = req.body
@@ -108,6 +104,23 @@ router.put("/user/:id", (req, res)=>{
     })
 })
 
+router.put("/user", auth, (req, res)=>{
+    const obj = req.body
+
+    obj["userID"] = req.user.userID
+    obj.password = await bcrypt.hash(req.body.password, 8)
+    
+    connection.query('UPDATE User SET ? WHERE userID = ?',[obj,req.user.userID], (err,result)=>{
+        if(err){
+		console.log(err)
+		return res.send(err)
+	}
+	console.log('Successfully update user information')
+        res.send(result)
+    })
+})
+
+// need auth later
 router.delete('/user/:id', (req, res)=>{
     connection.query('DELETE FROM User WHERE id = ?', req.params.id, (err, result)=>{
         if(err) return res.status(500).send()
