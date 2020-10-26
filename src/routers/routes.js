@@ -238,3 +238,5 @@ function permutate(list) {
     }
     return permuteRecurse(list, recurseList);
 }
+
+module.exports = router
