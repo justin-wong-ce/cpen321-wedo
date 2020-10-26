@@ -53,23 +53,39 @@ router.put("/taskList/:id", auth, (req, res)=>{
 
     const _id = req.params.id
     const obj = req.body
-    
-    connection.query('UPDATE TaskListWithOwner SET ? WHERE taskListID = ?',[obj,_id], (err,result)=>{
-        if(err){
-		console.log(err)
-		return res.send(err)
-	}
-	console.log('Successfully update user information')
-        res.send(result)
+
+    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?', [_id,req.user.userID], (err, hasAccess)=>{
+        if(err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+
+        connection.query('UPDATE TaskListWithOwner SET ? WHERE taskListID = ?',[obj,_id], (err,result)=>{
+            if(err){
+                console.log(err)
+                return res.send(err)
+            }
+            console.log('Successfully update user information')
+            res.send(result)
+        })
+        
     })
+    
+    
 })
 
-router.delete('/ttaskListsk/:id', (req, res)=>{
-    connection.query('DELETE FROM TaskHasTaskList WHERE taskListID = ?', req.params.id, (err, result)=>{
-        if(err) return res.status(500).send()
+// change to only head user can delete later
+router.delete('/taskListsk/:id', auth, (req, res)=>{
 
-        res.send('Successfully delete the taskList with id '+req.params.id)
+    const _id = req.params.id
+    
+    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?',[_id,req.user.userID], (err, taskList)=>{
+        if(err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+        
+        connection.query('DELETE FROM TaskHasTaskList WHERE taskListID = ?', req.params.id, (err, result)=>{
+            if(err) return res.status(500).send()
+    
+            res.send('Successfully delete the taskList with id '+req.params.id)
+        })
     })
+
  })
 
 module.exports = router
