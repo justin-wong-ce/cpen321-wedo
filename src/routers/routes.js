@@ -8,8 +8,6 @@ const client = new Client({})
 
 router.get('/routes/driving', (req, res) => {
     console.log("Get driving route");
-    console.log("req: ", req.body);
-    console.log("req.locations: ", req.body.locations);
     getDrivingRoute(req.body.locations).then((result) => {
         res.status(200).send([result.routes[0]]);
     }).catch((err) => {
@@ -30,13 +28,11 @@ router.get('/routes/transit', (req, res) => {
 async function getDrivingRoute(locations) {
     console.log(locations);
 
-    var waypoints = [];
-    for (let iter = 1; iter < req.locations.length - 2; iter++) {
-        waypoints.push(req.locations[iter]);
-    }
-
-    console.log(waypoints);
-    if (waypoints.length != 0) {
+    if (locations.length != 2) {
+        var waypoints = [];
+        for (let iter = 1; iter < req.locations.length - 2; iter++) {
+            waypoints.push(req.locations[iter]);
+        }
         return client.directions({
             params: {
                 origin: locations[0],
@@ -46,18 +42,19 @@ async function getDrivingRoute(locations) {
                 key: APIKEY,
             },
             timeout: 2000,
-        })
+        });
     }
     else {
+        console.log(locations[0], locations[1], APIKEY);
         return client.directions({
             params: {
                 origin: locations[0],
-                destination: locations[locations.length - 1],
+                destination: locations[1],
                 mode: "driving",
                 key: APIKEY,
             },
             timeout: 2000,
-        })
+        });
     }
 }
 
