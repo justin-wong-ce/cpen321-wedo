@@ -1,15 +1,25 @@
 const express = require('express')
-const app = express()
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 const taskListRouter = require('./routers/taskList')
 const routeRouter = require('./routere/routes')
 
+const socketio = require('socket.io')
+const http = require('http')
+const path = require('path')
 const port = process.env.PORT || 3000
 
+const app = express()
+const server = http.createServer(app)
+const io = socketio(server)
+//const io = socketio(http)
+const publicDirectoryPath = path.join(__dirname, '../public')
+
 app.use(express.json())
-
-
+app.use(express.static(publicDirectoryPath))
+//app.get('/', (req,res)=>{
+//	res.sendFile(__dirname + '/../public/index.html');
+//});
 /*
  * JSON FORMATTING:
  * (put JSON field names here for reference later)
@@ -42,7 +52,11 @@ app.use(taskRouter)
 app.use(taskListRouter)
 app.use(routeRouter)
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+    console.log('New WebSocket connection')
+})
+
+server.listen(port, () => {
     console.log('Server is up on port' + port)
 })
 

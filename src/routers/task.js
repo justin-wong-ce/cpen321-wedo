@@ -1,18 +1,36 @@
 const express = require('express')
 const router = new express.Router()
 const connection = require('../db/mysql')
+const auth = require('../auth/auth')
 
-router.post('/task', (req, res)=>{
+router.post('/task', auth, (req, res)=>{
     const task = req.body
 
-    connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err,task)=>{
-        if(err) return console.log(err) 
-
-       res.status(201).send(task)
+    // check if req.body.taskListID belongs to this user:
+    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?',[task.taskListID,req.user.userID], (err, taskList)=>{
+        if(err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+        
+        connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err,task)=>{
+            if(err) return console.log(err) 
+    
+           res.status(201).send(task)
+        })
     })
+
 })
 
-router.get('/task', (req, res)=>{
+// question here: how to join different table using sql
+// router.get('/task', auth, (req, res)=>{
+//     connection.query('SELECT * FROM TaskListWithOwner WHERE userID = ?', req.user.userID, (err, taskList)=>{
+//         if(err) return res.status(500).send(err)
+//         console.log('Successfully get user information')
+//         res.send(taskList)
+//     })
+// })
+
+
+// delete later
+router.get('/task/admin', (req, res)=>{
     connection.query('SELECT * FROM TaskHasTaskList', (err, tasks)=>{
         if(err) return res.status(500).send(err)
         console.log('Successfully get user information')
@@ -20,7 +38,7 @@ router.get('/task', (req, res)=>{
     })
 })
 
-
+// delete later
 router.get('/task/:id', (req, res)=>{
     const _id = req.params.id
     connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?',_id, (err, task)=>{
@@ -30,20 +48,24 @@ router.get('/task/:id', (req, res)=>{
     })
 })
 
-router.put("/task/:id", (req, res)=>{
+
+// this is not fully functioned 
+router.put("/task/:id", auth, (req, res)=>{
 
     const _id = req.params.id
     const obj = req.body
+    
     connection.query('UPDATE TaskHasTaskList SET ? WHERE taskID = ?',[obj,_id], (err,result)=>{
         if(err){
-		console.log(err)
-		return res.send(err)
-	}
-	console.log('Successfully update user information')
+            console.log(err)
+            return res.send(err)
+        }
+        console.log('Successfully update user information')
         res.send(result)
     })
 })
 
+// this is not fully functioned
 router.delete('/task/:id', (req, res)=>{
     connection.query('DELETE FROM TaskHasTaskList WHERE taskID = ?', req.params.id, (err, result)=>{
         if(err) return res.status(500).send()
