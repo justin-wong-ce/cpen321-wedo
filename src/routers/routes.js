@@ -9,30 +9,38 @@ const client = new Client({})
 router.get('/routes/driving', (req, res) => {
     console.log("Get driving route");
     getDrivingRoute(req.body.locations).then((result) => {
-        res.status(200).send([result.routes[0]]);
+        res.status(200).send([result.data.routes[0]]);
     }).catch((err) => {
         res.status(400).send(err);
     });
 })
 
+
 router.get('/routes/transit', (req, res) => {
+    console.log("Get transit route");
     getTransitRoute(req.body.locations, req.body.distanceThreshold)
         .then((result) => {
             res.status(200).send(result)
-        }).catch((err) => {
-            res.status(400).send(err);
         })
+    // .catch((err) => {
+    //     res.status(400).send(err);
+    // })
 })
 
 // Returns a driving route with locations converted to waypoints
 async function getDrivingRoute(locations) {
+
+    console.log("getting driving route");
     console.log(locations);
 
     if (locations.length != 2) {
-        var waypoints = [];
-        for (let iter = 1; iter < req.locations.length - 2; iter++) {
-            waypoints.push(req.locations[iter]);
+        var waypoints = ["optimize:true"];
+        for (let iter = 1; iter < locations.length - 1; iter++) {
+            waypoints.push(locations[iter]);
         }
+
+        console.log(waypoints);
+
         return client.directions({
             params: {
                 origin: locations[0],
@@ -45,7 +53,6 @@ async function getDrivingRoute(locations) {
         });
     }
     else {
-        console.log(locations[0], locations[1], APIKEY);
         return client.directions({
             params: {
                 origin: locations[0],
@@ -73,15 +80,23 @@ async function getTransitRoute(locations, distanceThreshold) {
         });
         return [result.data.routes[0]];
     }
-
     var response = await getDrivingRoute(locations);
+
     var farApartCoor = [];
     var closeByGroups = [];
-    groupByDistance(farApartCoor, closeByGroups, response.route[0], distanceThreshold);
+
+    console.log("get groupByDistance");
+    groupByDistance(farApartCoor, closeByGroups, response.data.routes[0], distanceThreshold);
+    console.log("done groupByDistance");
+    console.log("check if proper trasaction: ", farApartCoor, closeByGroups);
 
     // Get transit time needed for each far apart location
     // Return empty array on error (error logged in function already)
+    console.log("getBestTransitRoutes");
     var transitRoutes = await getBestTransitRoutes(farApartCoor);
+    console.log("got the best transit routes!");
+    console.log(transitRoutes);
+
     let transitRouteIter = 0;
 
     if (transitRoutes == null) {
@@ -92,53 +107,60 @@ async function getTransitRoute(locations, distanceThreshold) {
 
     var results = [];
 
+    console.log("closeByGroups", closeByGroups);
+
     // Make array
     for (let closeGroup of closeByGroups) {
+        console.log("closeGroup", closeGroup);
         var pointGroup = [];
         if (closeGroup.length > 2) {
             for (let pointIter = 1; pointIter < closeGroup.length - 2; pointIter++) {
-                pointGroup.push(closeGroup[pointIter].toUrlValue);
+                pointGroup.push(toUrlValue(closeGroup[pointIter]));
             }
         }
         if (closeGroup.length != 0) {
             let response = await client.directions({
                 params: {
-                    origin: closeGroup[0].toUrlValue,
-                    destination: closeGroup[closeGroup.length - 1].toUrlValue,
+                    origin: toUrlValue(closeGroup[0]),
+                    destination: toUrlValue(closeGroup[closeGroup.length - 1]),
                     mode: "walking",
                     waypoints: pointGroup,
                     key: APIKEY,
                 },
                 timeout: 2000
             });
-            results.push(response.data);
+            results.push(response.data.routes[0]);
         }
         if (transitRouteIter < transitRoutes.length) {
             let response = await client.directions({
                 params: {
-                    origin: transitRoutes[transitRouteIter].route[0].legs[0].start_location.toUrlValue(),
-                    destination: transitRoutes[transitRouteIter].route[0].legs[0].end_location.toUrlValue(),
+                    origin: toUrlValue(transitRoutes[transitRouteIter].routes[0].legs[0].start_location),
+                    destination: toUrlValue(transitRoutes[transitRouteIter].routes[0].legs[0].end_location),
                     mode: "transit",
                     key: APIKEY,
                 },
                 timeout: 2000
             });
-            results.push(response.data);
+            results.push(response.data.routes[0]);
             transitRouteIter++;
         }
     }
-    return result;
+
+    console.log(results);
+
+    return results;
 }
 
 function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThreshold) {
     var currCloseBy = [];
+
     // Get far apart locations and groups of close-by locations
     for (let legIter = 0; legIter < route.legs.length; legIter++) {
         if (route.legs[legIter].distance.value > walkDistanceThreshold) {
             if (currCloseBy.length != 0)
                 currCloseBy.push(route.legs[legIter].start_location);
             // Make deep copy of currCloseBy and store group
-            closeByGroups.push([...currCloseBy]);
+            closeByGroups.push(currCloseBy);
             currCloseBy = [];
 
             // Make sure starting coordinates are added
@@ -186,11 +208,11 @@ async function getBestTransitRoutes(locations) {
         var neighbours = new Map();
 
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
-            if (locIter1.toString() === locIter0.toString()) continue;
+            if (locIter1 == locIter0) continue;
             var response = await client.directions({
                 params: {
-                    origin: locations[locIter0].toUrlValue(),
-                    destination: locations[locIter1].toUrlValue(),
+                    origin: toUrlValue(locations[locIter0]),
+                    destination: toUrlValue(locations[locIter1]),
                     mode: "transit",
                     key: APIKEY,
                 },
@@ -228,9 +250,6 @@ async function getBestTransitRoutes(locations) {
 
                 currWeight += locationGraph.get(currLoc).get(currPerm[iter]);
                 currPath.push(responsesMap.get(currLoc + currPerm[iter]));
-
-                console.log("have key", responsesMap.has(currLoc + currPerm[iter]));
-                console.log("key:", responsesMap.keys().next().value);
             }
 
             currLoc = currPerm[iter];
@@ -268,6 +287,10 @@ function permutate(list) {
         return res;
     }
     return permuteRecurse(list, recurseList);
+}
+
+function toUrlValue(latLngObj) {
+    return latLngObj.lat.toString() + "," + latLngObj.lng.toString();
 }
 
 module.exports = router
