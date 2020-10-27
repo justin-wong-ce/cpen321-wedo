@@ -3,37 +3,57 @@ import { View, StyleSheet, Text } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome5, Feather } from '@expo/vector-icons';
 import ListBox from '../components/ListBox';
 
+let d = new Date();
 const lists = [
     {
         id: 1,
         title: 'Groceries',
-        completed: false
+        timeCreated: d.toISOString(),
+        lastTimeModified: d.toISOString(),
+        userCapacity: 20,
     },
     {
         id: 2,
         title: 'Rockets',
-        completed: false
+        timeCreated: d.toISOString(),
+        lastTimeModified: d.toISOString(),
+        userCapacity: 20,
     },
     {
         id: 3,
         title: 'Presentation',
-        completed: false
+        timeCreated: d.toISOString(),
+        lastTimeModified: d.toISOString(),
+        userCapacity: 20,
     },
     {
         id: 4,
         title: 'Competition',
-        completed: false
+        timeCreated: d.toISOString(),
+        lastTimeModified: d.toISOString(),
+        userCapacity: 20,
     },
     {
         id: 5,
         title: 'Robotic Project',
-        completed: false
+        timeCreated: d.toISOString(),
+        lastTimeModified: d.toISOString(),
+        userCapacity: 20,
     },
 ]
 
-function MainScreen(props) {
+function MainScreen({ navigation }) {
+    const [list, setLists] = useState(lists);
     const [quickLists, setQuickLists] = useState([lists[0], lists[1]]);
     const [recentLists, setRecentLists] = useState([lists[1], lists[2], lists[3], lists[4]]);
+
+    const listPressHandler = (list) => {
+        navigation.navigate("OpenListScreen", {
+            list,
+            screen: "Tasks",
+            params: list,
+        },);
+    };
 
     return (
         <View style={styles.container}>
@@ -44,8 +64,8 @@ function MainScreen(props) {
             </View>
 
             <View style={styles.quickAccessListsContainer}>
-                <ListBox title={quickLists[0].title} />
-                <ListBox title={quickLists[1].title} />
+                <ListBox list={quickLists[0]} onListPress={listPressHandler} />
+                <ListBox list={quickLists[1]} onListPress={listPressHandler} />
             </View>
 
             <View style= {styles.recentContainer} >
@@ -55,12 +75,12 @@ function MainScreen(props) {
 
             <View style={styles.recentListsContainer} >
                 <View style={styles.recentListRow} >
-                    <ListBox title={recentLists[0].title} />
-                    <ListBox title={recentLists[1].title} />
+                    <ListBox list={recentLists[0]} onListPress={listPressHandler} />
+                    <ListBox list={recentLists[1]} onListPress={listPressHandler} />
                 </View>
                 <View style={styles.recentListRow} >
-                    <ListBox title={recentLists[2].title} />
-                    <ListBox title={recentLists[3].title} />
+                    <ListBox list={recentLists[2]} onListPress={listPressHandler} />
+                    <ListBox list={recentLists[3]} onListPress={listPressHandler} />
                 </View>
             </View>
 

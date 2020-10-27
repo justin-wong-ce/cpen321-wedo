@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-function ListBox({ title }) {
+function ListBox({ list, onListPress }) {
+
+    const onPressHandler = () => {
+        onListPress(list);
+    };
+
     return (
-        <TouchableOpacity style={styles.container}>
-            <Text style={styles.text} >{title}</Text>
+        <TouchableOpacity style={styles.container} onPress={onPressHandler} >
+            <Text style={styles.text} >{list.title}</Text>
         </TouchableOpacity>
     );
 }
