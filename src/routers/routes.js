@@ -6,7 +6,7 @@ const client = new Client({})
 
 // PUT FUNCTIONS INTO SEPARATE FILE AND CALL REQUIRE LATER
 
-router.get('/routes/driving', (req, res) => {
+router.post('/routes/driving', (req, res) => {
     console.log("Get driving route");
     getDrivingRoute(req.body.locations).then((result) => {
         res.status(200).send([result.data.routes[0]]);
@@ -16,7 +16,7 @@ router.get('/routes/driving', (req, res) => {
 })
 
 
-router.get('/routes/transit', (req, res) => {
+router.post('/routes/transit', (req, res) => {
     console.log("Get transit route");
     getTransitRoute(req.body.locations, req.body.distanceThreshold)
         .then((result) => {

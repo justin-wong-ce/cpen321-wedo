@@ -29,6 +29,20 @@ router.post('/task', auth, (req, res)=>{
 // })
 
 
+router.get('/task', auth, (req, res)=>{
+
+    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?',[req.body.taskListID,req.user.userID], (err, taskList)=>{
+        if(err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+        
+        connection.query('SELECT * FROM TaskHasTaskList WHERE taskListID = ?', req.body.taskListID, (err, tasks)=>{
+            if(err) return res.status(500).send(err)
+            console.log('Successfully get user information')
+            res.send(tasks)
+        })
+    })
+})
+
+
 // delete later
 router.get('/task/admin', (req, res)=>{
     connection.query('SELECT * FROM TaskHasTaskList', (err, tasks)=>{
