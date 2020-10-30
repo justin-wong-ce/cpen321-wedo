@@ -1,23 +1,27 @@
 package com.example.cpen321_wedo;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.util.Log;
-
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
 
-public class MainActivity extends AppCompatActivity {
+public class TaskListActivity extends AppCompatActivity {
 
     List<TaskList> lstTaskList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_task_list);
+
 
         lstTaskList = new ArrayList<>();
         lstTaskList.add(new TaskList("Getting Enrique out of our team", 4, "Angry", "form a new groud of size 3", R.drawable.thevigitarian));
