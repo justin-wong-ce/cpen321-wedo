@@ -3,7 +3,9 @@ package com.example.cpen321_wedo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.VoiceInteractor;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +39,13 @@ public class LoginActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // if the user has already log in and not log out, then switch to TaskListActivity directly
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("LoginSignup", Context.MODE_PRIVATE);
+        if(preferences.getBoolean("haslogin",false)){
+            Intent taskListIntent = new Intent(LoginActivity.this, TaskListActivity.class);
+            startActivity(taskListIntent);
+        }
+
         login = (Button) findViewById(R.id.loginButton);
         signup = (Button) findViewById(R.id.signupButton);
         email = (TextView) findViewById(R.id.emailLoginTextView);
@@ -66,6 +75,21 @@ public class LoginActivity extends AppCompatActivity{
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+
+                                // save the status to local storage, if hasLogin is false, then means
+                                // user has logged out; otherwise, user has logged in. Also gonna
+                                // save token to local storage.
+                                boolean login = true;
+                                SharedPreferences preferences = getApplicationContext().getSharedPreferences("LoginSignup", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putBoolean("haslogin", login);
+                                try {
+                                    editor.putString("token", (String) response.get("token"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                editor.apply();
+
                                 Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
                                 Log.d("http", response.toString());
                                 Intent taskListIntent = new Intent(LoginActivity.this, TaskListActivity.class);

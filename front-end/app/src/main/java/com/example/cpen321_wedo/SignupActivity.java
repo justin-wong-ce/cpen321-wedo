@@ -1,6 +1,8 @@
 package com.example.cpen321_wedo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +21,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class SignupActivity extends AppCompatActivity {
     TextView name;
@@ -48,7 +49,7 @@ public class SignupActivity extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name_str = name.getText().toString();
+                final String name_str = name.getText().toString();
                 String email_str = email.getText().toString();
                 String password1_str = password1.getText().toString();
                 String password2_str = password2.getText().toString();
@@ -74,6 +75,21 @@ public class SignupActivity extends AppCompatActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+
+                                // save the status to local storage, if hasLogin is false, then means
+                                // user has logged out; otherwise, user has logged in. Also gonna
+                                // save token to local storage.
+                                boolean login = true;
+                                SharedPreferences preferences = getApplicationContext().getSharedPreferences("LoginSignup", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putBoolean("haslogin", login);
+                                try {
+                                    editor.putString("token", (String) response.get("token"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                editor.apply();
+
                                 Toast.makeText(getApplicationContext(), "Created new User!" + response.toString(), Toast.LENGTH_LONG).show();
                                 Log.d("http", response.toString());
                                 Intent taskListIntent = new Intent(SignupActivity.this, TaskListActivity.class);
