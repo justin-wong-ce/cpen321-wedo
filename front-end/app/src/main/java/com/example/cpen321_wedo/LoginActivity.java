@@ -2,11 +2,28 @@ package com.example.cpen321_wedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity{
 
@@ -25,6 +42,9 @@ public class LoginActivity extends AppCompatActivity{
         email = (TextView) findViewById(R.id.emailLoginTextView);
         password = (TextView) findViewById(R.id.passwordLoginTextView);
 
+        final RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        final String url = "http://40.78.89.252:3000/user/login";
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,11 +52,37 @@ public class LoginActivity extends AppCompatActivity{
                 String password_str = password.getText().toString();
                 //TODO: try to varify that email address is value later.
 
-                //TODO: send those two string to backend and varify.
+
+                JSONObject object = new JSONObject();
+                try{
+                    object.put("userID", Integer.parseInt(email_str));
+                    object.put("password", password_str);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("http", object.toString());
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
+                                Log.d("http", response.toString());
+                                Intent taskListIntent = new Intent(LoginActivity.this, TaskListActivity.class);
+                                startActivity(taskListIntent);
+                            }
+                        }, new Response.ErrorListener(){
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //TODO: error handler, display error with pop out message
+                                Log.d("http", error.toString());
+                                Toast.makeText(getApplicationContext(), "Error: " + error.toString(), Toast.LENGTH_LONG).show();
+                            }
+                });
+
+                queue.add(jsonObjectRequest);
 
 
-                Intent taskListIntent = new Intent(LoginActivity.this, TaskListActivity.class);
-                startActivity(taskListIntent);
             }
         });
 
