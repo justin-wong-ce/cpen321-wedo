@@ -18,7 +18,6 @@ const io = socketio(server)
 
 app.use(express.json())
 
-
 app.use(userRouter)
 app.use(taskRouter)
 app.use(taskListRouter)
@@ -36,8 +35,8 @@ io.on('connection', (socket) => {
     socket.emit('You\'v successfully received the push notifications')
 
     // before doing something, join the user to every room they should be:
-    socket.on('join', (chatID)=>{
-        console.log('User has joined '+chatID)
+    socket.on('join', (chatID) => {
+        console.log('User has joined ' + chatID)
         socket.join(chatID)
     })
 
