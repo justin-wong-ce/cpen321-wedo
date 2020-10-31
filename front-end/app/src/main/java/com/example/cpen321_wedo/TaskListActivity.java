@@ -1,19 +1,23 @@
 package com.example.cpen321_wedo;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.net.ConnectException;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.PreferenceChangeEvent;
 
-public class TaskListActivity extends AppCompatActivity {
+public class TaskListActivity extends AppCompatActivity implements TaskListClickedListener {
 
     List<TaskList> lstTaskList;
 
@@ -21,6 +25,10 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("TaskList");
 
 
         lstTaskList = new ArrayList<>();
@@ -51,7 +59,32 @@ public class TaskListActivity extends AppCompatActivity {
 
         RecyclerView myrv = (RecyclerView) findViewById(R.id.recyclerview_id);
         RecyclerViewAdapter myAdapter = new RecyclerViewAdapter(this, lstTaskList);
+        myAdapter.setClickListener(this);
         myrv.setLayoutManager((new GridLayoutManager(this, 3)));
         myrv.setAdapter(myAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.memu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(TaskListActivity.this, StartActivity.class));
+                finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void itemClicked() {
+        Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
+        startActivity(intent);
     }
 }

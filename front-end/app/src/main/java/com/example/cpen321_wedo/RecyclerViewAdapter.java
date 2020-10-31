@@ -1,7 +1,6 @@
 package com.example.cpen321_wedo;
-
 import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,6 +16,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private Context mContext;
     private List<TaskList> mData;
+    private TaskListClickedListener taskListClickedListener = null;
 
     public RecyclerViewAdapter(Context mContext, List<TaskList> mData){
         this.mContext = mContext;
@@ -42,7 +41,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.cardView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Log.d("test", "pressed a tasklist");
+                if(taskListClickedListener !=null){
+                    taskListClickedListener.itemClicked();
+                }
             }
         });
     }
@@ -65,5 +66,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
             cardView = itemView.findViewById(R.id.cardview_id);
         }
+    }
+
+    public void setClickListener(TaskListClickedListener clickListener){
+        this.taskListClickedListener = clickListener;
     }
 }

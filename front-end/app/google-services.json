@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "103355136429",
+    "firebase_url": "https://cpen321-non-triv-logic.firebaseio.com",
+    "project_id": "cpen321-non-triv-logic",
+    "storage_bucket": "cpen321-non-triv-logic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103355136429:android:e98bb45573df25fc7b4924",
+        "android_client_info": {
+          "package_name": "com.wedo.wedoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103355136429-00odlvl17aqru6gomnl6em1mpgfuqpmk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFnB3fuOMHo4DQSFj9awp8HcOzf7H25Ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103355136429-00odlvl17aqru6gomnl6em1mpgfuqpmk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
