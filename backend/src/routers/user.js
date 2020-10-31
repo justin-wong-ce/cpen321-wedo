@@ -38,22 +38,24 @@ router.post('/user/signup', async (req, res)=>{
 
 // to log in, must provide account info + password
 router.post('/user/login', (req, res)=>{
+    console.log("enttereee")
 
     try{
         connection.query('SELECT * FROM User WHERE userID = ?',req.body.userID, async (err, users)=>{
-            if(err || !users) return res.status(500).send('Unable to log in')
+            if(err || !users) return res.status(500).send('Unable to log in 1')
 	    
 	        const user = users[0]
             const isMatch = await bcrypt.compare(req.body.password, user.password)
-            if(!isMatch) return res.status(500).send('Unable to log in')
+            console.log(req.body.password)
+            if(!isMatch) return res.status(500).send('Unable to log in 2')
 
             const token = await jwt.sign({userID: user.userID.toString()}, 'userLogIn')
             connection.query('UPDATE User SET token = ? WHERE userID = ?',[token,user.userID], (err,result)=>{
                 if(err){
                     console.log(err)
-                    return res.send('Unable to log in')
+                    return res.send('Unable to log in 3')
                 }
-                res.send(token)
+                res.send({"token":token})
             })
             
         })
