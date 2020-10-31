@@ -1,6 +1,7 @@
 package com.example.cpen321_wedo;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -57,7 +58,7 @@ public class TaskListActivity extends AppCompatActivity implements TaskListClick
         lstTaskList.add(new TaskList("Who am I", 2, "Unknown", "IDK? You are a pig", R.drawable.hediedwith));
         lstTaskList.add(new TaskList("Where will I go", 4, "Unknown", "Go to the hell", R.drawable.mariasemples));
 
-        RecyclerView myrv = (RecyclerView) findViewById(R.id.recyclerview_id);
+        RecyclerView myrv = findViewById(R.id.recyclerview_id);
         RecyclerViewAdapter myAdapter = new RecyclerViewAdapter(this, lstTaskList);
         myAdapter.setClickListener(this);
         myrv.setLayoutManager((new GridLayoutManager(this, 3)));
@@ -70,6 +71,7 @@ public class TaskListActivity extends AppCompatActivity implements TaskListClick
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
