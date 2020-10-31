@@ -1,7 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 var admin = require('firebase-admin')
-var tempToken = "";
+var tempToken;
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault()
@@ -16,36 +16,36 @@ admin.initializeApp({
 //   token: ''
 // };
 
-// var message = {
-//   notification: {
-//     title: 'You received message from ADMIN',
-//     body: 'ADMIN: Have a nice day!'
-//   },
-//   android: {
-//     notification: {
-//       icon: 'stock_ticker_update',
-//       color: '#7e55c3'
-//     }
-//   },
-//   //   topic: "hello",
-//   token: ''
-// };
+var message = {
+  notification: {
+    title: 'You received message from ADMIN',
+    body: 'ADMIN: Have a nice day!'
+  },
+  android: {
+    notification: {
+      icon: 'stock_ticker_update',
+      color: '#7e55c3'
+    }
+  },
+  //   topic: "hello",
+  token: ''
+};
 
 router.post('/pushnotification', async (req, res) => {
   // message.token = req.header('Authorization').replace('Bearer ', '')
-  // console.log(req.body.token)
-  // message.token = req.body.token
+  console.log(req.body.token)
+  message.token = req.body.token
   tempToken = req.body.token
-  console.log(tempToken)
-  // admin.messaging().send(message)
-  //   .then((response) => {
-  //     // Response is a message ID string.
-  //     console.log('Successfully sent message:', response);
-  //     res.send('already sent')
-  //   })
-  //   .catch((error) => {
-  //     console.log('Error sending message:', error);
-  //   });
+  console.log(req.body.token)
+  admin.messaging().send(message)
+    .then((response) => {
+      // Response is a message ID string.
+      console.log('Successfully sent message:', response);
+      res.send('already sent')
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error);
+    });
 })
 
 
