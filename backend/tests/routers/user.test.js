@@ -1,10 +1,6 @@
 const userFunctions = require('../../src/db/users_db')
 
-user4Tasklists = [
-    { "taskListID": 1 },
-    { "taskListID": 2 },
-    { "taskListID": 8 },
-    { "taskListID": 200 }];
+user4Tasklists = [{ "taskListID": 1 }, { "taskListID": 2 }, { "taskListID": 8 }, { "taskListID": 200 }];
 
 jest.mock('../../src/db/databaseInterface', () => ({
     get: (attributesToGet, table, condition, callback) => callback("", [
@@ -13,8 +9,6 @@ jest.mock('../../src/db/databaseInterface', () => ({
         { "taskListID": 8 },
         { "taskListID": 200 }])
 }))
-//const database = require('../../src/db/databaseInterface')
-//database.get.mockResolvedValue = user4Tasklists;
 
 test('User has access', done => {
     console.log("starting test")
