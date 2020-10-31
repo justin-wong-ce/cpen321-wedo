@@ -2,11 +2,10 @@ sudo: false
 language: node_js
 node_js:
 - 15
+env:
+- TEST_DIR=backend
 branches:
   only:
   - master
-before_script:
-  - cd backend
-  - npm install
 script:
-  - npm run test
+  - cd $TEST_DIR && npm install && npm run test

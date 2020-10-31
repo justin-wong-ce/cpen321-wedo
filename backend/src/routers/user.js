@@ -18,35 +18,25 @@ const router = new express.Router()
 // }
 
 router.put('/user/token', async (req, res) => {
-    try {
-        const user = req.body
-        userFunctions.updateToken(user, (err, results) => {
-            if (err || !results) res.status(400).send(err);
-            else res.status(200).send("updated token");
-        })
-    } catch (err) {
-        console.log(err)
-        res.status(400).send(err)
-    }
+    const user = req.body
+    userFunctions.updateToken(user, (err, results) => {
+        callbackHandler(err, results);
+    })
 })
 
 router.post('/user/lists', async (req, res) => {
-    try {
-        const userID = req.body.userID
-        userFunctions.getUserLists(userID, (err, lists) => {
-            if (err) {
-                res.status(400).send(err)
-            }
-            else {
-                res.status(201).send(lists)
-            }
-        })
-    } catch (err) {
-        console.log(err)
-        res.status(400).send(err)
-    }
+    const userID = req.body.userID
+    userFunctions.getUserLists(userID, (err, lists) => {
+        callbackHandler(err, results);
+    })
 })
 
+function callbackHandler(err, lists) {
+    if (err || !results) res.status(400).send(err);
+    else res.status(200).send("success");
+}
+
+// SWITCH TO ABOVE FORMAT!!!
 
 router.post('/user/signup', async (req, res) => {
     const user = req.body

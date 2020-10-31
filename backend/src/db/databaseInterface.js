@@ -1,9 +1,14 @@
 const connection = require('./mysql')
+
+console.log("using database interface")
+
 var database = {
     get: function (attributesToGet, table, condition, callback) {
 
-        console.log('SELECT ' + attributesToGet + ' FROM ' + table + ' WHERE ' + condition)
+        console.log("SELECT from DB")
+
         connection.query('SELECT ' + attributesToGet + ' FROM ' + table + ' WHERE ' + condition, [], (err, results) => {
+
             if (err || !results) {
                 console.log("error during SELECT, ", err);
                 callback(err, results);
@@ -34,6 +39,10 @@ var database = {
                 callback(err, results);
             }
         })
+    },
+    shutdown: function () {
+        console.log("terminating db connection");
+        connection.destroy();
     }
 }
 module.exports = database
