@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo;
+package com.example.cpen321_wedo.Models;
 
 
 public class TaskList {

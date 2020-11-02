@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo;
+package com.example.cpen321_wedo.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -6,12 +6,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.cpen321_wedo.R;
+import com.example.cpen321_wedo.TaskActivity;
+import com.example.cpen321_wedo.Models.TaskList;
 
 import java.util.List;
 import java.util.Random;
@@ -85,6 +88,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             }
         });
+
     }
 
     @Override
