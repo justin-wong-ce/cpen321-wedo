@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -61,7 +62,8 @@ public class TaskListActivity extends AppCompatActivity implements TaskListClick
         RecyclerView myrv = findViewById(R.id.recyclerview_id);
         RecyclerViewAdapter myAdapter = new RecyclerViewAdapter(this, lstTaskList);
         myAdapter.setClickListener(this);
-        myrv.setLayoutManager((new GridLayoutManager(this, 3)));
+        myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
+
         myrv.setAdapter(myAdapter);
     }
 

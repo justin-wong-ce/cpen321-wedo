@@ -1,16 +1,20 @@
 package com.example.cpen321_wedo;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Random;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
@@ -34,16 +38,54 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         holder.tv_tasklist.setText(mData.get(position).getTaskListName());
-        holder.img_tasklist_thumbnail.setImageResource(mData.get(position).getThumbnail());
+        // if you want image here:
+        //holder.img_tasklist_thumbnail.setImageResource(mData.get(position).getThumbnail());
+        Random rnd = new Random();
+        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        holder.colorView.setBackgroundColor(color);
 
-        holder.cardView.setOnClickListener(new View.OnClickListener(){
+        holder.tv_tasklist.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if(taskListClickedListener !=null){
-                    taskListClickedListener.itemClicked();
+                    Intent intent = new Intent(mContext, TaskActivity.class);
+                    mContext.startActivity(intent);
+//                    taskListClickedListener.itemClicked();
                 }
+            }
+        });
+
+        holder.menuView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //creating a popup menu
+                PopupMenu popup = new PopupMenu(mContext, holder.menuView);
+                //inflating menu from xml resource
+                popup.inflate(R.menu.tasklist_options_memu);
+                //adding click listener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu1:
+                                //handle menu1 click
+                                break;
+                            case R.id.menu2:
+                                //handle menu2 click
+                                break;
+                            case R.id.menu3:
+                                //handle menu3 click
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                //displaying the popup
+                popup.show();
+
             }
         });
     }
@@ -56,15 +98,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tv_tasklist;
-        ImageView img_tasklist_thumbnail;
+//        ImageView img_tasklist_thumbnail;
         View cardView;
+        View colorView;
+        View menuView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             tv_tasklist = (TextView) itemView.findViewById(R.id.tasklist_title_id);
-            img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
+            //img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
             cardView = itemView.findViewById(R.id.cardview_id);
+            colorView = itemView.findViewById(R.id.color_view);
+            menuView = itemView.findViewById(R.id.memu_options);
         }
     }
 
