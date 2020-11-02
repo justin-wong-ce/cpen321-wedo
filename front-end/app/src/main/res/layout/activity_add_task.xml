@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddTaskActivity">
+
+    <include
+        layout="@layout/bar_layout"
+        android:id="@+id/addTaskBar" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/taskNameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Task Name*"
+        android:layout_below="@+id/addTaskBar"
+        android:layout_margin="10dp"
+        app:helperTextEnabled="true"
+        app:helperText="  *Required"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskNameText"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/taskStartLocationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Location"
+        android:layout_below="@+id/taskNameLayout"
+        android:layout_margin="10dp"
+        app:helperTextEnabled="true"
+        app:helperText="Associate a location"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskStartLocationText"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/taskDescriptionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Task Description"
+        android:layout_below="@+id/taskStartLocationLayout"
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/taskDescriptionText"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/taskDescriptionLayout"
+        android:layout_centerHorizontal="true"
+        android:text="Save"
+        android:id="@+id/addTaskSaveButton"/>
+
+</RelativeLayout>

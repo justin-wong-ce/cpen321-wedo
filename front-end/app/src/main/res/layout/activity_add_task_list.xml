@@ -4,45 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:id="@+id/loginActivityLayout">
+    tools:context=".SignupActivity">
 
+    <include
+        layout="@layout/bar_layout"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_below="@+id/toolbar"
         android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="Add TaskList"
             android:textSize="20sp"
             android:textStyle="bold"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/email"
+            android:id="@+id/tasklist_name"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="Email" />
+            android:hint="Tasklist Name" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/password"
-            android:inputType="textPassword"
+            android:id="@+id/tasklist_description"
+            android:maxLines="3"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="Password" />
+            android:hint="Description" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_login"
-            android:text="Login"
+            android:id="@+id/btn_add_tasklist"
+            android:text="Add TaskList"
             android:background="@color/colorPrimaryDark"
             android:textColor="#fff"
             android:layout_marginTop="10dp"/>

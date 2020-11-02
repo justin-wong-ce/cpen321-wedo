@@ -1,10 +1,10 @@
-package com.example.cpen321_wedo;
+package com.example.cpen321_wedo.Models;
 
+// TODO: need to modified the Tasklist class if we change backend as well
 public class TaskList {
 
     private String taskListName;
     private int userCap;
-    private String Category;
     private String description;
     private int Thumbnail;
 
@@ -12,10 +12,15 @@ public class TaskList {
 
     }
 
-    public TaskList(String taskListName, int userCap, String category, String description, int thumbnail) {
+    public TaskList(String taskListName, String description, int userCap) {
         this.taskListName = taskListName;
         this.userCap = userCap;
-        Category = category;
+        this.description = description;
+    }
+
+    public TaskList(String taskListName, int userCap, String description, int thumbnail) {
+        this.taskListName = taskListName;
+        this.userCap = userCap;
         this.description = description;
         Thumbnail = thumbnail;
     }
@@ -28,9 +33,6 @@ public class TaskList {
         return userCap;
     }
 
-    public String getCategory() {
-        return Category;
-    }
 
     public String getDescription() {
         return description;
@@ -48,9 +50,6 @@ public class TaskList {
         this.userCap = userCap;
     }
 
-    public void setCategory(String category) {
-        Category = category;
-    }
 
     public void setDescription(String description) {
         this.description = description;
