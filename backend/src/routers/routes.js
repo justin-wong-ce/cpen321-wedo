@@ -8,9 +8,14 @@ const client = new Client({})
 
 router.post('/routes/driving', (req, res) => {
     console.log("Get driving route");
+
+    console.log("request: ", req.body);
+
     getDrivingRoute(req.body.locations).then((result) => {
-        res.status(200).send([result.data.routes[0]]);
+        res.status(200).send({ "routes": [result.data.routes[0]] });
     }).catch((err) => {
+        console.log("err in driving", err);
+
         res.status(400).send(err);
     });
 })
