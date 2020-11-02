@@ -168,17 +168,17 @@ public class TaskListActivity extends AppCompatActivity{
 
     // Call Back method  to get the Message form other Activity
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2)
         {
-            if(getIntent().hasExtra("json")) {
+            if(data.hasExtra("json")) {
                 try {
-                    JSONObject mJsonObject = new JSONObject(getIntent().getStringExtra("json"));
+                    JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName").toString(), "no description attribute in backend now", (Integer) mJsonObject.get("userCap"));
+                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), "no description attribute in backend now", 5);
                     lstTaskList.add(taskList);
                     myAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {

@@ -52,13 +52,23 @@ public class AddTaskListActivity extends AppCompatActivity {
         btn_created.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("testing", "Btn pressed");
                 String txt_tasklistName = tasklistName.getText().toString();
                 String txt_description = tasklistDescription.getText().toString();
                 if(TextUtils.isEmpty(txt_tasklistName) || TextUtils.isEmpty(txt_description)){
                     Toast.makeText(getApplicationContext(), "pls don't left name or description to be empty", Toast.LENGTH_LONG).show();
                 }else{
-                    postData(txt_tasklistName, txt_description);
+//                    postData(txt_tasklistName, txt_description);
+                    Intent intent=new Intent();
+
+                    JSONObject object = new JSONObject();
+                    try {
+                        object.put("taskListName",txt_tasklistName);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    intent.putExtra("json",object.toString());
+                    setResult(2,intent);
+                    finish();
                 }
             }
         });
