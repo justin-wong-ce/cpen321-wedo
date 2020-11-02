@@ -1,4 +1,4 @@
-package com.example.m5_android_app;
+package com.example.cpen321_wedo.map;
 
 import android.os.Bundle;
 
@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.cpen321_wedo.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,11 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-// Interface for volley callback function
-interface VolleyCallBack {
-    void onSuccess();
-}
 
 public class MapsPlotRouteActivity extends FragmentActivity implements OnMapReadyCallback {
 
