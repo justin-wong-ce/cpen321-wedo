@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskListActivity extends AppCompatActivity implements TaskListClickedListener {
+public class TaskListActivity extends AppCompatActivity{
 
     List<TaskList> lstTaskList;
 
@@ -61,7 +61,6 @@ public class TaskListActivity extends AppCompatActivity implements TaskListClick
 
         RecyclerView myrv = findViewById(R.id.recyclerview_id);
         RecyclerViewAdapter myAdapter = new RecyclerViewAdapter(this, lstTaskList);
-        myAdapter.setClickListener(this);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -86,9 +85,4 @@ public class TaskListActivity extends AppCompatActivity implements TaskListClick
         return false;
     }
 
-    @Override
-    public void itemClicked() {
-        Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-        startActivity(intent);
-    }
 }

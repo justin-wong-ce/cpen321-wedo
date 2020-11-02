@@ -20,7 +20,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private Context mContext;
     private List<TaskList> mData;
-    private TaskListClickedListener taskListClickedListener = null;
 
     public RecyclerViewAdapter(Context mContext, List<TaskList> mData){
         this.mContext = mContext;
@@ -46,14 +45,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         holder.colorView.setBackgroundColor(color);
 
-        holder.tv_tasklist.setOnClickListener(new View.OnClickListener(){
+        holder.cardView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if(taskListClickedListener !=null){
-                    Intent intent = new Intent(mContext, TaskActivity.class);
-                    mContext.startActivity(intent);
-//                    taskListClickedListener.itemClicked();
-                }
+                Intent intent = new Intent(mContext, TaskActivity.class);
+                mContext.startActivity(intent);
+
             }
         });
 
@@ -112,9 +109,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             colorView = itemView.findViewById(R.id.color_view);
             menuView = itemView.findViewById(R.id.memu_options);
         }
-    }
-
-    public void setClickListener(TaskListClickedListener clickListener){
-        this.taskListClickedListener = clickListener;
     }
 }
