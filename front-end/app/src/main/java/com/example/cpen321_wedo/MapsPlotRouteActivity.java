@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.map;
+package com.example.cpen321_wedo;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.cpen321_wedo.R;
+import com.example.cpen321_wedo.map.VolleyCallBack;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,7 +30,7 @@ import java.util.List;
 public class MapsPlotRouteActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
-    private static final String TAG = MapsPlotRouteActivity.class.getName();
+    private static final String TAG = com.example.cpen321_wedo.map.MapsPlotRouteActivity.class.getName();
     private JSONArray routesArray;
 
     // Travel mode definition
@@ -46,7 +47,7 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_maps_plot_route);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
