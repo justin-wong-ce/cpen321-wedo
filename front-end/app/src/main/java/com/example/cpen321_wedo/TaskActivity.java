@@ -47,7 +47,7 @@ public class TaskActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.memu, menu);
+        getMenuInflater().inflate(R.menu.task_activity_menu, menu);
         return true;
     }
 
@@ -58,6 +58,8 @@ public class TaskActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(TaskActivity.this, StartActivity.class));
                 finish();
+                return true;
+            case R.id.add:
                 return true;
         }
         return false;
