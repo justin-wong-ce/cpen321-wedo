@@ -2,6 +2,7 @@ package com.example.cpen321_wedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,6 +32,7 @@ import java.util.Date;
 public class AddTaskListActivity extends AppCompatActivity {
 
     MaterialEditText tasklistName;
+    MaterialEditText tasklistDescription;
     Button btn_created;
 
     FirebaseUser firebaseUser;
@@ -43,37 +45,42 @@ public class AddTaskListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_task_list);
 
         tasklistName = findViewById(R.id.tasklist_name);
+        tasklistDescription = findViewById(R.id.tasklist_description);
         btn_created = findViewById(R.id.btn_add_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         btn_created.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("testing", "Btn pressed");
                 String txt_tasklistName = tasklistName.getText().toString();
-                if(!TextUtils.isEmpty(txt_tasklistName)){
-                    postData(txt_tasklistName);
+                String txt_description = tasklistDescription.getText().toString();
+                if(TextUtils.isEmpty(txt_tasklistName) || TextUtils.isEmpty(txt_description)){
+                    Toast.makeText(getApplicationContext(), "pls don't left name or description to be empty", Toast.LENGTH_LONG).show();
+                }else{
+                    postData(txt_tasklistName, txt_description);
                 }
             }
         });
     }
 
     // Get Request For JSONObject
-    public void postData(String txt_tasklistName){
+    public void postData(String txt_tasklistName, String txt_description){
         RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
-        JSONObject object = new JSONObject();
+        final JSONObject object = new JSONObject();
         try {
             //input your API parameters
-            object.put("chatID",1);
-            object.put("userID","1");
+            object.put("chatID",2);
+            object.put("userID","3");
             object.put("taskListName",txt_tasklistName);
-            object.put("taskListID",firebaseUser.getUid()+date.getTime());
+//            object.put("taskListID",firebaseUser.getUid()+date.getTime());
+            object.put("taskListID",Integer.parseInt(txt_description));
             object.put("userCap","5");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Log.d("test", "hhhhhhh");
         try {
             String url = "http://40.78.89.252:3000/taskList";
 
@@ -82,12 +89,16 @@ public class AddTaskListActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             // TODO: to ask the TasklistActivity to update.
+                            Intent intent=new Intent();
+                            intent.putExtra("json",object.toString());
+                            setResult(2,intent);
                             finish();
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "description has to be integer rn for testing", Toast.LENGTH_LONG).show();
+                    Log.d("testing", error.toString());
                 }
             });
 
