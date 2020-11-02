@@ -2,9 +2,11 @@ package com.example.cpen321_wedo;
 
 import android.content.Context;
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,17 +24,22 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+
+    @Rule
+    public ActivityScenarioRule<StartActivity> activityRule =
+            new ActivityScenarioRule<>(StartActivity.class);
+
     @Test
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.cpen321_wedo", appContext.getPackageName());
+        assertEquals("com.wedo.wedoapp", appContext.getPackageName());
     }
 
     @Test
     public void checkLoginButton() {
         onView(withId(R.id.login)).perform(click());
 
-        onView(withId(R.id.loginInfoLayout)).check(matches(isDisplayed()));
+        onView(withId(R.id.loginActivityLayout)).check(matches(isDisplayed()));
     }
 }

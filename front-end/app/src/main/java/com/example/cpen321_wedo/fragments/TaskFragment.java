@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class TaskFragment extends Fragment {
 
     private RecyclerView taskRecyclerView;
+    private TaskAdapter taskAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +36,10 @@ public class TaskFragment extends Fragment {
         tasks.add(new Task("Buy eggs", "Go to the nearest store to buy eggs"));
         tasks.add(new Task("Finish Homework", "There is a math homework due tomorrow"));
 
-        TaskAdapter adapter = new TaskAdapter();
-        adapter.setTasks(tasks);
+        taskAdapter = new TaskAdapter();
+        taskAdapter.setTasks(tasks);
 
-        taskRecyclerView.setAdapter(adapter);
+        taskRecyclerView.setAdapter(taskAdapter);
 
         return view;
     }
