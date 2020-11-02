@@ -4,9 +4,11 @@ package com.example.cpen321_wedo;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,11 +17,20 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.cpen321_wedo.Adapter.RecyclerViewAdapter;
 import com.example.cpen321_wedo.Models.TaskList;
+import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +42,12 @@ public class TaskListActivity extends AppCompatActivity{
 
     List<TaskList> lstTaskList;
 
+    FirebaseUser firebaseUser;
+
+    RecyclerViewAdapter myAdapter;
+    RecyclerView myrv;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,38 +58,17 @@ public class TaskListActivity extends AppCompatActivity{
         getSupportActionBar().setTitle("TaskList");
 
         fab = findViewById(R.id.fab_tasklist);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         lstTaskList = new ArrayList<>();
-        lstTaskList.add(new TaskList("Getting Enrique out of our team", 4, "Angry", "form a new groud of size 3", R.drawable.thevigitarian));
-        lstTaskList.add(new TaskList("What the heck", 3, "Angry", "I don't know bro", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Panic F", 7, "Angry", "So much hw", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Where am I from", 9, "Unknown", "This is a description for this unknown quesiton, fffffffffff", R.drawable.thewildrobot));
-        lstTaskList.add(new TaskList("Who am I", 2, "Unknown", "IDK? You are a pig", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Where will I go", 4, "Unknown", "Go to the hell", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Getting Enrique out of our team", 4, "Angry", "form a new groud of size 3", R.drawable.thevigitarian));
-        lstTaskList.add(new TaskList("What the heck", 3, "Angry", "I don't know bro", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Panic F", 7, "Angry", "So much hw", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Where am I from", 9, "Unknown", "This is a description for this unknown quesiton, fffffffffff", R.drawable.thewildrobot));
-        lstTaskList.add(new TaskList("Who am I", 2, "Unknown", "IDK? You are a pig", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Where will I go", 4, "Unknown", "Go to the hell", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Getting Enrique out of our team", 4, "Angry", "form a new groud of size 3", R.drawable.thevigitarian));
-        lstTaskList.add(new TaskList("What the heck", 3, "Angry", "I don't know bro", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Panic F", 7, "Angry", "So much hw", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Where am I from", 9, "Unknown", "This is a description for this unknown quesiton, fffffffffff", R.drawable.thewildrobot));
-        lstTaskList.add(new TaskList("Who am I", 2, "Unknown", "IDK? You are a pig", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Where will I go", 4, "Unknown", "Go to the hell", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Getting Enrique out of our team", 4, "Angry", "form a new groud of size 3", R.drawable.thevigitarian));
-        lstTaskList.add(new TaskList("What the heck", 3, "Angry", "I don't know bro", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Panic F", 7, "Angry", "So much hw", R.drawable.mariasemples));
-        lstTaskList.add(new TaskList("Where am I from", 9, "Unknown", "This is a description for this unknown quesiton, fffffffffff", R.drawable.thewildrobot));
-        lstTaskList.add(new TaskList("Who am I", 2, "Unknown", "IDK? You are a pig", R.drawable.hediedwith));
-        lstTaskList.add(new TaskList("Where will I go", 4, "Unknown", "Go to the hell", R.drawable.mariasemples));
 
-        RecyclerView myrv = findViewById(R.id.recyclerview_id);
-        final RecyclerViewAdapter myAdapter = new RecyclerViewAdapter(this, lstTaskList);
+        myrv = findViewById(R.id.recyclerview_id);
+        myAdapter = new RecyclerViewAdapter(this, lstTaskList);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
+
+        getData();
 
         // drag and drop
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -105,6 +101,8 @@ public class TaskListActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
+
     }
 
     @Override
@@ -124,6 +122,46 @@ public class TaskListActivity extends AppCompatActivity{
                 return true;
         }
         return false;
+    }
+
+
+
+    // Get Request For JSONObject
+    public void getData(){
+        RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
+                getRequestQueue();
+        try {
+            String url = "http://40.78.89.252:3000/taskList/admin/";
+            url+=firebaseUser.getUid();
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    lstTaskList.clear();
+                    for(int i=0;i<response.length();i++){
+                        try {
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", (Integer) response.getJSONObject(i).get("userCap"));
+                            lstTaskList.add(taskList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    myAdapter.notifyDataSetChanged();
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("test", error.toString());
+                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
+                }
+            });
+
+            RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
