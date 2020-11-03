@@ -7,15 +7,14 @@
     tools:context=".AddTaskActivity">
 
     <include
-        layout="@layout/bar_layout"
-        android:id="@+id/addTaskBar" />
+        layout="@layout/bar_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/taskNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Name*"
-        android:layout_below="@+id/addTaskBar"
+        android:layout_below="@+id/toolbar"
         android:layout_margin="10dp"
         app:helperTextEnabled="true"
         app:helperText="  *Required"

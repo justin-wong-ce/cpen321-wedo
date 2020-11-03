@@ -25,12 +25,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.cpen321_wedo.Adapter.RecyclerViewAdapter;
 import com.example.cpen321_wedo.Models.TaskList;
 import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,7 +100,7 @@ public class TaskListActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TaskListActivity.this, AddTaskListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -119,6 +121,9 @@ public class TaskListActivity extends AppCompatActivity{
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(TaskListActivity.this, StartActivity.class));
                 finish();
+                return true;
+            case R.id.map_test:
+                startActivity(new Intent(TaskListActivity.this, MapsPlotRouteActivity.class));
                 return true;
         }
         return false;
@@ -161,6 +166,28 @@ public class TaskListActivity extends AppCompatActivity{
             RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Call Back method  to get the Message form other Activity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==2)
+        {
+            if(data.hasExtra("json")) {
+                try {
+                    JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
+
+                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), "no description attribute in backend now", 5);
+                    lstTaskList.add(taskList);
+                    myAdapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
