@@ -33,8 +33,8 @@ public class TaskFragment extends Fragment {
         taskRecyclerView.setHasFixedSize(true);
 
         ArrayList<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("Buy eggs", "Go to the nearest store to buy eggs"));
-        tasks.add(new Task("Finish Homework", "There is a math homework due tomorrow"));
+        tasks.add(new Task("Buy eggs", "Save on Foods, UBC" , "Go to the nearest store to buy eggs"));
+        tasks.add(new Task("Finish Homework", "Koerner Library, UBC", "There is a math homework due tomorrow"));
 
         taskAdapter = new TaskAdapter();
         taskAdapter.setTasks(tasks);
@@ -42,5 +42,9 @@ public class TaskFragment extends Fragment {
         taskRecyclerView.setAdapter(taskAdapter);
 
         return view;
+    }
+
+    public void addTask(Task task) {
+        taskAdapter.addTask(task);
     }
 }

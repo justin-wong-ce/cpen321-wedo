@@ -14,8 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapsPlotRouteActivity"></activity>
-        <activity android:name=".AddTaskActivity" />
+        <activity android:name=".AddTaskActivity"></activity>
+        <activity android:name=".MapsPlotRouteActivity" />
         <activity android:name=".AddTaskListActivity" />
         <activity android:name=".MessageActivity" />
         <activity android:name=".StartActivity">

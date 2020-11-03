@@ -5,12 +5,22 @@ import java.util.Date;
 public class Task {
     private  String taskName;
     private String taskDescription;
+    private String taskLocation;
     private boolean completed;
     private long dateCreatedInSeconds;
 
-    public Task(String taskName, String taskDescription) {
+    public String getTaskLocation() {
+        return taskLocation;
+    }
+
+    public void setTaskLocation(String taskLocation) {
+        this.taskLocation = taskLocation;
+    }
+
+    public Task(String taskName, String taskLocation, String taskDescription) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
+        this.taskLocation = taskLocation;
         this.completed = false;
 
         Date date = new Date();
