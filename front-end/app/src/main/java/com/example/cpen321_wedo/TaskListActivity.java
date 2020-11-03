@@ -122,6 +122,9 @@ public class TaskListActivity extends AppCompatActivity{
                 startActivity(new Intent(TaskListActivity.this, StartActivity.class));
                 finish();
                 return true;
+            case R.id.map_test:
+                startActivity(new Intent(TaskListActivity.this, MapsPlotRouteActivity.class));
+                return true;
         }
         return false;
     }

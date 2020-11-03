@@ -21,13 +21,18 @@ import com.example.cpen321_wedo.Models.TaskList;
 import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class AddTaskListActivity extends AppCompatActivity {
 
@@ -66,6 +71,8 @@ public class AddTaskListActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    postGroupChat("111");
                     intent.putExtra("json",object.toString());
                     setResult(2,intent);
                     finish();
@@ -98,6 +105,11 @@ public class AddTaskListActivity extends AppCompatActivity {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            try {
+                                postGroupChat(object.get("taskListID").toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             // TODO: to ask the TasklistActivity to update.
                             Intent intent=new Intent();
                             intent.putExtra("json",object.toString());
@@ -116,5 +128,21 @@ public class AddTaskListActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // TODO: for each taskList we should add a group chat.
+    private void postGroupChat(String taskListID){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("taskListID", taskListID);
+        List<String> userIDList = new ArrayList<>();
+        userIDList.add(firebaseUser.getUid());
+        hashMap.put("userIDList", userIDList);
+        hashMap.put("name", "Group Chat");
+        List<HashMap<String,String>> messages = new ArrayList<>();
+        hashMap.put("messages", messages);
+
+        reference.child("groupChats").push().setValue(hashMap);
     }
 }
