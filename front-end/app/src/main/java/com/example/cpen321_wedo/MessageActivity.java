@@ -22,6 +22,12 @@ import com.bumptech.glide.Glide;
 import com.example.cpen321_wedo.Adapter.MessageAdapter;
 import com.example.cpen321_wedo.Models.Chat;
 import com.example.cpen321_wedo.Models.User;
+import com.example.cpen321_wedo.Notifications.APIService;
+import com.example.cpen321_wedo.Notifications.Client;
+import com.example.cpen321_wedo.Notifications.Data;
+import com.example.cpen321_wedo.Notifications.MyResponse;
+import com.example.cpen321_wedo.Notifications.Sender;
+import com.example.cpen321_wedo.Notifications.Token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -53,6 +62,12 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     Intent intent;
+
+    String userid;
+
+    APIService apiService;
+
+    boolean notify = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -75,10 +90,11 @@ public class MessageActivity extends AppCompatActivity {
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
         intent = getIntent();
-        final String userid = intent.getStringExtra("userid");
+        userid = intent.getStringExtra("userid");
         final boolean isGroupChat = intent.getExtras().getBoolean("isGroupChat");
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerview_view);
         recyclerView.setHasFixedSize(true);
@@ -92,6 +108,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
                 String msg = text_send.getText().toString();
                 if(!msg.equals("")){
                     if(isGroupChat){
@@ -137,7 +154,7 @@ public class MessageActivity extends AppCompatActivity {
     public void setSupportActionBar(Toolbar toolbar) {
     }
 
-    private void sendMessageToUser(String sender, String receiver, String message){
+    private void sendMessageToUser(final String sender, final String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -146,6 +163,62 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message);
 
         reference.child("privateChats").push().setValue(hashMap);
+
+        final String msg = message;
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if(notify){
+                    sendNotifications(receiver, user.getUsername(), msg);
+                }
+
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void sendNotifications(final String receiver, final String username, final String message){
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshots) {
+                for(DataSnapshot snapshot: snapshots.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    if(response.code()==200){
+                                        if(response.body().success==1){
+                                            Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void readMessageOfPrivateChat(final String myid, final String userid, final String imageurl){
