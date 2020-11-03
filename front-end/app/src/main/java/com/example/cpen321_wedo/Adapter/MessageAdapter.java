@@ -29,13 +29,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private Context mContext;
     private List<Chat> mChat;
     private String imageurl;
+    private boolean isGroupChat;
 
     FirebaseUser firebaseUser;
 
-    public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl){
+    public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl, boolean isGroupChat){
         this.mContext = mContext;
         this.mChat = mChat;
         this.imageurl = imageurl;
+        this.isGroupChat = isGroupChat;
     }
 
     @NonNull
@@ -45,7 +47,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             View view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_right, parent, false);
             return new MessageAdapter.ViewHolder(view);
         }else{
-            View view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left, parent, false);
+            View view;
+            if(isGroupChat){
+                view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left_group, parent, false);
+
+            }else{
+                view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left, parent, false);
+            }
             return new MessageAdapter.ViewHolder(view);
         }
 
@@ -56,6 +64,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         Chat chat = mChat.get(position);
         holder.show_message.setText(chat.getMessage());
+
+        holder.show_username.setText(chat.getSender().substring(0,5));
 
         if(imageurl.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -73,12 +83,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public TextView show_message;
         public ImageView profile_image;
+        public TextView show_username;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
+            show_username = itemView.findViewById(R.id.show_username_11111);
         }
     }
 

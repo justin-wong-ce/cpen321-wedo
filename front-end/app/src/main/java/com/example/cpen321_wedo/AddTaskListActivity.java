@@ -134,15 +134,10 @@ public class AddTaskListActivity extends AppCompatActivity {
     private void postGroupChat(String taskListID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("taskListID", taskListID);
         List<String> userIDList = new ArrayList<>();
         userIDList.add(firebaseUser.getUid());
-        hashMap.put("userIDList", userIDList);
-        hashMap.put("name", "Group Chat");
-        List<HashMap<String,String>> messages = new ArrayList<>();
-        hashMap.put("messages", messages);
 
-        reference.child("groupChats").push().setValue(hashMap);
+        reference.child("groupChats").child(taskListID).child("userIDList").setValue(userIDList);
+        reference.child("groupChats").child(taskListID).child("name").setValue("Group Chat");
     }
 }
