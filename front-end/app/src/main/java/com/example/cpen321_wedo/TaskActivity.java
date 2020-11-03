@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.cpen321_wedo.Models.Task;
 import com.example.cpen321_wedo.fragments.UserFragment;
 import com.example.cpen321_wedo.fragments.TaskFragment;
 import com.google.android.material.tabs.TabLayout;
@@ -23,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 public class TaskActivity extends AppCompatActivity {
+
+    private TaskFragment taskFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,9 @@ public class TaskActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.view_pager);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        viewPagerAdapter.addFragment(new TaskFragment(), "Tasks");
+        taskFragment = new TaskFragment();
+
+        viewPagerAdapter.addFragment(taskFragment, "Tasks");
         viewPagerAdapter.addFragment(new UserFragment(), "Chat");
 
         viewPager.setAdapter(viewPagerAdapter);
@@ -60,9 +65,24 @@ public class TaskActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.add:
+                Intent intent = new Intent(this, AddTaskActivity.class);
+                startActivityForResult(intent, 1);
                 return true;
         }
         return false;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String[] reply = data.getStringArrayExtra("task");
+
+                Task task = new Task(reply[0], reply[1], reply[2]);
+                taskFragment.addTask(task);
+            }
+        }
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
