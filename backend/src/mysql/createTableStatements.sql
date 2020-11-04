@@ -1,49 +1,55 @@
 CREATE TABLE User (
-	userID				int,
+	userID				char(50),
 	isPremium			boolean DEFAULT false,
-	userName            char(100) NOT NULL,
-	password            char(100) NOT NULL,
-	token               char(250),
+	token               char(170),
+	preferences			TEXT,
 	PRIMARY KEY (userID)
-)
+);
 
 CREATE TABLE TaskListWithOwner (
-	taskListID 			int,
+	taskListID 			char(150),
 	taskListName 		char(100),
 	lastModifiedTime 	datetime,
 	timeCreated 		datetime,
-	chatID				int NOT NULL,
-	userID				int NOT NULL,
-	userCap				int NOT NULL,
+	taskListDescription TEXT,
+	owner				char(50) NOT NULL,
 	PRIMARY KEY (taskListID),
-	UNIQUE (userID),
-	UNIQUE (chatID),
-	FOREIGN KEY (userID) REFERENCES User(userID)
+	UNIQUE (owner),
+	FOREIGN KEY (owner) REFERENCES User(userID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-)
+);
 
 CREATE TABLE TaskHasTaskList (
-	taskID				int,
-	chatID				int NOT NULL,
+	taskID				char(200),
+	createdBy			char(50),
 	taskBudget			int,
 	taskDescription		TEXT,
+	taskType			char(50),
 	address				TEXT,
+	done				boolean,
+	doneBy				char(50),
+	taskRating			int,
+	timeCreated			datetime,
+	lastModifiedTime	datetime,
 	taskName  			char(100),
-	taskListID			int NOT NULL,
+	taskListID			char(150) NOT NULL,
 	UNIQUE				(taskListID),
-	UNIQUE				(chatID),
 	PRIMARY KEY 		(taskID),
 	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
 		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	FOREIGN KEY (createdBy) REFERENCES User(userID)
+		ON DELETE SET NULL
+		ON UPDATE CASCADE,
+	FOREIGN KEY (doneBy) REFERENCES User(userID)
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
-)
-
-
+);
 
 CREATE TABLE HasAccess (
-	userID				int,
-	taskListID			int,
+	userID				char(50),
+	taskListID			char(150),
 	PRIMARY KEY (userID, taskListID),
 	FOREIGN KEY (userID) REFERENCES User(userID)
 		ON DELETE CASCADE
@@ -51,4 +57,16 @@ CREATE TABLE HasAccess (
 	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-)
+);
+
+-- CREATE TABLE Starred (
+-- 	userID				char(50),
+-- 	taskID				char(200),
+-- 	PRIMARY KEY (userID, taskID),
+-- 	FOREIGN KEY (userID) REFERENCES User(userID)
+-- 		ON DELETE CASCADE
+-- 		ON UPDATE CASCADE,
+-- 	FOREIGN KEY (taskID) REFERENCES TaskHasTaskList(taskID)
+-- 		ON DELETE CASCADE
+-- 		ON UPDATE CASCADE
+-- );
