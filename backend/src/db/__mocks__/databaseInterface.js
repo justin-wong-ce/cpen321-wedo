@@ -13,7 +13,7 @@ function get(attributesToGet, table, condition, callback) {
 //         { "taskListID": 2 },
 //         { "taskListID": 8 },
 //         { "taskListID": 200 }])
-// }))
+// })
 
 database.get = get;
 module.exports = database;
