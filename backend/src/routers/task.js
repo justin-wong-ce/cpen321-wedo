@@ -1,24 +1,44 @@
 const express = require('express')
 const router = new express.Router()
-const connection = require('../db/mysql')
-const auth = require('../auth/auth')
 const taskFunctions = require('../db/tasks_db')
+const routerHelper = require('./routerHelper')
 
-router.post('/task', auth, (req, res) => {
-    const task = req.body
-
-    // check if req.body.taskListID belongs to this user:
-    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?', [task.taskListID, req.user.userID], (err, taskList) => {
-        if (err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
-
-        connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err, task) => {
-            if (err) return console.log(err)
-
-            res.status(201).send(task)
-        })
-    })
-
+// Save created task onto database
+router.post('/task/create', (req, res) => {
+    // TODO:
 })
+
+// Update task
+router.put('/task/update', (req, res) => {
+    // TODO:
+})
+
+// Delete task
+router.delete('/task/delete', (req, res) => {
+    // TODO:
+})
+
+module.exports = router
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OLD STUFF, NEED TO DELETE LATER
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// router.post('/task', auth, (req, res) => {
+//     const task = req.body
+
+//     // check if req.body.taskListID belongs to this user:
+//     connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?', [task.taskListID, req.user.userID], (err, taskList) => {
+//         if (err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+
+//         connection.query('INSERT INTO TaskHasTaskList SET ?', task, (err, task) => {
+//             if (err) return console.log(err)
+
+//             res.status(201).send(task)
+//         })
+//     })
+
+// })
 
 // router.post('/task', auth, (req, res) => {
 //     const task = req.body
@@ -45,68 +65,65 @@ router.post('/task', auth, (req, res) => {
 // })
 
 
-router.get('/task', auth, (req, res) => {
+// router.get('/task', auth, (req, res) => {
 
 
-    connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?', [req.body.taskListID, req.user.userID], (err, taskList) => {
-        if (err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
+//     connection.query('SELECT * FROM HasAccess WHERE taskListID = ? AND userID = ?', [req.body.taskListID, req.user.userID], (err, taskList) => {
+//         if (err || !result) return res.status(500).send('Cannot modify taskList because that\'s not belongs to you ')
 
-        connection.query('SELECT * FROM TaskHasTaskList WHERE taskListID = ?', req.body.taskListID, (err, tasks) => {
-            if (err) return res.status(500).send(err)
-            console.log('Successfully get user information')
-            res.send(tasks)
-        })
-    })
-})
-
-
-// delete later
-router.get('/task/admin', (req, res) => {
-    connection.query('SELECT * FROM TaskHasTaskList', (err, tasks) => {
-        if (err) return res.status(500).send(err)
-        console.log('Successfully get user information')
-        res.send(tasks)
-    })
-})
-
-// delete later
-router.get('/task/:id', (req, res) => {
-    const _id = req.params.id
-    connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?', _id, (err, task) => {
-        if (err || !result) return res.status(500).send(err)
-        console.log('Successfully specific user id information')
-        res.send(task)
-    })
-})
+//         connection.query('SELECT * FROM TaskHasTaskList WHERE taskListID = ?', req.body.taskListID, (err, tasks) => {
+//             if (err) return res.status(500).send(err)
+//             console.log('Successfully get user information')
+//             res.send(tasks)
+//         })
+//     })
+// })
 
 
-// this is not fully functioned 
-router.put("/task/:id", auth, (req, res) => {
+// // delete later
+// router.get('/task/admin', (req, res) => {
+//     connection.query('SELECT * FROM TaskHasTaskList', (err, tasks) => {
+//         if (err) return res.status(500).send(err)
+//         console.log('Successfully get user information')
+//         res.send(tasks)
+//     })
+// })
 
-    const _id = req.params.id
-    const obj = req.body
+// // delete later
+// router.get('/task/:id', (req, res) => {
+//     const _id = req.params.id
+//     connection.query('SELECT * FROM TaskHasTaskList WHERE taskID = ?', _id, (err, task) => {
+//         if (err || !result) return res.status(500).send(err)
+//         console.log('Successfully specific user id information')
+//         res.send(task)
+//     })
+// })
 
-    connection.query('UPDATE TaskHasTaskList SET ? WHERE taskID = ?', [obj, _id], (err, result) => {
-        if (err) {
-            console.log(err)
-            return res.send(err)
-        }
-        console.log('Successfully update user information')
-        res.send(result)
-    })
-})
 
-// this is not fully functioned
-router.delete('/task/:id', (req, res) => {
-    connection.query('DELETE FROM TaskHasTaskList WHERE taskID = ?', req.params.id, (err, result) => {
-        if (err) return res.status(500).send()
+// // this is not fully functioned 
+// router.put("/task/:id", auth, (req, res) => {
 
-        res.send('Successfully delete the task with id ' + req.params.id)
-    })
-})
+//     const _id = req.params.id
+//     const obj = req.body
 
-module.exports = router
+//     connection.query('UPDATE TaskHasTaskList SET ? WHERE taskID = ?', [obj, _id], (err, result) => {
+//         if (err) {
+//             console.log(err)
+//             return res.send(err)
+//         }
+//         console.log('Successfully update user information')
+//         res.send(result)
+//     })
+// })
 
+// // this is not fully functioned
+// router.delete('/task/:id', (req, res) => {
+//     connection.query('DELETE FROM TaskHasTaskList WHERE taskID = ?', req.params.id, (err, result) => {
+//         if (err) return res.status(500).send()
+
+//         res.send('Successfully delete the task with id ' + req.params.id)
+//     })
+// })
 
 // router.patch('/tasks/:id', async (req, res)=>{
     //     const updates = Object.keys(req)

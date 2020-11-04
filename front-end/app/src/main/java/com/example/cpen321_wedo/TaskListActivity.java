@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
+
 public class TaskListActivity extends AppCompatActivity{
 
     FloatingActionButton fab;
@@ -142,7 +144,18 @@ public class TaskListActivity extends AppCompatActivity{
                 finish();
                 return true;
             case R.id.map_test:
-                startActivity(new Intent(TaskListActivity.this, MapsPlotRouteActivity.class));
+
+                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
+                double[] latitudes = {49.261599, 49.234620, 49.234562};
+                double[] longitudes = {-123.249374, -123.184539, -123.116674};
+                mapsIntent.putExtra("latitudes", latitudes);
+                mapsIntent.putExtra("longitudes", longitudes);
+                mapsIntent.putExtra("mode", DRIVING);
+
+                int distanceThreshold = 100;
+                mapsIntent.putExtra("distanceThreshold", distanceThreshold);
+
+                startActivity(mapsIntent);
                 return true;
         }
         return false;

@@ -2,13 +2,6 @@ const userFunctions = require('../../src/db/users_db')
 
 user4Tasklists = [{ "taskListID": 1 }, { "taskListID": 2 }, { "taskListID": 8 }, { "taskListID": 200 }];
 
-// jest.mock('../../src/db/databaseInterface', () => ({
-//     get: (attributesToGet, table, condition, callback) => callback("", [
-//         { "taskListID": 1 },
-//         { "taskListID": 2 },
-//         { "taskListID": 8 },
-//         { "taskListID": 200 }])
-// }))
 jest.mock('../../src/db/databaseInterface')
 
 test('User has access', done => {
