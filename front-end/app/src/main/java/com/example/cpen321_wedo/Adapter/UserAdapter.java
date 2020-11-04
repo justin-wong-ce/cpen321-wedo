@@ -50,7 +50,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, MessageActivity.class);
                 intent.putExtra("userid", user.getId());
-                Log.d("test", "begin to start activity message");
+                intent.putExtra("isGroupChat", user.isGroupChatUser());
+                Log.d("test", "comming");
                 mContext.startActivity(intent);
             }
         });
