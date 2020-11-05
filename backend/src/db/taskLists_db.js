@@ -14,4 +14,4 @@ var taskListFunctions = {
 
 }
 
-module.exports = taskFunctions
+module.exports = taskListFunctions

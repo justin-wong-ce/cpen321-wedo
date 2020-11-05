@@ -102,8 +102,7 @@ module.exports = router
 // })
 
 // // delte this later
-// router.get('/taskList/admin/:info', (req, res) => {
-//     console.log(req.params.info)
+// router.get('/taskList/admin', (req, res) => {
 //     connection.query('SELECT * FROM TaskListWithOwner', (err, taskList) => {
 //         if (err) return res.status(500).send(err)
 //         console.log('Successfully get user information')
