@@ -2,7 +2,10 @@ package com.example.cpen321_wedo;
 
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -106,7 +109,23 @@ public class TaskListActivity extends AppCompatActivity{
             }
         });
 
+        createNotificationChannel();
+    }
 
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "test";
+            String description = "test notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("1", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = this.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
@@ -149,8 +168,8 @@ public class TaskListActivity extends AppCompatActivity{
         RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
         try {
-            String url = "http://40.78.89.252:3000/taskList/admin/";
-            url+=firebaseUser.getUid();
+            String url = "http://40.78.89.252:3000/tasklist/get/abcdefg/abcdefasdasdasdg";
+
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {

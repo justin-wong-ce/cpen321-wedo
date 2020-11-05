@@ -182,6 +182,7 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void sendNotifications(final String receiver, final String username, final String message){
@@ -192,6 +193,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshots) {
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Token token = snapshot.getValue(Token.class);
+                    Log.d("test", token.getToken());
                     Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
                     Sender sender = new Sender(data, token.getToken());
 
