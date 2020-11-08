@@ -1,6 +1,16 @@
-const database = require('./databaseInterface')
+const database = require('./databaseInterface');
 
 var userFunctions = {
+    checkPermission: function (userID, taskListID, callback) {
+        database.get('taskListID', 'HasAccess', 'userID = ' + userID + ", taskListID = " + taskListID, (err, results) => {
+            callback(err, results);
+        })
+    },
+    isListOwner: function (userID, taskListID, callback) {
+        database.get('taskListID', 'taskListWithOwner', 'userID = ' + userID + ", taskListID = " + taskListID, (err, results) => {
+            callback(err, results);
+        })
+    },
     updateToken: function (userID, token, callback) {
 
         database.update("User", "token = " + token, "userID = " + userID, (err, results) => {
@@ -19,11 +29,6 @@ var userFunctions = {
     },
     registerUser: function (entry, callback) {
         database.insert("User", entry, (err, results) => {
-            callback(err, results);
-        })
-    },
-    biasPreferences: function (userID, taskType, callback) {
-        database.update("UserPreferences", taskType + " = " + taskType + " + 10", "userID = " + userID, (err, results) => {
             callback(err, results);
         })
     }

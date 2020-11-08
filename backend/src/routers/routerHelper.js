@@ -1,6 +1,8 @@
 // Does error checking for MySQL callback and sends responses
 function callbackHandler(err, results) {
 
+    if (err) console.log(err);
+
     if (err.code === 'ER_DUP_ENTRY')
         res.status(406).send("user/task/tasklist already exists");
 
