@@ -61,4 +61,18 @@ router.get('/user/tasklists/:userID', async (req, res) => {
     }
 })
 
+// Bias user preferences (add 10 "points" to type)
+router.put('/user/biaspreferences', async (req, res) => {
+    const userID = req.body.userID;
+    const taskType = req.body.taskType;
+    if (typeof userID !== "string" &&
+        typeof taskType !== "string")
+        res.status(400).send("bad data format or type");
+    else {
+        userFunctions.biasPreferences(userID, taskType, (err, results) => {
+            routerHelper.callbackHandler(err, results);
+        })
+    }
+})
+
 module.exports = router

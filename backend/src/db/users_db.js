@@ -17,13 +17,13 @@ var userFunctions = {
             callback(err, results);
         })
     },
-    checkPermission: function (userID, taskListID, callback) {
-        database.get('taskListID', 'HasAccess', 'userID = ' + userID + ", taskListID = " + taskListID, (err, results) => {
+    registerUser: function (entry, callback) {
+        database.insert("User", entry, (err, results) => {
             callback(err, results);
         })
     },
-    registerUser: function (entry, callback) {
-        database.insert("User", entry, (err, results) => {
+    biasPreferences: function (userID, taskType, callback) {
+        database.update("UserPreferences", taskType + " = " + taskType + " + 10", "userID = " + userID, (err, results) => {
             callback(err, results);
         })
     }

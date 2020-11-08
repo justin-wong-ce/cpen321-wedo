@@ -10,6 +10,10 @@ var taskListFunctions = {
         database.insert("TaskListWithOwner", entry, (err, results) => {
             callback(err, results);
         })
+    },
+    sortList: function (list) {
+
+        return sorted;
     }
 
 }

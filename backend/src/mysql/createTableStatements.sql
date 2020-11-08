@@ -26,6 +26,7 @@ CREATE TABLE TaskHasTaskList (
 	taskBudget			int,
 	taskDescription		TEXT,
 	taskType			char(50),
+	priorityLevel		int NOT NULL 
 	address				TEXT,
 	done				boolean,
 	doneBy				char(50),
@@ -55,6 +56,19 @@ CREATE TABLE HasAccess (
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+);
+
+CREATE TABLE UserPreferences (
+	userID				char(50) NOT NULL,
+	shopping			int DEFAULT 0,
+	transport			int DEFAULT 0,
+	eventSetup			int DEFAULT 0,
+	mechanical			int DEFAULT 0,
+	writing				int DEFAULT 0,
+	PRIMARY KEY 		(userID),
+	FOREIGN KEY (userID) REFERENCES User(userID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
