@@ -15,7 +15,7 @@ router.post("/user/new", (req, res) => {
         res.status(400).send("bad data format or type");
     else {
         userFunctions.registerUser(user, (err, results) => {
-            routerHelper.callbackHandler(err, results);
+            routerHelper.callbackHandler(err, results, res);
         })
     }
 })
@@ -30,7 +30,7 @@ router.put("/user/token", async (req, res) => {
     }
     else {
         userFunctions.updateToken(userID, token, (err, results) => {
-            routerHelper.callbackHandler(err, results);
+            routerHelper.callbackHandler(err, results, res);
         });
     }
 })
@@ -45,7 +45,7 @@ router.put("/user/premium", async (req, res) => {
     }
     else {
         userFunctions.updatePremium(userID, isPremium, (err, results) => {
-            routerHelper.callbackHandler(err, results);
+            routerHelper.callbackHandler(err, results, res);
         })
     }
 })
@@ -57,7 +57,7 @@ router.get("/user/tasklists/:userID", async (req, res) => {
         res.status(400).send("bad data format or type");
     else {
         userFunctions.getUserLists(userID, (err, results) => {
-            routerHelper.callbackHandler(err, results);
+            routerHelper.callbackHandler(err, results, res);
         })
     }
 })
@@ -71,7 +71,7 @@ router.put("/user/biaspreferences", async (req, res) => {
         res.status(400).send("bad data format or type");
     else {
         recManager.updatePreferences(userID, taskType, 10, (err, results) => {
-            routerHelper.callbackHandler(err, results);
+            routerHelper.callbackHandler(err, results, res);
         })
     }
 })

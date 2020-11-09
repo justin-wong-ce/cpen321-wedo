@@ -22,10 +22,7 @@ router.post("/task/create", (req, res) => {
     const task = req.body;
 
     taskFunctions.createTask(task, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        routerHelper.callbackHandler(err, results);
+        routerHelper.permHandler(err, results, perms, res);
     });
 });
 
@@ -50,10 +47,7 @@ router.put("/task/update", (req, res) => {
     const task = req.body;
 
     taskFunctions.createTask(task, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        routerHelper.callbackHandler(err, results);
+        routerHelper.permHandler(err, results, perms, res);
     });
 });
 
@@ -69,10 +63,7 @@ router.delete("/task/delete", (req, res) => {
     const taskListID = req.body.taskListID;
 
     taskFunctions.deleteTask(taskID, userID, taskListID, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        routerHelper.callbackHandler(err, results);
+        routerHelper.permHandler(err, results, perms, res);
     });
 
 });

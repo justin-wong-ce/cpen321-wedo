@@ -13,12 +13,12 @@ var userFunctions = {
     },
     updateToken: function (userID, token, callback) {
 
-        database.update("User", "token = " + token, "userID = " + userID, (err, results) => {
+        database.update("Users", "token = " + token, "userID = " + userID, (err, results) => {
             callback(err, results);
         })
     },
     updatePremium: function (userID, premiumStatus, callback) {
-        database.update("User", "isPremium = " + premiumStatus, "userID = " + userID, (err, results) => {
+        database.update("Users", "isPremium = " + premiumStatus, "userID = " + userID, (err, results) => {
             callback(err, results);
         })
     },
@@ -28,7 +28,7 @@ var userFunctions = {
         })
     },
     registerUser: function (entry, callback) {
-        database.insert("User", entry, (err, results) => {
+        database.insert("Users", entry, (err, results) => {
             callback(err, results);
         })
     }

@@ -4,25 +4,16 @@ const taskListFunctions = require("../db/taskLists_db");
 const routerHelper = require("./routerHelper");
 
 // Get all tasks (and its information) inside a task list
+//
+// Body JSON attribute types
+// typeof body.userID == "string"
+// typeof body.taskListID == "string"
 router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
     const userID = req.params.userID;
     const taskListID = req.params.taskListID;
-
-    if (typeof userID !== "string" ||
-        typeof taskListID !== "string") {
-        res.status(400).send("bad data format or type");
-    }
-    else {
-
-        taskListFunctions.getTasksInList(taskListID, userID, (err, results, perms) => {
-            if (!perms) {
-                res.status(401).send("user does not have permissions");
-            }
-            else {
-                routerHelper.callbackHandler(err, results);
-            }
-        });
-    }
+    taskListFunctions.getTasksInList(taskListID, userID, (err, results, perms) => {
+        routerHelper.permHandler(err, results, perms, res);
+    });
 });
 
 // Save created task list onto database
@@ -39,7 +30,7 @@ router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
 router.post("/tasklist/create", (req, res) => {
     const newTaskList = req.body;
     taskListFunctions.createTaskList(newTaskList, (err, results) => {
-        routerHelper.callbackHandler(err, results);
+        routerHelper.callbackHandler(err, results, res);
     });
 });
 
@@ -57,12 +48,7 @@ router.put("/tasklist/update", (req, res) => {
     const taskList = req.body;
 
     taskListFunctions.updateTaskList(taskList, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        else {
-            routerHelper.callbackHandler(err, results);
-        }
+        routerHelper.permHandler(err, results, perms, res);
     });
 
 });
@@ -77,12 +63,7 @@ router.post("/tasklist/adduser", (req, res) => {
     const entry = req.body;
 
     taskListFunctions.addUser(entry.userID, entry.taskListID, entry.addUser, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        else {
-            routerHelper.callbackHandler(err, results);
-        }
+        routerHelper.permHandler(err, results, perms, res);
     });
 });
 
@@ -96,12 +77,7 @@ router.delete("tasklist/removeuser", (req, res) => {
     const entry = req.body;
 
     taskListFunctions.removeUser(entry.userID, entry.taskListID, entry.toKick, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        else {
-            routerHelper.callbackHandler(err, results);
-        }
+        routerHelper.permHandler(err, results, perms, res);
     });
 });
 
@@ -115,12 +91,7 @@ router.delete("tasklist/delete", (req, res) => {
     const taskListID = req.body.taskListID;
 
     taskListFunctions.deleteTaskList(userID, taskListID, (err, results, perms) => {
-        if (!perms) {
-            res.status(401).send("user does not have permissions");
-        }
-        else {
-            routerHelper.callbackHandler(err, results);
-        }
+        routerHelper.permHandler(err, results, perms, res);
     });
 });
 
