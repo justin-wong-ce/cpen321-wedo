@@ -1,15 +1,12 @@
-const userFunctions = require('../../src/db/users_db')
+const userFunctions = require("../../src/db/users_db");
 
-user4Tasklists = [{ "taskListID": 1 }, { "taskListID": 2 }, { "taskListID": 8 }, { "taskListID": 200 }];
+let user4Tasklists = [{ "taskListID": 1 }, { "taskListID": 2 }, { "taskListID": 8 }, { "taskListID": 200 }];
 
-jest.mock('../../src/db/databaseInterface')
+jest.mock("../../src/db/databaseInterface");
 
-test('User has access', done => {
-    console.log("starting test")
-
+test("User has access", done => {
     userFunctions.getUserLists(4, (err, results) => {
-        console.log(results);
         expect(results).toStrictEqual(user4Tasklists);
         done();
-    })
-})
+    });
+});

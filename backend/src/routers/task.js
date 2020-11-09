@@ -46,7 +46,7 @@ router.post("/task/create", (req, res) => {
 router.put("/task/update", (req, res) => {
     const task = req.body;
 
-    taskFunctions.createTask(task, (err, results, perms) => {
+    taskFunctions.updateTask(task, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);
     });
 });
