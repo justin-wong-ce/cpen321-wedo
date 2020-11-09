@@ -1,4 +1,4 @@
-const connection = require('./mysql');
+const connection = require("./mysql");
 
 console.log("using database interface");
 
@@ -7,7 +7,7 @@ var database = {
 
         console.log("SELECT from DB");
 
-        connection.query('SELECT ' + attributesToGet + ' FROM ' + table + ' WHERE ' + condition, [], (err, results) => {
+        connection.query("SELECT " + attributesToGet + " FROM " + table + " WHERE " + condition, [], (err, results) => {
 
             if (err || !results) {
                 console.log("error during SELECT, ", err);
@@ -17,7 +17,7 @@ var database = {
     },
 
     update: function (table, values, condition, callback) {
-        connection.query('UPDATE ? SET ? WHERE ?', [table, values, condition], (err, results) => {
+        connection.query("UPDATE ? SET ? WHERE ?", [table, values, condition], (err, results) => {
             if (err || !results) {
                 console.log("error during UPDATE, ", err);
             }
@@ -26,7 +26,7 @@ var database = {
     },
 
     delete: function (table, condition, callback) {
-        connection.query('DELETE FROM ? WHERE ?', [table, condition], (err, results) => {
+        connection.query("DELETE FROM ? WHERE ?", [table, condition], (err, results) => {
             if (err || !results) {
                 console.log("error during DELETE, ", err);
             }
@@ -34,7 +34,7 @@ var database = {
         });
     },
     insert: function (table, entry, callback) {
-        connection.query('INSERT INTO ? SET ?', [table, entry], (err, results) => {
+        connection.query("INSERT INTO ? SET ?", [table, entry], (err, results) => {
             if (err || !results) {
                 console.log("error during INSERT", err);
             }

@@ -1,16 +1,16 @@
-const express = require('express');
-const userFunctions = require('../db/users_db');
+const express = require("express");
+const userFunctions = require("../db/users_db");
 const router = new express.Router();
-const routerHelper = require('./routerHelper');
-const recManager = require('../db/recommendationsManager');
+const routerHelper = require("./routerHelper");
+const recManager = require("../db/recommendationsManager");
 
 // Register new user
-router.post('/user/new', (req, res) => {
+router.post("/user/new", (req, res) => {
     // TODO:
     const user = req.body;
 
-    if (typeof user.userID !== 'string' ||
-        typeof user.token !== 'string' ||
+    if (typeof user.userID !== "string" ||
+        typeof user.token !== "string" ||
         (user.isPremium !== false && user.isPremium !== true && user.isPremium != null))
         res.status(400).send("bad data format or type");
     else {
@@ -21,7 +21,7 @@ router.post('/user/new', (req, res) => {
 })
 
 // Update user token, call on app startup
-router.put('/user/token', async (req, res) => {
+router.put("/user/token", async (req, res) => {
     const userID = req.body.userID;
     const token = req.body.token;
 
@@ -36,7 +36,7 @@ router.put('/user/token', async (req, res) => {
 })
 
 // Update user premium status
-router.put('/user/premium', async (req, res) => {
+router.put("/user/premium", async (req, res) => {
     const userID = req.body.userID;
     const isPremium = req.body.isPremium;
 
@@ -51,7 +51,7 @@ router.put('/user/premium', async (req, res) => {
 })
 
 // Get taskLists of tasklists that the user has access to
-router.get('/user/tasklists/:userID', async (req, res) => {
+router.get("/user/tasklists/:userID", async (req, res) => {
     const userID = req.params.userID;
     if (typeof userID !== "string")
         res.status(400).send("bad data format or type");
@@ -63,7 +63,7 @@ router.get('/user/tasklists/:userID', async (req, res) => {
 })
 
 // Bias user preferences (add 10 "points" to type)
-router.put('/user/biaspreferences', async (req, res) => {
+router.put("/user/biaspreferences", async (req, res) => {
     const userID = req.body.userID;
     const taskType = req.body.taskType;
     if (typeof userID !== "string" &&

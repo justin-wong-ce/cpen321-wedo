@@ -1,6 +1,6 @@
-const database = require('./databaseInterface');
-const userFunctions = require('./users_db');
-const recManager = require('./recommendationsManager');
+const database = require("./databaseInterface");
+const userFunctions = require("./users_db");
+const recManager = require("./recommendationsManager");
 
 var taskFunctions = {
     createTask: function (entry, callback) {

@@ -1,13 +1,13 @@
-const database = require('./databaseInterface');
+const database = require("./databaseInterface");
 
 var userFunctions = {
     checkPermission: function (userID, taskListID, callback) {
-        database.get('taskListID', 'HasAccess', 'userID = ' + userID + ", taskListID = " + taskListID, (err, results) => {
+        database.get("taskListID", "HasAccess", "userID = " + userID + ", taskListID = " + taskListID, (err, results) => {
             callback(err, results);
         })
     },
     isListOwner: function (userID, taskListID, callback) {
-        database.get('taskListID', 'taskListWithOwner', 'userID = ' + userID + ", taskListID = " + taskListID, (err, results) => {
+        database.get("taskListID", "taskListWithOwner", "userID = " + userID + ", taskListID = " + taskListID, (err, results) => {
             callback(err, results);
         })
     },
@@ -23,7 +23,7 @@ var userFunctions = {
         })
     },
     getUserLists: function (userID, callback) {
-        database.get('*', 'HasAccess', 'userID = ' + userID, (err, results) => {
+        database.get("*", "HasAccess", "userID = " + userID, (err, results) => {
             callback(err, results);
         })
     },
