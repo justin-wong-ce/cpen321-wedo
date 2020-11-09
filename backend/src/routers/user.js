@@ -50,7 +50,7 @@ router.put('/user/premium', async (req, res) => {
     }
 })
 
-// Get taskListIDs of tasklists that the user has access to
+// Get taskLists of tasklists that the user has access to
 router.get('/user/tasklists/:userID', async (req, res) => {
     const userID = req.params.userID;
     if (typeof userID !== "string")

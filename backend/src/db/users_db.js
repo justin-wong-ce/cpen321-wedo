@@ -23,7 +23,7 @@ var userFunctions = {
         })
     },
     getUserLists: function (userID, callback) {
-        database.get('taskListID', 'HasAccess', 'userID = ' + userID, (err, results) => {
+        database.get('*', 'HasAccess', 'userID = ' + userID, (err, results) => {
             callback(err, results);
         })
     },

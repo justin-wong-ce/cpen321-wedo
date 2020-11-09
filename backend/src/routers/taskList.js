@@ -4,7 +4,6 @@ const taskListFunctions = require('../db/taskLists_db');
 const userFunctions = require('../db/users_db')
 const routerHelper = require('./routerHelper');
 
-
 // Get all tasks (and its information) inside a task list
 router.get('/tasklist/get/:userID/:taskListID', (req, res) => {
 
