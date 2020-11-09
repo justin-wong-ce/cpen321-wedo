@@ -8,14 +8,14 @@ CREATE TABLE User (
 
 CREATE TABLE TaskListWithOwner (
 	taskListID 			char(150),
+	userID				char(50) NOT NULL,
 	taskListName 		char(100),
 	modifiedTime	 	datetime,
 	createdTime			datetime,
 	taskListDescription TEXT,
-	owner				char(50) NOT NULL,
 	PRIMARY KEY (taskListID),
-	UNIQUE (owner),
-	FOREIGN KEY (owner) REFERENCES User(userID)
+	UNIQUE (userID),
+	FOREIGN KEY (userID) REFERENCES User(userID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -26,9 +26,10 @@ CREATE TABLE TaskHasTaskList (
 	taskBudget			int,
 	taskDescription		TEXT,
 	taskType			char(50),
+	priorityLevel		int NOT NULL DEFAULT 0, 
 	address				TEXT,
 	done				boolean,
-	doneBy				char(50),
+	assignedTo			char(50),
 	taskRating			int,
 	createdTime			datetime,
 	modifiedTime	datetime,
@@ -42,7 +43,7 @@ CREATE TABLE TaskHasTaskList (
 	FOREIGN KEY (createdBy) REFERENCES User(userID)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
-	FOREIGN KEY (doneBy) REFERENCES User(userID)
+	FOREIGN KEY (assignedTo) REFERENCES User(userID)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
@@ -55,6 +56,19 @@ CREATE TABLE HasAccess (
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (taskListID) REFERENCES TaskListWithOwner(taskListID)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+);
+
+CREATE TABLE UserPreferences (
+	userID				char(50) NOT NULL,
+	shopping			int DEFAULT 0,
+	transport			int DEFAULT 0,
+	eventSetup			int DEFAULT 0,
+	mechanical			int DEFAULT 0,
+	writing				int DEFAULT 0,
+	PRIMARY KEY 		(userID),
+	FOREIGN KEY (userID) REFERENCES User(userID)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
