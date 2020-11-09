@@ -18,7 +18,6 @@ function getAndRespond(mode, res, req) {
 }
 
 router.post("/routes/transit", (req, res) => {
-    console.log("Get transit route");
     routeFunctions.getTransitRoute(req.body.locations, req.body.distanceThreshold)
         .then((result) => {
             if (result === []) {

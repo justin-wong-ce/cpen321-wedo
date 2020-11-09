@@ -5,75 +5,74 @@ const routerHelper = require("./routerHelper");
 const recManager = require("../db/recommendationsManager");
 
 // Register new user
+//
+// Body JSON attribute types
+// typeof body.userID == "string"
+// typeof body.token == "string"
+//
+// Optional attributes: ***************************************************
+// typeof body.isPremium == "boolean"
+
 router.post("/user/new", (req, res) => {
     // TODO:
     const user = req.body;
 
-    if (typeof user.userID !== "string" ||
-        typeof user.token !== "string" ||
-        (user.isPremium !== false && user.isPremium !== true && user.isPremium != null))
-        res.status(400).send("bad data format or type");
-    else {
-        userFunctions.registerUser(user, (err, results) => {
-            routerHelper.callbackHandler(err, results, res);
-        })
-    }
-})
+    userFunctions.registerUser(user, (err, results) => {
+        routerHelper.callbackHandler(err, results, res);
+    });
+});
 
 // Update user token, call on app startup
+//
+// Body JSON attribute types
+// typeof body.userID == "string"
+// typeof body.token == "string"
 router.put("/user/token", async (req, res) => {
     const userID = req.body.userID;
     const token = req.body.token;
 
-    if (typeof userID !== "string" || typeof token !== "string") {
-        res.status(400).send("bad data format or type");
-    }
-    else {
-        userFunctions.updateToken(userID, token, (err, results) => {
-            routerHelper.callbackHandler(err, results, res);
-        });
-    }
-})
+    userFunctions.updateToken(userID, token, (err, results) => {
+        routerHelper.callbackHandler(err, results, res);
+    });
+});
 
 // Update user premium status
+//
+// Body JSON attribute types
+// typeof body.userID == "string"
+// typeof body.isPremium == "boolean"
 router.put("/user/premium", async (req, res) => {
     const userID = req.body.userID;
     const isPremium = req.body.isPremium;
 
-    if (typeof userID !== "string" && (isPremium !== false || isPremium !== true)) {
-        res.status(400).send("bad data format or type");
-    }
-    else {
-        userFunctions.updatePremium(userID, isPremium, (err, results) => {
-            routerHelper.callbackHandler(err, results, res);
-        })
-    }
-})
+    userFunctions.updatePremium(userID, isPremium, (err, results) => {
+        routerHelper.callbackHandler(err, results, res);
+    });
+});
 
 // Get taskLists of tasklists that the user has access to
+//
+// Param types
+// typeof body.userID == "string"
 router.get("/user/tasklists/:userID", async (req, res) => {
     const userID = req.params.userID;
-    if (typeof userID !== "string")
-        res.status(400).send("bad data format or type");
-    else {
-        userFunctions.getUserLists(userID, (err, results) => {
-            routerHelper.callbackHandler(err, results, res);
-        })
-    }
-})
+
+    userFunctions.getUserLists(userID, (err, results) => {
+        routerHelper.callbackHandler(err, results, res);
+    });
+});
 
 // Bias user preferences (add 10 "points" to type)
+//
+// Body JSON attribute types
+// typeof body.userID == "string"
+// typeof body.taskType == "string"
 router.put("/user/biaspreferences", async (req, res) => {
     const userID = req.body.userID;
     const taskType = req.body.taskType;
-    if (typeof userID !== "string" &&
-        typeof taskType !== "string")
-        res.status(400).send("bad data format or type");
-    else {
-        recManager.updatePreferences(userID, taskType, 10, (err, results) => {
-            routerHelper.callbackHandler(err, results, res);
-        })
-    }
-})
+    recManager.updatePreferences(userID, taskType, 10, (err, results) => {
+        routerHelper.callbackHandler(err, results, res);
+    });
+});
 
-module.exports = router
+module.exports = router;

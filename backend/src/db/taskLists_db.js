@@ -68,7 +68,7 @@ var taskListFunctions = {
         });
     },
     addUser(userID, taskListID, addUser, callback) {
-        userFunctions.isListOwner(userID, entry.taskListID, (err, results) => {
+        userFunctions.isListOwner(userID, taskListID, (err, results) => {
             if (!results) {
                 callback(null, null, false);
             }
@@ -88,7 +88,7 @@ var taskListFunctions = {
         });
     },
     removeUser(userID, taskListID, toKick, callback) {
-        userFunctions.isListOwner(entry.userID, entry.taskListID, (err, results) => {
+        userFunctions.isListOwner(userID, taskListID, (err, results) => {
             if (!results) {
                 callback(null, null, false);
             }

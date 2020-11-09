@@ -4,7 +4,7 @@ let user4Tasklists = [{ "taskListID": 1 }, { "taskListID": 2 }, { "taskListID": 
 
 jest.mock("../../src/db/databaseInterface");
 
-test("User has access", done => {
+test("User has access", done() => {
     userFunctions.getUserLists(4, (err, results) => {
         expect(results).toStrictEqual(user4Tasklists);
         done();
