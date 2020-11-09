@@ -50,11 +50,12 @@ router.put("/task/update", (req, res) => {
     const task = req.body;
 
     taskFunctions.createTask(task, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         routerHelper.callbackHandler(err, results);
     });
-})
+});
 
 // Delete task
 //
@@ -68,11 +69,12 @@ router.delete("/task/delete", (req, res) => {
     const taskListID = req.body.taskListID;
 
     taskFunctions.deleteTask(taskID, userID, taskListID, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         routerHelper.callbackHandler(err, results);
     });
 
-})
+});
 
 module.exports = router;

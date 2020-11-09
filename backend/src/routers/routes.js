@@ -13,7 +13,6 @@ function getAndRespond(mode, res, req) {
             }
         })
         .catch((err) => {
-            console.log(err);
             res.status(400).send(err.message);
         });
 }
@@ -30,25 +29,20 @@ router.post("/routes/transit", (req, res) => {
             }
         })
         .catch((err) => {
-            console.log(err);
             res.status(400).send(err.message);
         });
-})
+});
 
 router.post("/routes/driving", (req, res) => {
-    console.log("Get driving route");
-
     getAndRespond("driving", res, req);
-})
+});
 
 router.post("/routes/walking", (req, res) => {
-    console.log("Get walking route");
     getAndRespond("walking", res, req);
-})
+});
 
 router.post("/routes/biking", (req, res) => {
-    console.log("Get biking route");
     getAndRespond("bicycling", res, req);
-})
+});
 
 module.exports = router;

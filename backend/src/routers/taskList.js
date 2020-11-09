@@ -8,8 +8,6 @@ router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
     const userID = req.params.userID;
     const taskListID = req.params.taskListID;
 
-    console.log("getting all tasks for user with ID: " + userID + "from tasklist with ID: " + taskListID);
-
     if (typeof userID !== "string" ||
         typeof taskListID !== "string") {
         res.status(400).send("bad data format or type");
@@ -43,7 +41,7 @@ router.post("/tasklist/create", (req, res) => {
     taskListFunctions.createTaskList(newTaskList, (err, results) => {
         routerHelper.callbackHandler(err, results);
     });
-})
+});
 
 // Update a task list
 //
@@ -59,14 +57,15 @@ router.put("/tasklist/update", (req, res) => {
     const taskList = req.body;
 
     taskListFunctions.updateTaskList(taskList, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         else {
             routerHelper.callbackHandler(err, results);
         }
     });
 
-})
+});
 
 // Grant a user access to the task list + push notifications to users with access
 //
@@ -78,13 +77,14 @@ router.post("/tasklist/adduser", (req, res) => {
     const entry = req.body;
 
     taskListFunctions.addUser(entry.userID, entry.taskListID, entry.addUser, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         else {
             routerHelper.callbackHandler(err, results);
         }
     });
-})
+});
 
 // Remove a user"s access to the task list + push notifications to user with access
 //
@@ -96,13 +96,14 @@ router.delete("tasklist/removeuser", (req, res) => {
     const entry = req.body;
 
     taskListFunctions.removeUser(entry.userID, entry.taskListID, entry.toKick, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         else {
             routerHelper.callbackHandler(err, results);
         }
     });
-})
+});
 
 // Delete task list and sends push notification to all users with access
 //
@@ -114,13 +115,14 @@ router.delete("tasklist/delete", (req, res) => {
     const taskListID = req.body.taskListID;
 
     taskListFunctions.deleteTaskList(userID, taskListID, (err, results, perms) => {
-        if (!perms)
+        if (!perms) {
             res.status(401).send("user does not have permissions");
+        }
         else {
             routerHelper.callbackHandler(err, results);
         }
     });
-})
+});
 
 module.exports = router;
 

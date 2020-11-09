@@ -27,7 +27,7 @@ var taskListFunctions = {
                 var hasAccessObj = {
                     userID: entry.userID,
                     taskListID: entry.taskListID
-                }
+                };
                 database.insert("HasAccess", hasAccessObj, (err, results) => {
                     callback(err, results);
                 });
@@ -61,7 +61,7 @@ var taskListFunctions = {
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
 
-                database.delete("TaskListWithOwner", "taskListID = " + entry.taskListID, (err, results) => {
+                database.delete("TaskListWithOwner", "taskListID = " + taskListID, (err, results) => {
                     callback(err, results, true);
                 });
             }
@@ -100,11 +100,11 @@ var taskListFunctions = {
 
                 var hasAccessObj = {
                     userID: toKick,
-                    taskListID: taskListID
+                    taskListID
                 };
                 database.delete("HasAccess", hasAccessObj, (err, results) => {
                     callback(err, results, true);
-                })
+                });
             }
         });
     }
