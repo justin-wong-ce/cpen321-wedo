@@ -75,11 +75,7 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
 
         // Create waypoints list for close by coordinates
         if (closeGroup.length !== 0) {
-            for (let pointIter = 0; pointIter < closeGroup.length; pointIter++) {
-                pointGroup.push(toUrlValue(closeGroup[parseInt(pointIter, 10)]));
-            }
-
-            let response = await route(pointGroup, "walking");
+            let response = await route(closeGroup, "walking");
             results.push(response.data.routes[0]);
         }
 
@@ -94,8 +90,6 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
             transitRouteIter++;
         }
     }
-
-    console.log(results);
     return results;
 }
 
@@ -126,7 +120,7 @@ function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThresho
             // Make sure to add final destination to group
             if (legIter === route.length - 1) {
                 currCloseBy.push(route.legs[parseInt(legIter, 10)].end_location);
-                closeByGroups.push([parseInt(currCloseBy, 10)]);
+                closeByGroups.push(currCloseBy);
             }
         }
     }
@@ -137,10 +131,7 @@ async function setUpMaps(locationGraph, responsesMap, locations) {
         var neighbours = new Map();
 
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
-            if (locIter1 === locIter0) {
-                continue;
-            }
-            else {
+            if (locIter1 !== locIter0) {
                 var response = await route([locations[parseInt(locIter0, 10)], locations[parseInt(locIter1, 10)]], "transit");
 
                 if (response.data.status !== "OK") {
@@ -153,6 +144,18 @@ async function setUpMaps(locationGraph, responsesMap, locations) {
             }
         }
         locationGraph.set(locIter0.toString(), neighbours);
+    }
+}
+
+function tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives) {
+    for (let iter = 0; iter < currPerm.length; iter++) {
+        if (currPerm[parseInt(iter, 10)] === "-1" && primitives.currLoc !== endingLoc) {
+            primitives.currWeight = Number.MAX_VALUE;
+        } else if (currPerm[parseInt(iter, 10)] !== "-1") {
+            primitives.currWeight += locationGraph.get(primitives.currLoc).get(currPerm[parseInt(iter, 10)]);
+            currPath.push(responsesMap.get(primitives.currLoc + currPerm[parseInt(iter, 10)]));
+        }
+        primitives.currLoc = currPerm[parseInt(iter, 10)];
     }
 }
 
@@ -211,19 +214,6 @@ async function getBestTransitRoutes(locations) {
 
     return minPath;
 }
-
-function tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives) {
-    for (let iter = 0; iter < currPerm.length; iter++) {
-        if (currPerm[parseInt(iter, 10)] === "-1" && primitives.currLoc !== endingLoc) {
-            primitives.currWeight = Number.MAX_VALUE;
-        } else if (currPerm[parseInt(iter, 10)] !== "-1") {
-            primitives.currWeight += locationGraph.get(primitives.currLoc).get(currPerm[parseInt(iter, 10)]);
-            currPath.push(responsesMap.get(primitives.currLoc + currPerm[parseInt(iter, 10)]));
-        }
-        primitives.currLoc = currPerm[parseInt(iter, 10)];
-    }
-}
-
 
 // Transforms a list of locations into an array of routes
 // The array of routes should be combined to form one big route
