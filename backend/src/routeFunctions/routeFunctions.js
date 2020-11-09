@@ -93,18 +93,18 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
     return results;
 }
 
-function closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor) {
+function closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor, iter) {
     if (currCloseBy.length !== 0) {
-        currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
+        currCloseBy.push(route.legs[parseInt(iter, 10)].start_location);
     }
     closeByGroups.push(currCloseBy);
     currCloseBy = [];
 
     // Make sure starting coordinates are added
     if (farApartCoor.length === 0) {
-        farApartCoor.push(route.legs[parseInt(legIter, 10)].start_location);
+        farApartCoor.push(route.legs[parseInt(iter, 10)].start_location);
     }
-    farApartCoor.push(route.legs[parseInt(legIter, 10)].end_location);
+    farApartCoor.push(route.legs[parseInt(iter, 10)].end_location);
 }
 
 // Groups coordinates that are closer than walkDistanceThreshold into an array
@@ -117,7 +117,7 @@ function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThresho
     for (let legIter = 0; legIter < route.legs.length; legIter++) {
         if (route.legs[parseInt(legIter, 10)].distance.value > walkDistanceThreshold) {
 
-            closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor);
+            closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor, legIter);
         }
         else {
             currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
@@ -150,13 +150,47 @@ async function setUpMaps(locationGraph, responsesMap, locations) {
 
 function tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives) {
     for (let iter = 0; iter < currPerm.length; iter++) {
-        if (currPerm[parseInt(iter, 10)] === "-1" && primitives.currLoc !== endingLoc) {
-            primitives.currWeight = Number.MAX_VALUE;
-        } else if (currPerm[parseInt(iter, 10)] !== "-1") {
+        // Get weight from map for anything that is not the dummy node
+        if (currPerm[parseInt(iter, 10)] !== "-1") {
             primitives.currWeight += locationGraph.get(primitives.currLoc).get(currPerm[parseInt(iter, 10)]);
             currPath.push(responsesMap.get(primitives.currLoc + currPerm[parseInt(iter, 10)]));
         }
         primitives.currLoc = currPerm[parseInt(iter, 10)];
+    }
+}
+
+function setUpTspLocs(locations, noStartingLocation, startEndLocs) {
+    for (let count = 0; count < locations.length; count++) {
+        noStartingLocation.push(count.toString());
+    }
+    startEndLocs.startingLoc = noStartingLocation[0];
+    startEndLocs.endingLoc = noStartingLocation[noStartingLocation.length - 1];
+    noStartingLocation.push("-1");
+    noStartingLocation.shift();
+
+}
+
+function tspIteration(permutations, tspIterResults, minPath, startingLoc, endingLoc, locationGraph, responsesMap) {
+    let currPerm = permutations[parseInt(tspIterResults.onPermutation, 10)];
+    tspIterResults.onPermutation++;
+
+    if (currPerm[currPerm.length - 1] !== "-1" || currPerm[currPerm.length - 2] !== endingLoc) {
+        return;
+    }
+
+    var currPath = [];
+    let currWeight = 0;
+    let currLoc = startingLoc;
+
+    let primitives = { currWeight, currLoc };
+    tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives);
+
+    currWeight = primitives.currWeight;
+    currLoc = primitives.currLoc;
+
+    if (currWeight < tspIterResults.minDistance) {
+        tspIterResults.minDistance = currWeight;
+        minPath = currPath;
     }
 }
 
@@ -172,46 +206,25 @@ async function getBestTransitRoutes(locations) {
 
     // Set up waypoints, omits starting and ending location 
     let noStartingLocation = [];
-    for (let count = 0; count < locations.length; count++) {
-        noStartingLocation.push(count.toString());
-    }
-    let startingLoc = noStartingLocation[0];
-    let endingLoc = noStartingLocation[noStartingLocation.length - 1];
-    noStartingLocation.push("-1");
-    noStartingLocation.shift();
+    let startEndLocs = {};
+    setUpTspLocs(locations, noStartingLocation, startEndLocs);
+    startingLoc = startEndLocs.startingLoc;
+    endingLoc = startEndLocs.endingLoc;
 
     // Get array of permuations of locations
     let permutations = permutate(noStartingLocation);
 
     // Find optimal path (travelling post man problem)
-    let minDistance = Number.MAX_VALUE;
-    let onPermutation = 0;
+    let tspIterResults = {
+        minDistance: Number.MAX_VALUE,
+        onPermutation: 0
+    };
     var minPath = [];
 
     // Find best path by brute force for now, may change to more optimal algorithm later
     do {
-        let currPerm = permutations[parseInt(onPermutation, 10)];
-        onPermutation++;
-        if (currPerm[currPerm.length - 1] !== "-1" || currPerm[currPerm.length - 2] !== endingLoc) {
-
-            continue;
-        }
-
-        var currPath = [];
-        let currWeight = 0;
-        let currLoc = startingLoc;
-
-        let primitives = { currWeight, currLoc };
-        tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives);
-
-        currWeight = primitives.currWeight;
-        currLoc = primitives.currLoc;
-
-        if (currWeight < minDistance) {
-            minDistance = currWeight;
-            minPath = currPath;
-        }
-    } while (onPermutation < permutations.length);
+        tspIteration(permutations, tspIterResults, minPath, startingLoc, endingLoc, locationGraph, responsesMap);
+    } while (tspIteration.onPermutation < permutations.length);
 
     return minPath;
 }
