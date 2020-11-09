@@ -65,14 +65,16 @@ public class AddTaskListActivity extends AppCompatActivity {
 //                    postData(txt_tasklistName, txt_description);
                     Intent intent=new Intent();
 
-                    JSONObject object = new JSONObject();
-                    try {
-                        object.put("taskListName",txt_tasklistName);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+//                    JSONObject object = new JSONObject();
+//                    try {
+//                        object.put("taskListName",txt_tasklistName);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+                    String taskListID = firebaseUser.getUid()+date.getTime();
+                    final JSONObject object = new JSONObject();
+                    postData(txt_tasklistName, txt_description, taskListID, object);
 
-                    postGroupChat("111");
                     intent.putExtra("json",object.toString());
                     setResult(2,intent);
                     finish();
@@ -82,24 +84,22 @@ public class AddTaskListActivity extends AppCompatActivity {
     }
 
     // Get Request For JSONObject
-    public void postData(String txt_tasklistName, String txt_description){
+    public void postData(String txt_tasklistName, String txt_description, String taskListID, final JSONObject object){
         RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
-        final JSONObject object = new JSONObject();
+
         try {
             //input your API parameters
-            object.put("chatID",2);
-            object.put("userID","3");
+            object.put("userID",firebaseUser.getUid());
             object.put("taskListName",txt_tasklistName);
-//            object.put("taskListID",firebaseUser.getUid()+date.getTime());
-            object.put("taskListID",Integer.parseInt(txt_description));
-            object.put("userCap","5");
+            object.put("taskListID",taskListID);
+            object.put("taskListDescription",txt_description);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         try {
-            String url = "http://40.78.89.252:3000/taskList";
+            String url = "http://40.78.89.252:3000/tasklist/create";
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
                     new Response.Listener<JSONObject>() {

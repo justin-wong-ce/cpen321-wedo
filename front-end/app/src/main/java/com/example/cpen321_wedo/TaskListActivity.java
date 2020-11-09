@@ -165,18 +165,18 @@ public class TaskListActivity extends AppCompatActivity{
 
     // Get Request For JSONObject
     public void getData(){
-        RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
-                getRequestQueue();
         try {
-            String url = "http://40.78.89.252:3000/tasklist/get/abcdefg/abcdefasdasdasdg";
-
+            String url = "http://40.78.89.252:3000/user/tasklists/";
+            url+=firebaseUser.getUid();
+            Log.d("test", url)
+;
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     lstTaskList.clear();
                     for(int i=0;i<response.length();i++){
                         try {
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", (Integer) response.getJSONObject(i).get("userCap"));
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListID").toString(),"We should add description attribute to tasklist later on", 2);
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -213,7 +213,7 @@ public class TaskListActivity extends AppCompatActivity{
                 try {
                     JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), "no description attribute in backend now", 5);
+                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), 2);
                     lstTaskList.add(taskList);
                     myAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
