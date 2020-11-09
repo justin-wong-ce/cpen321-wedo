@@ -3,6 +3,7 @@ package com.example.cpen321_wedo.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,12 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 
 import com.example.cpen321_wedo.Adapter.TaskAdapter;
 import com.example.cpen321_wedo.Models.Task;
 import com.example.cpen321_wedo.R;
 
 import java.util.ArrayList;
+
+import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
+import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class TaskFragment extends Fragment {
 
@@ -31,6 +36,9 @@ public class TaskFragment extends Fragment {
         taskRecyclerView = view.findViewById(R.id.taskRecyclerView);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         taskRecyclerView.setHasFixedSize(true);
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), VERTICAL);
+        taskRecyclerView.addItemDecoration(itemDecor);
 
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(new Task("Buy eggs", "Save on Foods, UBC" , "Go to the nearest store to buy eggs"));
