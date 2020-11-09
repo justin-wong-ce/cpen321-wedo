@@ -7,7 +7,7 @@ function permutate(list) {
     var res = [];
     var recurseList = [];
     function permuteRecurse(subList, recurseList) {
-        var cur, recurseList = recurseList;
+        var cur = recurseList;
 
         for (let iter = 0; iter < subList.length; iter++) {
             cur = subList.splice(iter, 1);
@@ -36,13 +36,13 @@ async function route(inputLocs, travelMode) {
         // Make Google optimize the waypoints
         var waypoints = ["optimize:true"];
         for (let iter = 1; iter < locations.length - 1; iter++) {
-            waypoints.push(locations[iter]);
+            waypoints.push(locations[parseInt(iter, 10)]);
         }
         return client.directions({
             params: {
                 origin: locations[0],
                 destination: locations[locations.length - 1],
-                waypoints: waypoints,
+                waypoints,
                 mode: travelMode,
                 key: APIKEY,
             },
@@ -76,7 +76,7 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
         // Create waypoints list for close by coordinates
         if (closeGroup.length !== 0) {
             for (let pointIter = 0; pointIter < closeGroup.length; pointIter++) {
-                pointGroup.push(toUrlValue(closeGroup[parseInt(pointIter)]));
+                pointGroup.push(toUrlValue(closeGroup[parseInt(pointIter, 10)]));
             }
 
             let response = await route(pointGroup, "walking");
@@ -86,8 +86,8 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
         // Calls API for transit to reach second group of close by coordinates
         if (transitRouteIter < transitRoutes.length) {
 
-            let transitPoint = [toUrlValue(transitRoutes[parseInt(transitRouteIter)].routes[0].legs[0].start_location),
-            toUrlValue(transitRoutes[parseInt(transitRouteIter)].routes[0].legs[0].end_location)];
+            let transitPoint = [toUrlValue(transitRoutes[parseInt(transitRouteIter, 10)].routes[0].legs[0].start_location),
+            toUrlValue(transitRoutes[parseInt(transitRouteIter, 10)].routes[0].legs[0].end_location)];
 
             let response = await route(transitPoint, "transit");
             results.push(response.data.routes[0]);
@@ -107,26 +107,26 @@ function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThresho
 
     // Get far apart locations and groups of close-by locations
     for (let legIter = 0; legIter < route.legs.length; legIter++) {
-        if (route.legs[parseInt(legIter)].distance.value > walkDistanceThreshold) {
+        if (route.legs[parseInt(legIter, 10)].distance.value > walkDistanceThreshold) {
             if (currCloseBy.length !== 0) {
-                currCloseBy.push(route.legs[parseInt(legIter)].start_location);
+                currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
             }
             closeByGroups.push(currCloseBy);
             currCloseBy = [];
 
             // Make sure starting coordinates are added
             if (farApartCoor.length === 0) {
-                farApartCoor.push(route.legs[parseInt(legIter)].start_location);
+                farApartCoor.push(route.legs[parseInt(legIter, 10)].start_location);
             }
-            farApartCoor.push(route.legs[parseInt(legIter)].end_location);
+            farApartCoor.push(route.legs[parseInt(legIter, 10)].end_location);
         }
         else {
-            currCloseBy.push(route.legs[parseInt(legIter)].start_location);
+            currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
 
             // Make sure to add final destination to group
             if (legIter === route.length - 1) {
-                currCloseBy.push(route.legs[parseInt(legIter)].end_location);
-                closeByGroups.push([parseInt(currCloseBy)]);
+                currCloseBy.push(route.legs[parseInt(legIter, 10)].end_location);
+                closeByGroups.push([parseInt(currCloseBy, 10)]);
             }
         }
     }
@@ -137,18 +137,20 @@ async function setUpMaps(locationGraph, responsesMap, locations) {
         var neighbours = new Map();
 
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
-            if (locIter1 == locIter0) {
+            if (locIter1 === locIter0) {
                 continue;
             }
-            var response = await route([locations[parseInt(locIter0)], locations[parseInt(locIter1)]], "transit");
+            else {
+                var response = await route([locations[parseInt(locIter0, 10)], locations[parseInt(locIter1, 10)]], "transit");
 
-            if (response.data.status !== "OK") {
-                throw Error(response.data.status);
+                if (response.data.status !== "OK") {
+                    throw Error(response.data.status);
+                }
+
+                // can make entire inner for loop asynchronously later on
+                neighbours.set(locIter1.toString(), response.data.routes[0].legs[0].distance.value);
+                responsesMap.set(locIter0.toString() + locIter1.toString(), response.data);
             }
-
-            // can make entire inner for loop asynchronously later on
-            neighbours.set(locIter1.toString(), response.data.routes[0].legs[0].distance.value);
-            responsesMap.set(locIter0.toString() + locIter1.toString(), response.data);
         }
         locationGraph.set(locIter0.toString(), neighbours);
     }
@@ -184,7 +186,7 @@ async function getBestTransitRoutes(locations) {
 
     // Find best path by brute force for now, may change to more optimal algorithm later
     do {
-        let currPerm = permutations[parseInt(onPermutation)];
+        let currPerm = permutations[parseInt(onPermutation, 10)];
         onPermutation++;
         if (currPerm[currPerm.length - 1] !== "-1" || currPerm[currPerm.length - 2] !== endingLoc) {
 
@@ -192,26 +194,34 @@ async function getBestTransitRoutes(locations) {
         }
 
         var currPath = [];
-
         let currWeight = 0;
         let currLoc = startingLoc;
-        for (let iter = 0; iter < currPerm.length; iter++) {
-            if (currPerm[parseInt(iter)] === "-1" && currLoc !== endingLoc) {
-                currWeight = Number.MAX_VALUE;
-            } else if (currPerm[parseInt(iter)] !== "-1") {
-                currWeight += locationGraph.get(currLoc).get(currPerm[parseInt(iter)]);
-                currPath.push(responsesMap.get(currLoc + currPerm[parseInt(iter)]));
-            }
-            currLoc = currPerm[parseInt(iter)];
-        }
+
+        let primitives = { currWeight, currLoc };
+        tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives);
+
+        currWeight = primitives.currWeight;
+        currLoc = primitives.currLoc;
 
         if (currWeight < minDistance) {
             minDistance = currWeight;
             minPath = currPath;
         }
-    } while (onPermutation < permutations.length)
+    } while (onPermutation < permutations.length);
 
     return minPath;
+}
+
+function tspHelper(currPath, currPerm, locationGraph, responsesMap, endingLoc, primitives) {
+    for (let iter = 0; iter < currPerm.length; iter++) {
+        if (currPerm[parseInt(iter, 10)] === "-1" && primitives.currLoc !== endingLoc) {
+            primitives.currWeight = Number.MAX_VALUE;
+        } else if (currPerm[parseInt(iter, 10)] !== "-1") {
+            primitives.currWeight += locationGraph.get(primitives.currLoc).get(currPerm[parseInt(iter, 10)]);
+            currPath.push(responsesMap.get(primitives.currLoc + currPerm[parseInt(iter, 10)]));
+        }
+        primitives.currLoc = currPerm[parseInt(iter, 10)];
+    }
 }
 
 
