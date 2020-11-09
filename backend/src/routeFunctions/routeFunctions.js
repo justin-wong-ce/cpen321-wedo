@@ -93,6 +93,20 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
     return results;
 }
 
+function closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor) {
+    if (currCloseBy.length !== 0) {
+        currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
+    }
+    closeByGroups.push(currCloseBy);
+    currCloseBy = [];
+
+    // Make sure starting coordinates are added
+    if (farApartCoor.length === 0) {
+        farApartCoor.push(route.legs[parseInt(legIter, 10)].start_location);
+    }
+    farApartCoor.push(route.legs[parseInt(legIter, 10)].end_location);
+}
+
 // Groups coordinates that are closer than walkDistanceThreshold into an array
 // Returns nothing: arrays should be initialized and values are to be loaded
 // directly into the given arrays
@@ -102,17 +116,8 @@ function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThresho
     // Get far apart locations and groups of close-by locations
     for (let legIter = 0; legIter < route.legs.length; legIter++) {
         if (route.legs[parseInt(legIter, 10)].distance.value > walkDistanceThreshold) {
-            if (currCloseBy.length !== 0) {
-                currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
-            }
-            closeByGroups.push(currCloseBy);
-            currCloseBy = [];
 
-            // Make sure starting coordinates are added
-            if (farApartCoor.length === 0) {
-                farApartCoor.push(route.legs[parseInt(legIter, 10)].start_location);
-            }
-            farApartCoor.push(route.legs[parseInt(legIter, 10)].end_location);
+            closeFarSeparator(route, currCloseBy, closeByGroups, farApartCoor);
         }
         else {
             currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
@@ -133,10 +138,6 @@ async function setUpMaps(locationGraph, responsesMap, locations) {
         for (let locIter1 = 1; locIter1 < locations.length; locIter1++) {
             if (locIter1 !== locIter0) {
                 var response = await route([locations[parseInt(locIter0, 10)], locations[parseInt(locIter1, 10)]], "transit");
-
-                if (response.data.status !== "OK") {
-                    throw Error(response.data.status);
-                }
 
                 // can make entire inner for loop asynchronously later on
                 neighbours.set(locIter1.toString(), response.data.routes[0].legs[0].distance.value);
