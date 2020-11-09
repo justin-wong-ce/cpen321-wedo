@@ -1,6 +1,1 @@
-# Backend
-
-use some extra framework (download with npm):
-- mysql
-- nodemon
-- express
+CPEN 321 Wedo 2020W

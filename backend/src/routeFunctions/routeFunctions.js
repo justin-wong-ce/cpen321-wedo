@@ -208,8 +208,8 @@ async function getBestTransitRoutes(locations) {
     let noStartingLocation = [];
     let startEndLocs = {};
     setUpTspLocs(locations, noStartingLocation, startEndLocs);
-    startingLoc = startEndLocs.startingLoc;
-    endingLoc = startEndLocs.endingLoc;
+    let startingLoc = startEndLocs.startingLoc;
+    let endingLoc = startEndLocs.endingLoc;
 
     // Get array of permuations of locations
     let permutations = permutate(noStartingLocation);
