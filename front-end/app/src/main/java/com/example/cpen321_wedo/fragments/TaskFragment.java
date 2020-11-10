@@ -20,15 +20,19 @@ import java.util.ArrayList;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class TaskFragment extends Fragment {
+//<<<<<<< HEAD
+//=======
+//
+//>>>>>>> 5f7b67a229b3ec75749abfcbc9293d1321b2b59c
     private TaskAdapter taskAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        RecyclerView taskRecyclerView;
         View view = inflater.inflate(R.layout.fragment_task, container, false);
 
-        RecyclerView taskRecyclerView;
         taskRecyclerView = view.findViewById(R.id.taskRecyclerView);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         taskRecyclerView.setHasFixedSize(true);

@@ -3,7 +3,6 @@ package com.example.cpen321_wedo.models;
 import java.util.Date;
 
 public class Task {
-    private int id;
     private  String taskName;
     private String taskDescription;
     private String taskLocation;
@@ -19,7 +18,6 @@ public class Task {
     }
 
     public Task(String taskName, String taskLocation, String taskDescription) {
-
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskLocation = taskLocation;
@@ -71,6 +69,6 @@ public class Task {
         // typecast o to Complex so that we can compare data members
         Task c = (Task) o;
 
-        return this.getTaskName().equals(((Task) o).getTaskName());
+        return this.getTaskName().equals(c.getTaskName());
     }
 }

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class TaskActivity extends AppCompatActivity {
 
     private TaskFragment taskFragment;
-    private boolean isDeletePressed;
     private Menu taskMenu;
 
     @Override
@@ -47,7 +46,6 @@ public class TaskActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         taskFragment = new TaskFragment();
-        isDeletePressed = false;
 
         viewPagerAdapter.addFragment(taskFragment, "Tasks");
         viewPagerAdapter.addFragment(new UserFragment(), "Chat");
@@ -101,13 +99,12 @@ public class TaskActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                String[] reply = data.getStringArrayExtra("task");
+        if (requestCode == 1 && resultCode == RESULT_OK) {
 
-                Task task = new Task(reply[0], reply[1], reply[2]);
-                taskFragment.addTask(task);
-            }
+            String[] reply = data.getStringArrayExtra("task");
+
+            Task task = new Task(reply[0], reply[1], reply[2]);
+            taskFragment.addTask(task);
         }
     }
 
