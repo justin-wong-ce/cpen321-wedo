@@ -176,7 +176,7 @@ public class TaskListActivity extends AppCompatActivity{
                     lstTaskList.clear();
                     for(int i=0;i<response.length();i++){
                         try {
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListID").toString(),"We should add description attribute to tasklist later on", 2);
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListID").toString(),"We should add description attribute to tasklist later on");
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();

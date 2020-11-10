@@ -4,7 +4,6 @@ package com.example.cpen321_wedo.Models;
 public class TaskList {
 
     private String taskListName;
-    private int userCap;
     private String description;
     private int Thumbnail;
 
@@ -12,25 +11,19 @@ public class TaskList {
 
     }
 
-    public TaskList(String taskListName, String description, int userCap) {
+    public TaskList(String taskListName, String description) {
         this.taskListName = taskListName;
-        this.userCap = userCap;
         this.description = description;
     }
 
-    public TaskList(String taskListName, int userCap, String description, int thumbnail) {
+    public TaskList(String taskListName, String description, int thumbnail) {
         this.taskListName = taskListName;
-        this.userCap = userCap;
         this.description = description;
         Thumbnail = thumbnail;
     }
 
     public String getTaskListName() {
         return taskListName;
-    }
-
-    public int getUserCap() {
-        return userCap;
     }
 
 
@@ -44,10 +37,6 @@ public class TaskList {
 
     public void setTaskListName(String taskListName) {
         this.taskListName = taskListName;
-    }
-
-    public void setUserCap(int userCap) {
-        this.userCap = userCap;
     }
 
 
