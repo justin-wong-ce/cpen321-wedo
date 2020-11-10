@@ -55,4 +55,8 @@ public class TaskFragment extends Fragment {
     public void addTask(Task task) {
         taskAdapter.addTask(task);
     }
+
+    public void toggleItemViewType () { taskAdapter.toggleItemViewType(); }
+
+    public void deleteTasksSelected() { taskAdapter.deleteTasksSelected(); }
 }

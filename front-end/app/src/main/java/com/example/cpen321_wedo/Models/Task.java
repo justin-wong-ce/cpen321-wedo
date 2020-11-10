@@ -1,8 +1,10 @@
 package com.example.cpen321_wedo.Models;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class Task {
+    private int id;
     private  String taskName;
     private String taskDescription;
     private String taskLocation;
@@ -18,6 +20,7 @@ public class Task {
     }
 
     public Task(String taskName, String taskLocation, String taskDescription) {
+
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskLocation = taskLocation;
@@ -53,5 +56,22 @@ public class Task {
 
     public long getDateCreatedInSeconds() {
         return dateCreatedInSeconds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Task)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members
+        Task c = (Task) o;
+
+        return this.getTaskName().equals(((Task) o).getTaskName());
     }
 }

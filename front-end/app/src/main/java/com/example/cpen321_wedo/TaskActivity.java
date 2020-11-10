@@ -34,6 +34,8 @@ import java.util.ArrayList;
 public class TaskActivity extends AppCompatActivity {
 
     private TaskFragment taskFragment;
+    private boolean isDeletePressed;
+    private Menu taskMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class TaskActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         taskFragment = new TaskFragment();
+        isDeletePressed = false;
 
         viewPagerAdapter.addFragment(taskFragment, "Tasks");
         viewPagerAdapter.addFragment(new UserFragment(), "Chat");
@@ -64,6 +67,9 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.task_activity_menu, menu);
+        taskMenu = menu;
+        menu.setGroupVisible(R.id.taskDefaultMenu, true);
+        menu.setGroupVisible(R.id.taskDeleteMenu, false);
         return true;
     }
 
@@ -78,6 +84,22 @@ public class TaskActivity extends AppCompatActivity {
             case R.id.add:
                 Intent intent = new Intent(this, AddTaskActivity.class);
                 startActivityForResult(intent, 1);
+                return true;
+            case R.id.delete:
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, false);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, true);
+                taskFragment.toggleItemViewType();
+                return true;
+            case R.id.trash:
+                taskFragment.deleteTasksSelected();
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
+                taskFragment.toggleItemViewType();
+                return true;
+            case R.id.cancel_delete:
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
+                taskFragment.toggleItemViewType();
                 return true;
         }
         return false;
