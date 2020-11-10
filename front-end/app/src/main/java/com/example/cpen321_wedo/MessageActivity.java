@@ -24,7 +24,7 @@ import com.example.cpen321_wedo.adapter.MessageAdapter;
 import com.example.cpen321_wedo.models.Chat;
 import com.example.cpen321_wedo.models.User;
 import com.example.cpen321_wedo.notifications.APIService;
-import com.example.cpen321_wedo.notifications.MyClient;
+import com.example.cpen321_wedo.notifications.MyClientUtil;
 import com.example.cpen321_wedo.notifications.Data;
 import com.example.cpen321_wedo.notifications.MyResponse;
 import com.example.cpen321_wedo.notifications.Sender;
@@ -92,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
         final boolean isGroupChat = intent.getExtras().getBoolean("isGroupChat");
         ImageButton btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
-        apiService = MyClient.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = MyClientUtil.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerview_view);
         recyclerView.setHasFixedSize(true);
