@@ -27,8 +27,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String imageurl;
     private boolean isGroupChat;
 
-    private FirebaseUser firebaseUser;
-
     public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl, boolean isGroupChat){
         this.mContext = mContext;
         this.mChat = mChat;
@@ -92,7 +90,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(mChat.get(position).getSender().equals(firebaseUser.getUid())){
             return MSG_TYPE_RIGHT;

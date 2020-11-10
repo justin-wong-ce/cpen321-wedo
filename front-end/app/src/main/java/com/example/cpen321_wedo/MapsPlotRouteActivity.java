@@ -29,7 +29,7 @@ import java.util.List;
 public class MapsPlotRouteActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private static final String TAG = MapsPlotRouteActivity.class.getName();
+//    private static final String TAG = MapsPlotRouteActivity.class.getName();
     private JSONArray routesArray;
 
     // Travel mode definition
@@ -41,7 +41,7 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
     // Parameters for calling API
     private int travelMode;
     private int distanceThreshold;
-    JSONArray coordinates;
+    private JSONArray coordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,8 +140,6 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                int i = 0;
-
                 try {
                     routesArray = (JSONArray) response.get("routes");
                 } catch (JSONException e) {

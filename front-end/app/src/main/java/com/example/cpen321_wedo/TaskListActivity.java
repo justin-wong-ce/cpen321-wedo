@@ -42,16 +42,11 @@ import java.util.List;
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
 public class TaskListActivity extends AppCompatActivity{
-
-    private FloatingActionButton fab;
-
     private List<TaskList> lstTaskList;
 
     private FirebaseUser firebaseUser;
 
     private RecyclerViewAdapter myAdapter;
-    private RecyclerView myrv;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +57,12 @@ public class TaskListActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("TaskList");
 
-        fab = findViewById(R.id.fab_tasklist);
+        FloatingActionButton fab = findViewById(R.id.fab_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         lstTaskList = new ArrayList<>();
 
-        myrv = findViewById(R.id.recyclerview_id);
+        RecyclerView myrv = findViewById(R.id.recyclerview_id);
         myAdapter = new RecyclerViewAdapter(this, lstTaskList);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
@@ -207,19 +202,18 @@ public class TaskListActivity extends AppCompatActivity{
     {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
-        if(requestCode==2)
+        if(requestCode==2 && data.hasExtra("json"))
         {
-            if(data.hasExtra("json")) {
-                try {
-                    JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
+            try {
+                JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), 2);
-                    lstTaskList.add(taskList);
-                    myAdapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), 2);
+                lstTaskList.add(taskList);
+                myAdapter.notifyDataSetChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
         }
     }
 

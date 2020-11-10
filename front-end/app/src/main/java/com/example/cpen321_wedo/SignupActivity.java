@@ -33,7 +33,9 @@ import java.util.HashMap;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private MaterialEditText username,email,password;
+    private MaterialEditText username;
+    private MaterialEditText email;
+    private MaterialEditText password;
     private Button btn_register;
     private FirebaseAuth auth;
     private DatabaseReference reference;
@@ -91,7 +93,7 @@ public class SignupActivity extends AppCompatActivity {
                             hashMap.put("imageURL", "default");
 
 
-                            register_backend(userid);
+                            registerBackend(userid);
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -112,7 +114,7 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
-    private void register_backend(String userid){
+    private void registerBackend(String userid){
 
         final JSONObject object = new JSONObject();
         try {

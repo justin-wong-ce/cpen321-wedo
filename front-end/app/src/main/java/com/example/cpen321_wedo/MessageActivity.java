@@ -23,7 +23,7 @@ import com.example.cpen321_wedo.adapter.MessageAdapter;
 import com.example.cpen321_wedo.models.Chat;
 import com.example.cpen321_wedo.models.User;
 import com.example.cpen321_wedo.notifications.APIService;
-import com.example.cpen321_wedo.notifications.Client;
+import com.example.cpen321_wedo.notifications.MyClient;
 import com.example.cpen321_wedo.notifications.Data;
 import com.example.cpen321_wedo.notifications.MyResponse;
 import com.example.cpen321_wedo.notifications.Sender;
@@ -53,7 +53,6 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
 
-    private ImageButton btn_send;
     private EditText text_send;
 
     private MessageAdapter messageAdapter;
@@ -92,9 +91,9 @@ public class MessageActivity extends AppCompatActivity {
         intent = getIntent();
         userid = intent.getStringExtra("userid");
         final boolean isGroupChat = intent.getExtras().getBoolean("isGroupChat");
-        btn_send = findViewById(R.id.btn_send);
+        ImageButton btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = MyClient.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerview_view);
         recyclerView.setHasFixedSize(true);
@@ -146,12 +145,13 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
     }
 
     public void setSupportActionBar(Toolbar toolbar) {
+        Log.d("test", "This should be implemented later");
     }
 
     private void sendMessageToUser(final String sender, final String receiver, String message){
@@ -201,10 +201,10 @@ public class MessageActivity extends AppCompatActivity {
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                    if(response.code()==200){
-                                        if(response.body().success==1){
-                                            Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                                        }
+                                    if(response.code()==200 && response.body().success==1){
+
+                                        Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+
                                     }
                                 }
 
@@ -261,7 +261,7 @@ public class MessageActivity extends AppCompatActivity {
     private void readMessageInGroupChat(final String taskListID){
         mchat = new ArrayList<>();
         // TODO: I use "111" for now, don't forget to change it back later.
-        reference = FirebaseDatabase.getInstance().getReference("groupChats").child("111").child("messages");
+        reference = FirebaseDatabase.getInstance().getReference("groupChats").child(taskListID).child("messages");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshots) {
