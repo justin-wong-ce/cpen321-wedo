@@ -5,18 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,14 +21,12 @@ import com.example.cpen321_wedo.fragments.TaskFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 
 public class TaskActivity extends AppCompatActivity {
 
     private TaskFragment taskFragment;
-    private boolean isDeletePressed;
     private Menu taskMenu;
 
     @Override
@@ -54,7 +46,6 @@ public class TaskActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         taskFragment = new TaskFragment();
-        isDeletePressed = false;
 
         viewPagerAdapter.addFragment(taskFragment, "Tasks");
         viewPagerAdapter.addFragment(new UserFragment(), "Chat");
@@ -108,13 +99,12 @@ public class TaskActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                String[] reply = data.getStringArrayExtra("task");
+        if (requestCode == 1 && resultCode == RESULT_OK) {
 
-                Task task = new Task(reply[0], reply[1], reply[2]);
-                taskFragment.addTask(task);
-            }
+            String[] reply = data.getStringArrayExtra("task");
+
+            Task task = new Task(reply[0], reply[1], reply[2]);
+            taskFragment.addTask(task);
         }
     }
 

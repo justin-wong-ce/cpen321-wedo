@@ -4,7 +4,6 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -15,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cpen321_wedo.Models.Task;
 import com.example.cpen321_wedo.R;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
