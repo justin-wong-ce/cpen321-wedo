@@ -146,6 +146,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // Just print the error for now
                 Log.d("test", error.toString());
             }
         });
