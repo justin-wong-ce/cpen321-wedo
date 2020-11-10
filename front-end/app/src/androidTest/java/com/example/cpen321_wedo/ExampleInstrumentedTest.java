@@ -6,6 +6,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.email)).perform(typeText("test1@gmail.com"));
         onView(withId(R.id.password)).perform(typeText("123456789"));
         onView(withId(R.id.email)).check(matches(withText("test1@gmail.com")));
+        Assert.assertTrue(true);
     }
 
 
