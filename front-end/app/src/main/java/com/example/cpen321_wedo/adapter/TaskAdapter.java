@@ -1,5 +1,6 @@
 package com.example.cpen321_wedo.adapter;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private static final int TASK_ITEM = -1;
     private static final int TASK_ITEM_CHECKBOX = -2;
     private ArrayList<Task> tasks;
-    private ArrayList<Task> toDelete;
+    private final ArrayList<Task> toDelete;
     private int currentView;
 
     public TaskAdapter() {
@@ -45,11 +46,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_with_checkbox_item, parent, false);
         }
 
-        ViewHolder holder = new ViewHolder(view, viewType);
-
-        return holder;
+        return new ViewHolder(view, viewType);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.taskName.setText(tasks.get(position).getTaskName());
@@ -66,11 +66,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             holder.markDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (tasks.get(position).isCompleted()) {
-                        tasks.get(position).setCompleted(false);
-                    } else {
-                        tasks.get(position).setCompleted(true);
-                    }
+                    tasks.get(position).setCompleted(!tasks.get(position).isCompleted());
 
                     notifyItemChanged(position);
                 }
@@ -146,9 +142,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView taskName;
+        private final TextView taskName;
         private Button markDone;
         private CheckBox checkbox;
         public ViewHolder(@NonNull View itemView, int viewType) {

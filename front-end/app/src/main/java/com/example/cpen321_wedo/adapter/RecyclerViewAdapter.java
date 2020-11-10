@@ -1,4 +1,5 @@
 package com.example.cpen321_wedo.adapter;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,8 +22,8 @@ import java.util.Random;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
-    private Context mContext;
-    private List<TaskList> mData;
+    private final Context mContext;
+    private final List<TaskList> mData;
 
     public RecyclerViewAdapter(Context mContext, List<TaskList> mData){
         this.mContext = mContext;
@@ -67,6 +68,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 popup.inflate(R.menu.tasklist_options_memu);
                 //adding click listener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @SuppressLint("NonConstantResourceId")
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
@@ -100,16 +102,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tv_tasklist;
+        private final TextView tv_tasklist;
 //        ImageView img_tasklist_thumbnail;
-        private View cardView;
-        private View colorView;
-        private View menuView;
+        private final View cardView;
+        private final View colorView;
+        private final View menuView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            tv_tasklist = (TextView) itemView.findViewById(R.id.tasklist_title_id);
+            tv_tasklist = itemView.findViewById(R.id.tasklist_title_id);
             //img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
             cardView = itemView.findViewById(R.id.cardview_id);
             colorView = itemView.findViewById(R.id.color_view);

@@ -1,5 +1,6 @@
 package com.example.cpen321_wedo.singleton;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.LruCache;
@@ -10,10 +11,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 public class RequestQueueSingleton {
+    @SuppressLint("StaticFieldLeak")
     private static RequestQueueSingleton instance;
     private RequestQueue requestQueue;
-    private ImageLoader imageLoader;
-    private static Context ctx;
+    private final ImageLoader imageLoader;
+    private final Context ctx;
 
     private RequestQueueSingleton(Context context) {
         ctx = context;
@@ -21,8 +23,9 @@ public class RequestQueueSingleton {
 
         imageLoader = new ImageLoader(requestQueue,
                 new ImageLoader.ImageCache() {
+
                     private final LruCache<String, Bitmap>
-                            cache = new LruCache<String, Bitmap>(20);
+                            cache = new LruCache<>(20);
 
                     @Override
                     public Bitmap getBitmap(String url) {

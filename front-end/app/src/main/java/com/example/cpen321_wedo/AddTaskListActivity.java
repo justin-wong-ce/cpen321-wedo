@@ -32,7 +32,6 @@ public class AddTaskListActivity extends AppCompatActivity {
 
     private MaterialEditText tasklistName;
     private MaterialEditText tasklistDescription;
-    private Button btn_created;
 
     private FirebaseUser firebaseUser;
 
@@ -44,7 +43,7 @@ public class AddTaskListActivity extends AppCompatActivity {
 
         tasklistName = findViewById(R.id.tasklist_name);
         tasklistDescription = findViewById(R.id.tasklist_description);
-        btn_created = findViewById(R.id.btn_add_tasklist);
+        Button btn_created = findViewById(R.id.btn_add_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         btn_created.setOnClickListener(new View.OnClickListener() {

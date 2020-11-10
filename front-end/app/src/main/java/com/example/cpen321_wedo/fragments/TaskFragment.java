@@ -1,7 +1,9 @@
 package com.example.cpen321_wedo.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,16 +18,15 @@ import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class TaskFragment extends Fragment {
-//<<<<<<< HEAD
-//=======
-//
-//>>>>>>> 5f7b67a229b3ec75749abfcbc9293d1321b2b59c
+
     private TaskAdapter taskAdapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class TaskFragment extends Fragment {
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         taskRecyclerView.setHasFixedSize(true);
 
-        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), VERTICAL);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(Objects.requireNonNull(getContext()), VERTICAL);
         taskRecyclerView.addItemDecoration(itemDecor);
 
         ArrayList<Task> tasks = new ArrayList<>();

@@ -33,10 +33,10 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
     private JSONArray routesArray;
 
     // Travel mode definition
-    final static int DRIVING = 1;
-    final static int WALKING = 2;
-    final static int BIKING = 3;
-    final static int TRANSIT = 4;
+    public final static int DRIVING = 1;
+    public final static int WALKING = 2;
+    public final static int BIKING = 3;
+    public final static int TRANSIT = 4;
 
     // Parameters for calling API
     private int travelMode;

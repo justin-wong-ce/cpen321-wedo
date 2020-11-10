@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,8 +61,6 @@ public class MessageActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    private Intent intent;
-
     private String userid;
 
     private APIService apiService;
@@ -88,7 +87,7 @@ public class MessageActivity extends AppCompatActivity {
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
-        intent = getIntent();
+        Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
         final boolean isGroupChat = intent.getExtras().getBoolean("isGroupChat");
         ImageButton btn_send = findViewById(R.id.btn_send);
@@ -125,6 +124,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -133,6 +133,7 @@ public class MessageActivity extends AppCompatActivity {
                     readMessageInGroupChat(userid);
                 }else{
                     User user = snapshot.getValue(User.class);
+                    assert user != null;
                     username.setText(user.getUsername());
                     if(user.getImageURL().equals("default")){
                         profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -171,6 +172,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if(notify){
+                    assert user != null;
                     sendNotifications(receiver, user.getUsername(), msg);
                 }
 
@@ -179,7 +181,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
 
@@ -193,6 +195,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshots) {
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Token token = snapshot.getValue(Token.class);
+                    assert token != null;
                     Log.d("test", token.getToken());
                     Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
                     Sender sender = new Sender(data, token.getToken());
@@ -201,10 +204,13 @@ public class MessageActivity extends AppCompatActivity {
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                    if(response.code()==200 && response.body().success==1){
+                                    if(response.code() == 200) {
+                                        assert response.body() != null;
+                                        if (response.body().success==1) {
 
-                                        Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
 
+                                        }
                                     }
                                 }
 
@@ -232,6 +238,7 @@ public class MessageActivity extends AppCompatActivity {
                 mchat.clear();
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
                         mchat.add(chat);

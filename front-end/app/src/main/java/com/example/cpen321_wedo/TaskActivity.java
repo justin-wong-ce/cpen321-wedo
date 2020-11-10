@@ -92,6 +92,8 @@ public class TaskActivity extends AppCompatActivity {
                 taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
                 taskFragment.toggleItemViewType();
                 return true;
+            default:
+                break;
         }
         return false;
     }

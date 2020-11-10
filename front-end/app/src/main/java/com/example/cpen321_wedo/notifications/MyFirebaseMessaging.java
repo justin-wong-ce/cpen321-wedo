@@ -1,5 +1,6 @@
 package com.example.cpen321_wedo.notifications;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -20,6 +21,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 
 
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MyFirebaseMessaging extends FirebaseMessagingService {
 
     @Override
@@ -32,8 +34,11 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(firebaseUser != null && sented.equals(firebaseUser.getUid())){
-            sendNotification(remoteMessage);
+        if(firebaseUser != null) {
+            assert sented != null;
+            if (sented.equals(firebaseUser.getUid())) {
+                sendNotification(remoteMessage);
+            }
         }
     }
 
@@ -47,6 +52,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Log.d("test", user+"  "+icon+"  "+title+"  "+body);
 
 //        RemoteMessage.Notification notification = remoteMessage.getNotification();
+        assert user != null;
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle =new Bundle();
@@ -62,6 +68,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 //                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         Uri defaulSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        assert icon != null;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
                 .setSmallIcon(Integer.parseInt(icon))
                 .setContentTitle(title)

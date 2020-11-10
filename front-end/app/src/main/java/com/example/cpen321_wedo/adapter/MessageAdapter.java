@@ -22,10 +22,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public static final int MSG_TYPE_LEFT = 0;
     public static final int MSG_TYPE_RIGHT = 1;
 
-    private Context mContext;
-    private List<Chat> mChat;
-    private String imageurl;
-    private boolean isGroupChat;
+    private final Context mContext;
+    private final List<Chat> mChat;
+    private final String imageurl;
+    private final boolean isGroupChat;
 
     public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl, boolean isGroupChat){
         this.mContext = mContext;
@@ -37,19 +37,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+
         if(viewType==MSG_TYPE_RIGHT){
-            View view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_right, parent, false);
-            return new MessageAdapter.ViewHolder(view);
+            view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_right, parent, false);
         }else{
-            View view;
             if(isGroupChat){
                 view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left_group, parent, false);
 
             }else{
                 view = LayoutInflater.from(mContext).inflate(R.layout.chat_item_left, parent, false);
             }
-            return new MessageAdapter.ViewHolder(view);
         }
+        return new ViewHolder(view);
 
     }
 
@@ -73,7 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return mChat.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView show_message;
         public ImageView profile_image;
@@ -92,6 +92,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public int getItemViewType(int position) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        assert firebaseUser != null;
         if(mChat.get(position).getSender().equals(firebaseUser.getUid())){
             return MSG_TYPE_RIGHT;
         }else{

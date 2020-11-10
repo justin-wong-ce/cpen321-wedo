@@ -36,7 +36,6 @@ public class SignupActivity extends AppCompatActivity {
     private MaterialEditText username;
     private MaterialEditText email;
     private MaterialEditText password;
-    private Button btn_register;
     private FirebaseAuth auth;
     private DatabaseReference reference;
 
@@ -54,7 +53,7 @@ public class SignupActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
 
-        btn_register = findViewById(R.id.btn_register);
+        Button btn_register = findViewById(R.id.btn_register);
         auth = FirebaseAuth.getInstance();
 
         btn_register.setOnClickListener(new View.OnClickListener() {
