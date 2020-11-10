@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.Models;
+package com.example.cpen321_wedo.models;
 
 // TODO: need to modified the Tasklist class if we change backend as well
 public class TaskList {

@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.Singleton;
+package com.example.cpen321_wedo.singleton;
 
 import android.content.Context;
 import android.graphics.Bitmap;

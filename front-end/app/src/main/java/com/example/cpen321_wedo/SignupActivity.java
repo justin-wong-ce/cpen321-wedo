@@ -3,7 +3,6 @@ package com.example.cpen321_wedo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +13,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -35,10 +33,10 @@ import java.util.HashMap;
 
 public class SignupActivity extends AppCompatActivity {
 
-    MaterialEditText username,email,password;
-    Button btn_register;
-    FirebaseAuth auth;
-    DatabaseReference reference;
+    private MaterialEditText username,email,password;
+    private Button btn_register;
+    private FirebaseAuth auth;
+    private DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

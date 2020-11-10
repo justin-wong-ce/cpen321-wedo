@@ -1,8 +1,6 @@
-package com.example.cpen321_wedo.Adapter;
+package com.example.cpen321_wedo.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cpen321_wedo.MessageActivity;
-import com.example.cpen321_wedo.Models.Chat;
-import com.example.cpen321_wedo.Models.User;
+import com.example.cpen321_wedo.models.Chat;
 import com.example.cpen321_wedo.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,7 +27,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String imageurl;
     private boolean isGroupChat;
 
-    FirebaseUser firebaseUser;
+    private FirebaseUser firebaseUser;
 
     public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl, boolean isGroupChat){
         this.mContext = mContext;

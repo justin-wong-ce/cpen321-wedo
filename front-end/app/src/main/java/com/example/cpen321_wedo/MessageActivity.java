@@ -19,15 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cpen321_wedo.Adapter.MessageAdapter;
-import com.example.cpen321_wedo.Models.Chat;
-import com.example.cpen321_wedo.Models.User;
-import com.example.cpen321_wedo.Notifications.APIService;
-import com.example.cpen321_wedo.Notifications.Client;
-import com.example.cpen321_wedo.Notifications.Data;
-import com.example.cpen321_wedo.Notifications.MyResponse;
-import com.example.cpen321_wedo.Notifications.Sender;
-import com.example.cpen321_wedo.Notifications.Token;
+import com.example.cpen321_wedo.adapter.MessageAdapter;
+import com.example.cpen321_wedo.models.Chat;
+import com.example.cpen321_wedo.models.User;
+import com.example.cpen321_wedo.notifications.APIService;
+import com.example.cpen321_wedo.notifications.Client;
+import com.example.cpen321_wedo.notifications.Data;
+import com.example.cpen321_wedo.notifications.MyResponse;
+import com.example.cpen321_wedo.notifications.Sender;
+import com.example.cpen321_wedo.notifications.Token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,26 +48,26 @@ import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
-    CircleImageView profile_image;
-    TextView username;
-    FirebaseUser firebaseUser;
-    DatabaseReference reference;
+    private CircleImageView profile_image;
+    private TextView username;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference reference;
 
-    ImageButton btn_send;
-    EditText text_send;
+    private ImageButton btn_send;
+    private EditText text_send;
 
-    MessageAdapter messageAdapter;
-    List<Chat> mchat;
+    private MessageAdapter messageAdapter;
+    private List<Chat> mchat;
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
-    Intent intent;
+    private Intent intent;
 
-    String userid;
+    private String userid;
 
-    APIService apiService;
+    private APIService apiService;
 
-    boolean notify = false;
+    private boolean notify = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -210,7 +210,7 @@ public class MessageActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onFailure(Call<MyResponse> call, Throwable t) {
-
+                                    Log.d("test", "cannot send notification, there is an error");
                                 }
                             });
                 }

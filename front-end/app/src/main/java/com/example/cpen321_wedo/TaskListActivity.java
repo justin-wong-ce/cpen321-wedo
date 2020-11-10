@@ -21,14 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.example.cpen321_wedo.Adapter.RecyclerViewAdapter;
-import com.example.cpen321_wedo.Models.TaskList;
-import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
-import com.google.android.gms.tasks.Task;
+import com.example.cpen321_wedo.adapter.RecyclerViewAdapter;
+import com.example.cpen321_wedo.models.TaskList;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,14 +43,14 @@ import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
 public class TaskListActivity extends AppCompatActivity{
 
-    FloatingActionButton fab;
+    private FloatingActionButton fab;
 
-    List<TaskList> lstTaskList;
+    private List<TaskList> lstTaskList;
 
-    FirebaseUser firebaseUser;
+    private FirebaseUser firebaseUser;
 
-    RecyclerViewAdapter myAdapter;
-    RecyclerView myrv;
+    private RecyclerViewAdapter myAdapter;
+    private RecyclerView myrv;
 
 
     @Override
@@ -93,7 +91,7 @@ public class TaskListActivity extends AppCompatActivity{
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                Log.d("test", "You can swiping " + direction + ", we will implement this later");
             }
         });
 
@@ -157,6 +155,8 @@ public class TaskListActivity extends AppCompatActivity{
 
                 startActivity(mapsIntent);
                 return true;
+            default:
+                break;
         }
         return false;
     }

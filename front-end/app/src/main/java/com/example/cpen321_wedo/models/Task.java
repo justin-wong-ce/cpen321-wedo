@@ -1,7 +1,6 @@
-package com.example.cpen321_wedo.Models;
+package com.example.cpen321_wedo.models;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class Task {
     private int id;

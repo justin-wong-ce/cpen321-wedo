@@ -1,8 +1,5 @@
 package com.example.cpen321_wedo.fragments;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,14 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.cpen321_wedo.Adapter.UserAdapter;
-import com.example.cpen321_wedo.LoginActivity;
-import com.example.cpen321_wedo.Models.User;
-import com.example.cpen321_wedo.Notifications.Token;
+import com.example.cpen321_wedo.adapter.UserAdapter;
+import com.example.cpen321_wedo.models.User;
+import com.example.cpen321_wedo.notifications.Token;
 import com.example.cpen321_wedo.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +30,6 @@ import java.util.List;
 
 public class UserFragment extends Fragment {
     private RecyclerView recyclerView;
-    private UserAdapter userAdapter;
     private List<User> mUsers;
 
 
@@ -53,19 +46,9 @@ public class UserFragment extends Fragment {
         mUsers = new ArrayList<>();
         readUsers();
 
-
-updateToken(FirebaseInstanceId.getInstance().getToken());
         return view;
     }
 
-
-    private void updateToken(String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-//        Toast.makeText(getContext(), token1.toString(), Toast.LENGTH_LONG).show();
-        Log.d("test", token1.getToken());
-        reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(token1);
-    }
 
     private void readUsers(){
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -87,13 +70,14 @@ updateToken(FirebaseInstanceId.getInstance().getToken());
                     }
                 }
 
+                UserAdapter userAdapter;
                 userAdapter = new UserAdapter(getContext(), mUsers);
                 recyclerView.setAdapter(userAdapter);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
     }

@@ -51,7 +51,7 @@
         <activity android:name=".TaskListActivity" />
         <activity android:name=".SignupActivity" />
 
-        <service android:name=".Notifications.MyFirebaseIdService"
+        <service android:name=".notifications.MyFirebaseIdService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -59,7 +59,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".Notifications.MyFirebaseMessaging"
+        <service android:name=".notifications.MyFirebaseMessaging"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

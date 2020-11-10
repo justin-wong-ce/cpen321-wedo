@@ -8,40 +8,34 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.cpen321_wedo.Models.TaskList;
-import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class AddTaskListActivity extends AppCompatActivity {
 
-    MaterialEditText tasklistName;
-    MaterialEditText tasklistDescription;
-    Button btn_created;
+    private MaterialEditText tasklistName;
+    private MaterialEditText tasklistDescription;
+    private Button btn_created;
 
-    FirebaseUser firebaseUser;
-    Date date = new Date();
+    private FirebaseUser firebaseUser;
 
 
     @Override
@@ -71,6 +65,7 @@ public class AddTaskListActivity extends AppCompatActivity {
 //                    } catch (JSONException e) {
 //                        e.printStackTrace();
 //                    }
+                    Date date = new Date();
                     String taskListID = firebaseUser.getUid()+date.getTime();
                     final JSONObject object = new JSONObject();
                     postData(txt_tasklistName, txt_description, taskListID, object);
@@ -85,8 +80,8 @@ public class AddTaskListActivity extends AppCompatActivity {
 
     // Get Request For JSONObject
     public void postData(String txt_tasklistName, String txt_description, String taskListID, final JSONObject object){
-        RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
-                getRequestQueue();
+//        RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
+//                getRequestQueue();
 
         try {
             //input your API parameters

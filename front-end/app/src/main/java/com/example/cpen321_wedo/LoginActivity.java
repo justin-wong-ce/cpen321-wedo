@@ -2,7 +2,6 @@ package com.example.cpen321_wedo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,10 +17,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class LoginActivity extends AppCompatActivity {
-    MaterialEditText email,password;
-    Button btn_login;
+    private MaterialEditText email;
+    private MaterialEditText password;
+    private Button btn_login;
 
-    FirebaseAuth auth;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

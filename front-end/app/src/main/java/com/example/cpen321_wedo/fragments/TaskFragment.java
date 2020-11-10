@@ -10,21 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 
-import com.example.cpen321_wedo.Adapter.TaskAdapter;
-import com.example.cpen321_wedo.Models.Task;
+import com.example.cpen321_wedo.adapter.TaskAdapter;
+import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
 import java.util.ArrayList;
 
-import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
 
 public class TaskFragment extends Fragment {
-
-    private RecyclerView taskRecyclerView;
     private TaskAdapter taskAdapter;
 
     @Override
@@ -33,6 +28,7 @@ public class TaskFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task, container, false);
 
+        RecyclerView taskRecyclerView;
         taskRecyclerView = view.findViewById(R.id.taskRecyclerView);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         taskRecyclerView.setHasFixedSize(true);

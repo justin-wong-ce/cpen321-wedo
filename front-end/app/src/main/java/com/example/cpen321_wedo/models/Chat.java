@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.Models;
+package com.example.cpen321_wedo.models;
 
 public class Chat {
 

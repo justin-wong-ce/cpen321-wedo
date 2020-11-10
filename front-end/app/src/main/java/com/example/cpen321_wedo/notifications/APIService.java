@@ -1,8 +1,7 @@
-package com.example.cpen321_wedo.Notifications;
+package com.example.cpen321_wedo.notifications;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 

@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.Notifications;
+package com.example.cpen321_wedo.notifications;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

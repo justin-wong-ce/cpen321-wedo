@@ -1,8 +1,7 @@
-package com.example.cpen321_wedo.Adapter;
+package com.example.cpen321_wedo.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
-import com.example.cpen321_wedo.Models.TaskList;
+import com.example.cpen321_wedo.models.TaskList;
 
 import java.util.List;
 import java.util.Random;
@@ -80,6 +79,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             case R.id.menu3:
                                 //handle menu3 click
                                 break;
+                            default:
+                                break;
                         }
                         return false;
                     }
@@ -99,11 +100,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv_tasklist;
+        private TextView tv_tasklist;
 //        ImageView img_tasklist_thumbnail;
-        View cardView;
-        View colorView;
-        View menuView;
+        private View cardView;
+        private View colorView;
+        private View menuView;
 
         public MyViewHolder(View itemView) {
             super(itemView);

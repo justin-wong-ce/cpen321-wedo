@@ -1,4 +1,4 @@
-package com.example.cpen321_wedo.Notifications;
+package com.example.cpen321_wedo.notifications;
 
 public class MyResponse {
 

@@ -1,10 +1,9 @@
-package com.example.cpen321_wedo.Adapter;
+package com.example.cpen321_wedo.adapter;
 
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -13,10 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.cpen321_wedo.Models.Task;
+import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
