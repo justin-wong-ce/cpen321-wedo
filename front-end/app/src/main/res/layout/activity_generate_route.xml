@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_height="fill_parent"
+    android:layout_width="fill_parent" android:background="#ffffff">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:layout_margin="5dip"
+        android:text="Select task to do" />
+
+    <ListView android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/ListViewCatalog"
+        android:layout_width="fill_parent"
+        android:background="#ffffff"
+        android:cacheColorHint="#ffffff"
+        android:clickable="true"
+        android:choiceMode="multipleChoice"
+        android:focusable="true">
+
+    </ListView>
+    <LinearLayout android:id="@+id/LinearLayout01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:layout_margin="5dip"
+        tools:ignore="RtlHardcoded">
+
+        <Button
+            android:id="@+id/btn_generateRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proceed to Checkout" />
+    </LinearLayout>
+
+
+</LinearLayout>

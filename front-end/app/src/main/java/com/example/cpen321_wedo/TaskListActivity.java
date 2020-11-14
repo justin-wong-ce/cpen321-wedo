@@ -150,6 +150,9 @@ public class TaskListActivity extends AppCompatActivity{
 
                 startActivity(mapsIntent);
                 return true;
+            case R.id.generate_route:
+                startActivity(new Intent(TaskListActivity.this, GenerateRouteActivity.class));
+                return true;
             default:
                 break;
         }

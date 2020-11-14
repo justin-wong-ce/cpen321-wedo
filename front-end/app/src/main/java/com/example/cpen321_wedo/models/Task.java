@@ -17,6 +17,16 @@ public class Task {
         this.taskLocation = taskLocation;
     }
 
+    // This is for test:
+    public Task(String taskName, String taskLocation) {
+        this.taskName = taskName;
+        this.taskLocation = taskLocation;
+        this.completed = false;
+
+        Date date = new Date();
+        this.dateCreatedInSeconds = date.getTime();
+    }
+
     public Task(String taskName, String taskLocation, String taskDescription) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
