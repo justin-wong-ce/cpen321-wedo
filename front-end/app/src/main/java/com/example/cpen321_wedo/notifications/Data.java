@@ -1,22 +1,29 @@
 package com.example.cpen321_wedo.notifications;
 
+
 public class Data {
     private String user;
     private int icon;
     private String body;
     private String title;
     private String sented;
+    private notificationType type;
 
-    public Data(String user, int icon, String body, String title, String sented) {
+    public Data(String user, int icon, String body, String title, String sented, notificationType type) {
         this.user = user;
         this.icon = icon;
         this.body = body;
         this.title = title;
         this.sented = sented;
+        this.type = type;
     }
 
     public Data(){
 
+    }
+
+    public notificationType getType(){
+        return type;
     }
 
     public String getUser() {

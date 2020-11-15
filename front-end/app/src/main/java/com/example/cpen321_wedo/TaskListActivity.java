@@ -24,12 +24,15 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.example.cpen321_wedo.adapter.RecyclerViewAdapter;
+import com.example.cpen321_wedo.adapter.TaskListAdapter;
 import com.example.cpen321_wedo.models.TaskList;
 import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +40,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
@@ -46,7 +50,7 @@ public class TaskListActivity extends AppCompatActivity{
 
     private FirebaseUser firebaseUser;
 
-    private RecyclerViewAdapter myAdapter;
+    private TaskListAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +64,13 @@ public class TaskListActivity extends AppCompatActivity{
         FloatingActionButton fab = findViewById(R.id.fab_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        //TODO: this is low efficient
+        updateToken();
+
         lstTaskList = new ArrayList<>();
 
         RecyclerView myrv = findViewById(R.id.recyclerview_id);
-        myAdapter = new RecyclerViewAdapter(this, lstTaskList);
+        myAdapter = new TaskListAdapter(this, lstTaskList);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -105,6 +112,18 @@ public class TaskListActivity extends AppCompatActivity{
         createNotificationChannel();
     }
 
+    private void updateToken(){
+        String txt_user_email = firebaseUser.getEmail();
+        txt_user_email = txt_user_email.replaceAll("\\.", "\\_");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("token", FirebaseInstanceId.getInstance().getToken());
+        hashMap.put("userID", firebaseUser.getUid());
+        reference.child(firebaseUser.getUid()).setValue(hashMap);
+        reference.child(txt_user_email).setValue(hashMap);
+    }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -126,6 +145,8 @@ public class TaskListActivity extends AppCompatActivity{
         getMenuInflater().inflate(R.menu.memu, menu);
         return true;
     }
+
+
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -152,6 +173,9 @@ public class TaskListActivity extends AppCompatActivity{
                 return true;
             case R.id.generate_route:
                 startActivity(new Intent(TaskListActivity.this, GenerateRouteActivity.class));
+                return true;
+            case R.id.ic_chat:
+                startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
                 return true;
             default:
                 break;

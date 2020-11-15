@@ -1,16 +1,13 @@
 package com.example.cpen321_wedo;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.cpen321_wedo.adapter.GenerateTaskAdapter;
-import com.example.cpen321_wedo.adapter.RecyclerViewAdapter;
 import com.example.cpen321_wedo.models.Task;
 
 import java.util.ArrayList;

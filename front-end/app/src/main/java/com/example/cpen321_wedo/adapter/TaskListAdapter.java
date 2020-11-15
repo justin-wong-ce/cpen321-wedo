@@ -20,12 +20,12 @@ import com.example.cpen321_wedo.models.TaskList;
 import java.util.List;
 import java.util.Random;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
+public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyViewHolder> {
 
     private final Context mContext;
     private final List<TaskList> mData;
 
-    public RecyclerViewAdapter(Context mContext, List<TaskList> mData){
+    public TaskListAdapter(Context mContext, List<TaskList> mData){
         this.mContext = mContext;
         this.mData = mData;
     }

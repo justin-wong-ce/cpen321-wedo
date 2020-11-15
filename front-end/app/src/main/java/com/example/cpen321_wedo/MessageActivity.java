@@ -29,6 +29,7 @@ import com.example.cpen321_wedo.notifications.Data;
 import com.example.cpen321_wedo.notifications.MyResponse;
 import com.example.cpen321_wedo.notifications.Sender;
 import com.example.cpen321_wedo.notifications.Token;
+import com.example.cpen321_wedo.notifications.notificationType;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -198,7 +199,7 @@ public class MessageActivity extends AppCompatActivity {
                     Token token = snapshot.getValue(Token.class);
                     assert token != null;
                     Log.d("test", token.getToken());
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid, notificationType.MESSAGE);
                     Sender sender = new Sender(data, token.getToken());
 
                     apiService.sendNotification(sender)
