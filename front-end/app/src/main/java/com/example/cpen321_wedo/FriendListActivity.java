@@ -27,8 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
-
 public class FriendListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<User> mUsers;
@@ -74,7 +72,9 @@ public class FriendListActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.addFriend:
-                startActivity(new Intent(FriendListActivity.this, AddFriendActivity.class));
+                Intent intent = new Intent(FriendListActivity.this, AddUserActivity.class);
+                intent.putExtra("Friends", true);
+                startActivity(intent);
                 return true;
             case R.id.acceptRequest:
                 startActivity(new Intent(FriendListActivity.this, AcceptFriendsActivity.class));

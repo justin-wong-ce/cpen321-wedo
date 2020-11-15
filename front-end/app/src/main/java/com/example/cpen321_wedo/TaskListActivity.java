@@ -113,15 +113,10 @@ public class TaskListActivity extends AppCompatActivity{
     }
 
     private void updateToken(){
-        String txt_user_email = firebaseUser.getEmail();
-        txt_user_email = txt_user_email.replaceAll("\\.", "\\_");
-
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("token", FirebaseInstanceId.getInstance().getToken());
-        hashMap.put("userID", firebaseUser.getUid());
         reference.child(firebaseUser.getUid()).setValue(hashMap);
-        reference.child(txt_user_email).setValue(hashMap);
     }
 
     private void createNotificationChannel() {
@@ -177,6 +172,8 @@ public class TaskListActivity extends AppCompatActivity{
             case R.id.ic_chat:
                 startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
                 return true;
+            case R.id.tasklist_invitation:
+                startActivity(new Intent(TaskListActivity.this, AcceptTaskListActivity.class));
             default:
                 break;
         }
@@ -198,7 +195,9 @@ public class TaskListActivity extends AppCompatActivity{
                     lstTaskList.clear();
                     for(int i=0;i<response.length();i++){
                         try {
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListID").toString(),"We should add description attribute to tasklist later on");
+
+                            //TODO: after Justin make change to the backend please don't forget to change here!
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -234,7 +233,7 @@ public class TaskListActivity extends AppCompatActivity{
             try {
                 JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), 2);
+                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), mJsonObject.getString("taskListID"));
                 lstTaskList.add(taskList);
                 myAdapter.notifyDataSetChanged();
             } catch (JSONException e) {

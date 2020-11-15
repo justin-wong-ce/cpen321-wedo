@@ -6,20 +6,31 @@ public class TaskList {
     private String taskListName;
     private String description;
     private int Thumbnail;
+    private String taskListID;
 
     public TaskList(){
 
     }
 
-    public TaskList(String taskListName, String description) {
+    public TaskList(String taskListName, String description, String taskListID) {
         this.taskListName = taskListName;
         this.description = description;
+        this.taskListID = taskListID;
     }
 
-    public TaskList(String taskListName, String description, int thumbnail) {
+    public TaskList(String taskListName, String description, String taskListID, int thumbnail) {
         this.taskListName = taskListName;
         this.description = description;
         Thumbnail = thumbnail;
+        this.taskListID = taskListID;
+    }
+
+    public String getTaskListID() {
+        return taskListID;
+    }
+
+    public void setTaskListID(String taskListID) {
+        this.taskListID = taskListID;
     }
 
     public String getTaskListName() {

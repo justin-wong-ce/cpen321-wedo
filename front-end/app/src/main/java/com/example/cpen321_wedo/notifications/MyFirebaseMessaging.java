@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.cpen321_wedo.AcceptFriendsActivity;
+import com.example.cpen321_wedo.AcceptTaskListActivity;
 import com.example.cpen321_wedo.MessageActivity;
+import com.example.cpen321_wedo.TaskListActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -40,17 +42,18 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
             if (sented.equals(firebaseUser.getUid())) {
 
                 if(remoteMessage.getData().get("type").equals("MESSAGE")){
-                    sendNotification(remoteMessage);
+                    sendNotification(remoteMessage, new Intent(this, MessageActivity.class));
                 }else if(remoteMessage.getData().get("type").equals("ADDFRIEND")){
-                    sendNotificationAddFriends(remoteMessage);
+                    sendNotification(remoteMessage, new Intent(this, AcceptFriendsActivity.class));
+                }else if(remoteMessage.getData().get("type").equals("WORKTOGETHER")){
+                    sendNotification(remoteMessage, new Intent(this, AcceptTaskListActivity.class));
                 }
-
             }
         }
     }
 
 
-    private void sendNotification(RemoteMessage remoteMessage){
+    private void sendNotification(RemoteMessage remoteMessage, Intent intent){
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -61,7 +64,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 //        RemoteMessage.Notification notification = remoteMessage.getNotification();
         assert user != null;
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle =new Bundle();
         bundle.putString("userid", user);
         intent.putExtras(bundle);
@@ -95,51 +97,4 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         notificationManager.notify(i, builder.build());
         Log.d("test", "send notification in firebase messaging service");
     }
-
-    private void sendNotificationAddFriends(RemoteMessage remoteMessage){
-        String user = remoteMessage.getData().get("user");
-        String icon = remoteMessage.getData().get("icon");
-        String title = remoteMessage.getData().get("title");
-        String body = remoteMessage.getData().get("body");
-
-        Log.d("test", user+"  "+icon+"  "+title+"  "+body);
-
-//        RemoteMessage.Notification notification = remoteMessage.getNotification();
-        assert user != null;
-        int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, AcceptFriendsActivity.class);
-        Bundle bundle =new Bundle();
-        bundle.putString("userid", user);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
-
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "2")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setContentTitle(title)
-//                .setContentText(body)
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        Uri defaulSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        assert icon != null;
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
-                .setSmallIcon(Integer.parseInt(icon))
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setSound(defaulSound)
-                .setContentIntent(pendingIntent);
-
-        //TODO: this is where I changed when doing notification
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        int i =0;
-        if(j>0){
-            i=j;
-        }
-        Log.d("test", "i is"+i);
-        notificationManager.notify(i, builder.build());
-        Log.d("test", "send notification in firebase messaging service");
-    }
-
 }

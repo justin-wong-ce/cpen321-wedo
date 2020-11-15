@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/menu1"
-        android:title="Menu 1" />
+        android:title="add user" />
 
     <item
         android:id="@+id/menu2"

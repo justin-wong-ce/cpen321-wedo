@@ -74,7 +74,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void register (final String username, String email, String password){
+    private void register (final String username, final String email, String password){
         auth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -90,6 +90,11 @@ public class SignupActivity extends AppCompatActivity {
                             hashMap.put("id",userid);
                             hashMap.put("username", username);
                             hashMap.put("imageURL", "default");
+
+                            String email_add = email.replaceAll("\\.", "\\_");
+                            HashMap<String, String> hashMap_add = new HashMap<>();
+                            hashMap_add.put("userID",userid);
+                            FirebaseDatabase.getInstance().getReference("emailToID").child(email_add).setValue(hashMap_add);
 
 
                             registerBackend(userid);

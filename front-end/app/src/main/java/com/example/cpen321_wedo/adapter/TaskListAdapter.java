@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cpen321_wedo.AddUserActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.models.TaskList;
@@ -41,7 +42,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.tv_tasklist.setText(mData.get(position).getTaskListName());
         // if you want image here:
         //holder.img_tasklist_thumbnail.setImageResource(mData.get(position).getThumbnail());
@@ -73,7 +74,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
-                                //handle menu1 click
+                                Intent intent = new Intent(mContext, AddUserActivity.class);
+                                intent.putExtra("Friends", false);
+                                intent.putExtra("tasklistName", mData.get(position).getTaskListName());
+                                intent.putExtra("tasklistDescription", mData.get(position).getDescription());
+                                intent.putExtra("tasklistID", mData.get(position).getTaskListID());
+                                mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
                                 //handle menu2 click

@@ -23,4 +23,9 @@
         android:title="Route"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/tasklist_invitation"
+        android:title="Tasklist Invitation"
+        app:showAsAction="never"/>
+
 </menu>

@@ -27,19 +27,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddFriendActivity extends AppCompatActivity {
+public class AddUserActivity extends AppCompatActivity {
 
     private TextView user_email;
     private FirebaseUser firebaseUser;
     private APIService apiService;
+    boolean friends;
+    String taskListName;
+    String taskListDescription;
+    String taskListID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,16 @@ public class AddFriendActivity extends AppCompatActivity {
         user_email = findViewById(R.id.user_email);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         apiService = MyClientUtil.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        friends = getIntent().getBooleanExtra("Friends", true);
+
+        if(!friends){
+            taskListName = getIntent().getStringExtra("tasklistName");
+            taskListDescription = getIntent().getStringExtra("tasklistDescription");
+            taskListID = getIntent().getStringExtra("tasklistID");
+        }
+
+        TextView title = findViewById(R.id.addingAttribute);
+        title.setText(friends?"Add Friend":"Add Other User to this TaskList");
 
         Button btn_add = findViewById(R.id.btn_add_user);
 
@@ -59,19 +71,39 @@ public class AddFriendActivity extends AppCompatActivity {
                 if(!TextUtils.isEmpty(txt_user_email)){
                     //TODO: write to the online database here
 
-                    AddFriend(txt_user_email);
-
-                    sendNotifications(txt_user_email, "Fuck");
-
-
-//                    finish();
+                    getUserID(txt_user_email);
                 }
             }
         });
     }
 
-    private void AddFriend(String txt_user_email){
-        Log.d("test", "btn pressed");
+    private void getUserID(final String email){
+        String newemail = email.replaceAll("\\.", "\\_");
+        FirebaseDatabase.getInstance().getReference("emailToID").child(newemail).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshots) {
+                String userID = "";
+                for(DataSnapshot snapshot: snapshots.getChildren()){
+
+                    userID = snapshot.getValue(String.class);
+                }
+
+                if(friends){
+                    AddFriend(email, userID);
+                }else{
+                    AddTaskList(userID);
+                }
+                sendNotifications(userID, email);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void AddFriend(String txt_user_email, String userID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, String> hashMap = new HashMap<>();
@@ -79,18 +111,25 @@ public class AddFriendActivity extends AppCompatActivity {
         hashMap.put("username", txt_user_email);
         hashMap.put("imageURL", "default");
 
-        txt_user_email = txt_user_email.replaceAll("\\.", "\\_");
-        Log.d("test", txt_user_email);
+        reference.child("FriendRequest").child(userID).child(firebaseUser.getUid()).setValue(hashMap);
+    }
 
-        reference.child("FriendRequest").child(txt_user_email).child(firebaseUser.getUid()).setValue(hashMap);
+    private void AddTaskList(String userID){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("id", taskListID);
+        hashMap.put("username", firebaseUser.getEmail());
+        hashMap.put("tasklistName", taskListName);
+        hashMap.put("tasklistDescription", taskListDescription);
+
+        reference.child("TaskListRequest").child(userID).child(taskListID).setValue(hashMap);
     }
 
 
-    private void sendNotifications(String receiver, final String username){
+    private void sendNotifications(final String receiver, final String username){
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
 
-        receiver = receiver.replaceAll("\\.", "\\_");
-        Log.d("test", receiver);
         Query query = tokens.orderByKey().equalTo(receiver);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -99,8 +138,12 @@ public class AddFriendActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Token token = snapshot.getValue(Token.class);
                     assert token != null;
-
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+" send you a friend request ", "New Message", token.getUserID(), notificationType.ADDFRIEND);
+                    Data data;
+                    if(friends){
+                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+" send you a friend request ", "Friend Request", receiver, notificationType.ADDFRIEND);
+                    }else{
+                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, firebaseUser.getEmail()+" ask you to work together on a tasklist ", "Work Together", receiver, notificationType.WORKTOGETHER);
+                    }
                     Sender sender = new Sender(data, token.getToken());
                     Log.d("test", token.getToken());
                     apiService.sendNotification(sender)
@@ -110,7 +153,7 @@ public class AddFriendActivity extends AppCompatActivity {
                                     if(response.code() == 200) {
                                         assert response.body() != null;
                                         if (response.body().success==1) {
-                                            Toast.makeText(AddFriendActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AddUserActivity.this, "Not sure if it's failed or succeed", Toast.LENGTH_SHORT).show();
 
                                         }
                                     }
