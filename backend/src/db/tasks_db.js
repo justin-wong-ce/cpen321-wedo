@@ -5,9 +5,10 @@ const recManager = require("./recommendationsManager");
 var taskFunctions = {
     createTask(entry, callback) {
         userFunctions.checkPermission(entry.userID, entry.taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
+            // ADD MAX # TASKS PER LIST CHECK HERE
             else {
                 entry.createdBy = entry.userID;
                 delete entry.userID;
@@ -15,7 +16,6 @@ var taskFunctions = {
                 // ************************************
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
-
                 database.insert("TaskHasTaskList", entry, (err, results) => {
                     callback(err, results, true);
                 });
@@ -32,17 +32,18 @@ var taskFunctions = {
                 let userID = entry.userID;
                 delete entry.userID;
 
-                database.update("TaskHasTaskList", entry, "taskID = " + entry.taskID, (err, results) => {
-                    if (err || entry.done !== true) {
-                        callback(err, results, true);
-                    }
+                database.update("TaskHasTaskList", entry, { taskID: entry.taskID }, (err, results) => {
+                    // if (err || entry.done !== true) {
+                    //     callback(err, results, true);
+                    // }
+                    // // Increment user's "like" factor to the taskType (by rating) if task is done
+                    // else {
+                    //     recManager.updatePreferences(userID, entry.taskType, entry.taskRating, (err, results) => {
+                    //         callback(err, results);
+                    //     });
+                    // }
 
-                    // Increment user's "like" factor to the taskType (by rating) if task is done
-                    else {
-                        recManager.updatePreferences(userID, entry.taskType, entry.taskRating, (err, results) => {
-                            callback(err, results);
-                        });
-                    }
+                    callback(err, results, true);
                 });
             }
         });
@@ -57,7 +58,7 @@ var taskFunctions = {
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
 
-                database.delete("TaskHasTaskList", "taskID = " + taskID, (err, results) => {
+                database.delete("TaskHasTaskList", taskID, (err, results) => {
                     callback(err, results, true);
                 });
             }

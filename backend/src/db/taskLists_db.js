@@ -1,5 +1,5 @@
 const database = require("./databaseInterface");
-const recManager = require("./recommendationsManager");
+// const recManager = require("./recommendationsManager");
 const userFunctions = require("./users_db");
 
 var taskListFunctions = {
@@ -9,8 +9,10 @@ var taskListFunctions = {
                 callback(null, null, false);
             }
             else {
-                database.get("*", "TaskHasTaskList", "tasklistID = " + taskListID + " + ORDER BY priorityLevel DESC", (err, results) => {
-                    var list = recManager.sortTasks(results, userID);
+                database.get("*", "TaskHasTaskList", { taskListID } + " ORDER BY priorityLevel DESC", (err, results) => {
+                    // var list = recManager.sortTasks(results, userID);
+                    // callback(err, list, true);
+
                     callback(err, results, true);
                 });
             }
@@ -24,11 +26,7 @@ var taskListFunctions = {
             }
 
             else {
-                var hasAccessObj = {
-                    userID: entry.userID,
-                    taskListID: entry.taskListID
-                };
-                database.insert("HasAccess", hasAccessObj, (err, results) => {
+                database.insert("HasAccess", { userID: entry.userID, taskListID: entry.taskListID }, (err, results) => {
                     callback(err, results);
                 });
             }
@@ -44,7 +42,7 @@ var taskListFunctions = {
                     entry.userID = entry.newOwner;
                     delete entry["newOwner"];
                 }
-                database.update("TaskListWithOwner", entry, "taskListID = " + entry.taskListID, (err, results) => {
+                database.update("TaskListWithOwner", entry, { taskListID: entry.taskListID }, (err, results) => {
                     callback(err, results, true);
                 });
             }
@@ -61,7 +59,7 @@ var taskListFunctions = {
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
 
-                database.delete("TaskListWithOwner", "taskListID = " + taskListID, (err, results) => {
+                database.delete("TaskListWithOwner", { taskListID }, (err, results) => {
                     callback(err, results, true);
                 });
             }
@@ -77,11 +75,7 @@ var taskListFunctions = {
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
 
-                var hasAccessObj = {
-                    userID: addUser,
-                    taskListID
-                };
-                database.insert("HasAccess", hasAccessObj, (err, results) => {
+                database.insert("HasAccess", { userID: addUser, taskListID }, (err, results) => {
                     callback(err, results, true);
                 });
             }
@@ -96,13 +90,7 @@ var taskListFunctions = {
                 // ************************************
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
-
-
-                var hasAccessObj = {
-                    userID: toKick,
-                    taskListID
-                };
-                database.delete("HasAccess", hasAccessObj, (err, results) => {
+                database.delete("HasAccess", { userID: toKick, taskListID }, (err, results) => {
                     callback(err, results, true);
                 });
             }

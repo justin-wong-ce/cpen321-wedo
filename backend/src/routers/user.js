@@ -8,16 +8,14 @@ const recManager = require("../db/recommendationsManager");
 //
 // Body JSON attribute types
 // typeof body.userID == "string"
-// typeof body.token == "string"
 //
 // Optional attributes: ***************************************************
 // typeof body.isPremium == "boolean"
 
 router.post("/user/new", (req, res) => {
-    // TODO:
-    const user = req.body;
-
-    userFunctions.registerUser(user, (err, results) => {
+    console.log(req.body);
+    const entry = req.body;
+    userFunctions.registerUser(entry, (err, results) => {
         routerHelper.callbackHandler(err, results, res);
     });
 });
@@ -52,7 +50,7 @@ router.put("/user/premium", async (req, res) => {
 
 // Get taskLists of tasklists that the user has access to
 //
-// Param types
+// Param types 
 // typeof body.userID == "string"
 router.get("/user/tasklists/:userID", async (req, res) => {
     const userID = req.params.userID;

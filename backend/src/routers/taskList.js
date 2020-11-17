@@ -29,6 +29,7 @@ router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
 // typeof body.taskListDescription == "string"
 router.post("/tasklist/create", (req, res) => {
     const newTaskList = req.body;
+    console.log(newTaskList)
     taskListFunctions.createTaskList(newTaskList, (err, results) => {
         routerHelper.callbackHandler(err, results, res);
     });

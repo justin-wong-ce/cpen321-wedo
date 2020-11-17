@@ -7,7 +7,6 @@ const pushnotification = require("./routers/pushNotification");
 
 const socketio = require("socket.io");
 const http = require("http");
-const port = process.env.PORT || 3000;
 
 const app = express();
 const server = http.createServer(app);
@@ -39,4 +38,4 @@ io.on("connection", (socket) => {
     });
 });
 
-server.listen(port);
+module.exports = { app, server };

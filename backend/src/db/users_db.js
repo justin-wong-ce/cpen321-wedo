@@ -1,29 +1,30 @@
 const database = require("./databaseInterface");
+const taskListFunctions = require("./taskLists_db");
 
 var userFunctions = {
     checkPermission(userID, taskListID, callback) {
-        database.get("taskListID", "HasAccess", "userID = " + userID + ", taskListID = " + taskListID, (err, results) => {
+        database.get("taskListID", "HasAccess", { userID, taskListID }, "", (err, results) => {
             callback(err, results);
         });
     },
     isListOwner(userID, taskListID, callback) {
-        database.get("taskListID", "taskListWithOwner", "userID = " + userID + ", taskListID = " + taskListID, (err, results) => {
+        database.get("taskListID", "TaskListWithOwner", { userID, taskListID }, "", (err, results) => {
             callback(err, results);
         });
     },
     updateToken(userID, token, callback) {
-
-        database.update("Users", "token = " + token, "userID = " + userID, (err, results) => {
+        database.update("Users", { token }, { userID }, (err, results) => {
             callback(err, results);
         });
     },
     updatePremium(userID, premiumStatus, callback) {
-        database.update("Users", "isPremium = " + premiumStatus, "userID = " + userID, (err, results) => {
+        database.update("Users", { isPremium: premiumStatus }, { userID }, (err, results) => {
             callback(err, results);
         });
     },
+    // RETURN TASKLIST BODY AS WELL! (join/second db call)
     getUserLists(userID, callback) {
-        database.get("*", "HasAccess", "userID = " + userID, (err, results) => {
+        database.getJoin("*", "HasAccess", "TaskListWithOwner", "HasAccess.userID = " + userID + " AND HasAccess.taskListID = TaskListWithOwner.taskListID", (err, results) => {
             callback(err, results);
         });
     },
