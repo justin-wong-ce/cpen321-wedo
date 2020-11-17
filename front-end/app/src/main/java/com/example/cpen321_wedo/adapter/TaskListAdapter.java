@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -103,6 +104,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     @Override
     public int getItemCount() {
+        Log.d("test", mData.size()+"");
         return mData.size();
     }
 
