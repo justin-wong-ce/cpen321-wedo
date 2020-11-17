@@ -1,6 +1,5 @@
 const { app, server } = require("../src/server");
 const request = require("supertest");
-const sampleReturnRoute = require("../samples");
 
 jest.setTimeout(10000);
 
@@ -105,7 +104,7 @@ describe("Integration test 1: User doing a bunch of task and task list operation
 describe("Integration test 2: Getting a route", () => {
     it("Get the transit route", () => {
         return request(app)
-            .post("/routes/driving")
+            .post("/routes/transit")
             .send({
                 locations: ["ubc life building, vancouver",
                     "ubc bus loop, vancouver",
@@ -117,7 +116,7 @@ describe("Integration test 2: Getting a route", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toStrictEqual(sampleReturnRoute);
+                expect(res.body.length !== 0).toStrictEqual(true);
             });
     });
 });
