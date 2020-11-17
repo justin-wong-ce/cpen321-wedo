@@ -44,6 +44,7 @@ public class AcceptTaskListRequestAdapter extends RecyclerView.Adapter<AcceptTas
         return new AcceptTaskListRequestAdapter.MyViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull final AcceptTaskListRequestAdapter.MyViewHolder holder, int position) {
         final TaskListRequest taskListRequest = mData.get(position);

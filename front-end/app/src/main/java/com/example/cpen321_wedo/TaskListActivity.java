@@ -33,6 +33,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,22 +183,25 @@ public class TaskListActivity extends AppCompatActivity{
     }
 
 
-
     // Get Request For JSONObject
     public void getData(){
         try {
             String url = "http://40.78.89.252:3000/user/tasklists/";
+            url+="\"";
             url+=firebaseUser.getUid();
-            Log.d("test", url)
+            Log.d("test", url);
+            url+="\"";
 ;
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     lstTaskList.clear();
+
                     for(int i=0;i<response.length();i++){
                         try {
 
                             //TODO: after Justin make change to the backend please don't forget to change here!
+
                             TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {

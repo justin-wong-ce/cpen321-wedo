@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".TaskActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".login.LoginActivity" />
         <activity android:name=".TaskListActivity" />
         <activity android:name=".SignupActivity" />
 
