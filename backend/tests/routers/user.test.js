@@ -133,7 +133,7 @@ describe("Update user premium status tests", () => {
             .put("/user/premium")
             .send({ userID: 123456789, token: 123123 })
             .then(res => {
-                expect(res.status).toStrictEqual(400);
+                expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });
             });
     });
