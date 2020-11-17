@@ -52,7 +52,7 @@ public class AddTaskListActivity extends AppCompatActivity {
                 String txt_tasklistName = tasklistName.getText().toString();
                 String txt_description = tasklistDescription.getText().toString();
                 if(TextUtils.isEmpty(txt_tasklistName) || TextUtils.isEmpty(txt_description)){
-                    Toast.makeText(getApplicationContext(), "pls don't left name or description to be empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Must fill required fields", Toast.LENGTH_LONG).show();
                 }else{
 //                    postData(txt_tasklistName, txt_description);
                     Intent intent=new Intent();

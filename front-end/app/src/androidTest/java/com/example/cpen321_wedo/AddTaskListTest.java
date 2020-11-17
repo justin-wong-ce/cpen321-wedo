@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeoutException;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -32,76 +31,65 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
 /**
- * Test of the Login use case
+ * Test of the add task list use case
  */
-@RunWith(AndroidJUnit4.class)
-public class LoginTest {
 
+@RunWith(AndroidJUnit4.class)
+public class AddTaskListTest {
     @Rule
-    public ActivityScenarioRule<LoginActivity> activityRule =
-            new ActivityScenarioRule<>(LoginActivity.class);
+    public ActivityScenarioRule<TaskListActivity> activityRule =
+            new ActivityScenarioRule<>(TaskListActivity.class);
 
     private View decorView;
 
     @Before
     public void setUp() {
-        activityRule.getScenario().onActivity(new ActivityScenario.ActivityAction<LoginActivity>() {
+        activityRule.getScenario().onActivity(new ActivityScenario.ActivityAction<TaskListActivity>() {
             @Override
-            public void perform(LoginActivity activity) {
+            public void perform(TaskListActivity activity) {
                 decorView = activity.getWindow().getDecorView();
             }
         });
     }
 
-
-
     @Test
-    public void checkLogin() {
-        onView(isRoot()).perform(waitDisplayed(R.id.loginActivityLayout, 5000));
-        onView(withId(R.id.loginActivityLayout)).check(matches(isDisplayed()));
+    public void checkAddTaskList() {
+        onView(isRoot()).perform(waitDisplayed(R.id.taskListActivityLayout, 5000));
+        onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.btn_login)).check(matches(not(isEnabled())));
+        onView(withId(R.id.fab_tasklist)).perform(click());
 
-        onView(withId(R.id.email)).perform(typeText("test1gmail.com"));
-        onView(withId(R.id.btn_login)).check(matches(not(isEnabled())));
-
-        onView(withId(R.id.password)).perform(typeText("whatever"));
-        onView(withId(R.id.btn_login)).check(matches(isEnabled()));
-
-        onView(withId(R.id.btn_login)).perform(click());
-        onView(withText("Please enter a valid email")).inRoot(withDecorView(not(decorView)))
-                .check(matches(isDisplayed()));
-
-        onView(withId(R.id.email)).perform(clearText());
-        onView(withId(R.id.email)).perform(typeText("1@gmail.com"));
-        onView(withId(R.id.btn_login)).check(matches(isEnabled()));
-        onView(withId(R.id.btn_login)).perform(click());
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        onView(withText("Login failed")).inRoot(withDecorView(not(decorView)))
-                .check(matches(isDisplayed()));
-
-        onView(withId(R.id.password)).perform(clearText());
-        onView(withId(R.id.password)).perform(typeText("123456789"));
-        onView(withId(R.id.btn_login)).check(matches(isEnabled()));
-
-        onView(withId(R.id.btn_login)).perform(click());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
-    }
 
+        onView(withId(R.id.addTaskListLayout)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.btn_add_tasklist)).perform(click());
+        onView(withText("Must fill required fields")).inRoot(withDecorView(not(decorView)))
+                .check(matches(isDisplayed()));
+
+        onView(withId(R.id.tasklist_name)).perform(typeText("test2"));
+        onView(withId(R.id.tasklist_description)).perform(typeText("Description"));
+
+        onView(withId(R.id.btn_add_tasklist)).perform(click());
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
+
+        onView(allOf(withId(R.id.tasklist_title_id), withText("test2"))).check(matches(isDisplayed()));
+    }
 
     /**
      * Perform action of waiting for a specific view id to be displayed.
