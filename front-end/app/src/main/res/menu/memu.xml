@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/ic_chat"
+        android:icon="@drawable/ic_chat"
+        android:title="Add"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/logout"
         android:title="Logout"
         app:showAsAction="never"/>
@@ -10,6 +16,16 @@
     <item
         android:id="@+id/map_test"
         android:title="Map"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/generate_route"
+        android:title="Route"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/tasklist_invitation"
+        android:title="Tasklist Invitation"
         app:showAsAction="never"/>
 
 </menu>

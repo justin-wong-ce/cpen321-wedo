@@ -3,15 +3,20 @@ package com.example.cpen321_wedo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,14 +26,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 public class SignupActivity extends AppCompatActivity {
 
-    MaterialEditText username,email,password;
-    Button btn_register;
-    FirebaseAuth auth;
-    DatabaseReference reference;
+    private MaterialEditText username;
+    private MaterialEditText email;
+    private MaterialEditText password;
+    private FirebaseAuth auth;
+    private DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +53,7 @@ public class SignupActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
 
-        btn_register = findViewById(R.id.btn_register);
+        Button btn_register = findViewById(R.id.btn_register);
         auth = FirebaseAuth.getInstance();
 
         btn_register.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +74,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void register (final String username, String email, String password){
+    private void register (final String username, final String email, String password){
         auth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -81,6 +90,14 @@ public class SignupActivity extends AppCompatActivity {
                             hashMap.put("id",userid);
                             hashMap.put("username", username);
                             hashMap.put("imageURL", "default");
+
+                            String email_add = email.replaceAll("\\.", "\\_");
+                            HashMap<String, String> hashMap_add = new HashMap<>();
+                            hashMap_add.put("userID",userid);
+                            FirebaseDatabase.getInstance().getReference("emailToID").child(email_add).setValue(hashMap_add);
+
+
+                            registerBackend(userid);
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -99,5 +116,37 @@ public class SignupActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void registerBackend(String userid){
+
+        final JSONObject object = new JSONObject();
+        try {
+            object.put("userID",userid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String url = "http://40.78.89.252:3000/user/new";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(getApplicationContext(), "successfully add user", Toast.LENGTH_LONG).show();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "description has to be integer rn for testing", Toast.LENGTH_LONG).show();
+                    Log.d("testing", error.toString());
+                }
+            });
+
+            RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

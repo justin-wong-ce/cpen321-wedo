@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,15 +20,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cpen321_wedo.Adapter.MessageAdapter;
-import com.example.cpen321_wedo.Models.Chat;
-import com.example.cpen321_wedo.Models.User;
-import com.example.cpen321_wedo.Notifications.APIService;
-import com.example.cpen321_wedo.Notifications.Client;
-import com.example.cpen321_wedo.Notifications.Data;
-import com.example.cpen321_wedo.Notifications.MyResponse;
-import com.example.cpen321_wedo.Notifications.Sender;
-import com.example.cpen321_wedo.Notifications.Token;
+import com.example.cpen321_wedo.adapter.MessageAdapter;
+import com.example.cpen321_wedo.models.Chat;
+import com.example.cpen321_wedo.models.User;
+import com.example.cpen321_wedo.notifications.APIService;
+import com.example.cpen321_wedo.notifications.MyClientUtil;
+import com.example.cpen321_wedo.notifications.Data;
+import com.example.cpen321_wedo.notifications.MyResponse;
+import com.example.cpen321_wedo.notifications.Sender;
+import com.example.cpen321_wedo.notifications.Token;
+import com.example.cpen321_wedo.notifications.notificationType;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,26 +50,23 @@ import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
-    CircleImageView profile_image;
-    TextView username;
-    FirebaseUser firebaseUser;
-    DatabaseReference reference;
+    private CircleImageView profile_image;
+    private TextView username;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference reference;
 
-    ImageButton btn_send;
-    EditText text_send;
+    private EditText text_send;
 
-    MessageAdapter messageAdapter;
-    List<Chat> mchat;
+    private MessageAdapter messageAdapter;
+    private List<Chat> mchat;
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
-    Intent intent;
+    private String userid;
 
-    String userid;
+    private APIService apiService;
 
-    APIService apiService;
-
-    boolean notify = false;
+    private boolean notify = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -89,12 +88,12 @@ public class MessageActivity extends AppCompatActivity {
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
-        intent = getIntent();
+        Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
         final boolean isGroupChat = intent.getExtras().getBoolean("isGroupChat");
-        btn_send = findViewById(R.id.btn_send);
+        ImageButton btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = MyClientUtil.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerview_view);
         recyclerView.setHasFixedSize(true);
@@ -126,6 +125,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -134,6 +134,7 @@ public class MessageActivity extends AppCompatActivity {
                     readMessageInGroupChat(userid);
                 }else{
                     User user = snapshot.getValue(User.class);
+                    assert user != null;
                     username.setText(user.getUsername());
                     if(user.getImageURL().equals("default")){
                         profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -146,12 +147,14 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Just print the error for now
+                Log.d("test", error.toString());
             }
         });
     }
 
     public void setSupportActionBar(Toolbar toolbar) {
+        Log.d("test", "This should be implemented later");
     }
 
     private void sendMessageToUser(final String sender, final String receiver, String message){
@@ -171,6 +174,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if(notify){
+                    assert user != null;
                     sendNotifications(receiver, user.getUsername(), msg);
                 }
 
@@ -179,7 +183,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
 
@@ -193,24 +197,28 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshots) {
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Token token = snapshot.getValue(Token.class);
+                    assert token != null;
                     Log.d("test", token.getToken());
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", userid, notificationType.MESSAGE);
                     Sender sender = new Sender(data, token.getToken());
 
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                    if(response.code()==200){
-                                        if(response.body().success==1){
+                                    if(response.code() == 200) {
+                                        assert response.body() != null;
+                                        if (response.body().success==1) {
+
                                             Toast.makeText(MessageActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+
                                         }
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<MyResponse> call, Throwable t) {
-
+                                    Log.d("test", "cannot send notification, there is an error");
                                 }
                             });
                 }
@@ -218,7 +226,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
     }
@@ -232,6 +240,7 @@ public class MessageActivity extends AppCompatActivity {
                 mchat.clear();
                 for(DataSnapshot snapshot: snapshots.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
                         mchat.add(chat);
@@ -244,7 +253,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
     }
@@ -261,7 +270,7 @@ public class MessageActivity extends AppCompatActivity {
     private void readMessageInGroupChat(final String taskListID){
         mchat = new ArrayList<>();
         // TODO: I use "111" for now, don't forget to change it back later.
-        reference = FirebaseDatabase.getInstance().getReference("groupChats").child("111").child("messages");
+        reference = FirebaseDatabase.getInstance().getReference("groupChats").child(taskListID).child("messages");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshots) {
@@ -298,7 +307,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", error.toString());
             }
         });
     }

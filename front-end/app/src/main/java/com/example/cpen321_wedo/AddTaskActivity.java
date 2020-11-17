@@ -11,8 +11,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
-
 public class AddTaskActivity extends AppCompatActivity {
 
     private EditText taskName;
@@ -44,7 +42,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 String loc = location.getText().toString();
                 String desc = description.getText().toString();
 
-                if (task_name.equals(null) || task_name.equals("")) {
+                if (task_name == null || task_name.equals("")) {
                     Toast.makeText(AddTaskActivity.this, "Please fill the required fields", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent();

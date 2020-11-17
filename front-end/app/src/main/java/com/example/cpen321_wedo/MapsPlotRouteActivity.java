@@ -16,7 +16,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
@@ -30,19 +29,19 @@ import java.util.List;
 public class MapsPlotRouteActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private static final String TAG = MapsPlotRouteActivity.class.getName();
+//    private static final String TAG = MapsPlotRouteActivity.class.getName();
     private JSONArray routesArray;
 
     // Travel mode definition
-    final static int DRIVING = 1;
-    final static int WALKING = 2;
-    final static int BIKING = 3;
-    final static int TRANSIT = 4;
+    public final static int DRIVING = 1;
+    public final static int WALKING = 2;
+    public final static int BIKING = 3;
+    public final static int TRANSIT = 4;
 
     // Parameters for calling API
     private int travelMode;
     private int distanceThreshold;
-    JSONArray coordinates;
+    private JSONArray coordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,8 +140,6 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, body, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                int i = 0;
-
                 try {
                     routesArray = (JSONArray) response.get("routes");
                 } catch (JSONException e) {

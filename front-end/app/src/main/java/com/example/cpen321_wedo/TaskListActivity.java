@@ -21,17 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.example.cpen321_wedo.Adapter.RecyclerViewAdapter;
-import com.example.cpen321_wedo.Models.TaskList;
-import com.example.cpen321_wedo.Singleton.RequestQueueSingleton;
-import com.google.android.gms.tasks.Task;
+import com.example.cpen321_wedo.adapter.TaskListAdapter;
+import com.example.cpen321_wedo.models.TaskList;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,21 +40,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
 public class TaskListActivity extends AppCompatActivity{
+    private List<TaskList> lstTaskList;
 
-    FloatingActionButton fab;
+    private FirebaseUser firebaseUser;
 
-    List<TaskList> lstTaskList;
-
-    FirebaseUser firebaseUser;
-
-    RecyclerViewAdapter myAdapter;
-    RecyclerView myrv;
-
+    private TaskListAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +61,16 @@ public class TaskListActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("TaskList");
 
-        fab = findViewById(R.id.fab_tasklist);
+        FloatingActionButton fab = findViewById(R.id.fab_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //TODO: this is low efficient
+        updateToken();
 
         lstTaskList = new ArrayList<>();
 
-        myrv = findViewById(R.id.recyclerview_id);
-        myAdapter = new RecyclerViewAdapter(this, lstTaskList);
+        RecyclerView myrv = findViewById(R.id.recyclerview_id);
+        myAdapter = new TaskListAdapter(this, lstTaskList);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -93,7 +93,7 @@ public class TaskListActivity extends AppCompatActivity{
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                Log.d("test", "You can swiping " + direction + ", we will implement this later");
             }
         });
 
@@ -110,6 +110,13 @@ public class TaskListActivity extends AppCompatActivity{
         });
 
         createNotificationChannel();
+    }
+
+    private void updateToken(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("token", FirebaseInstanceId.getInstance().getToken());
+        reference.child(firebaseUser.getUid()).setValue(hashMap);
     }
 
     private void createNotificationChannel() {
@@ -134,6 +141,8 @@ public class TaskListActivity extends AppCompatActivity{
         return true;
     }
 
+
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -157,6 +166,16 @@ public class TaskListActivity extends AppCompatActivity{
 
                 startActivity(mapsIntent);
                 return true;
+            case R.id.generate_route:
+                startActivity(new Intent(TaskListActivity.this, GenerateRouteActivity.class));
+                return true;
+            case R.id.ic_chat:
+                startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
+                return true;
+            case R.id.tasklist_invitation:
+                startActivity(new Intent(TaskListActivity.this, AcceptTaskListActivity.class));
+            default:
+                break;
         }
         return false;
     }
@@ -165,18 +184,20 @@ public class TaskListActivity extends AppCompatActivity{
 
     // Get Request For JSONObject
     public void getData(){
-        RequestQueue queue = RequestQueueSingleton.getInstance(this.getApplicationContext()).
-                getRequestQueue();
         try {
-            String url = "http://40.78.89.252:3000/tasklist/get/abcdefg/abcdefasdasdasdg";
-
+            String url = "http://40.78.89.252:3000/user/tasklists/";
+            url+=firebaseUser.getUid();
+            Log.d("test", url)
+;
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     lstTaskList.clear();
                     for(int i=0;i<response.length();i++){
                         try {
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", (Integer) response.getJSONObject(i).get("userCap"));
+
+                            //TODO: after Justin make change to the backend please don't forget to change here!
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -207,19 +228,18 @@ public class TaskListActivity extends AppCompatActivity{
     {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
-        if(requestCode==2)
+        if(requestCode==2 && data.hasExtra("json"))
         {
-            if(data.hasExtra("json")) {
-                try {
-                    JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
+            try {
+                JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                    TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), "no description attribute in backend now", 5);
-                    lstTaskList.add(taskList);
-                    myAdapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), mJsonObject.getString("taskListID"));
+                lstTaskList.add(taskList);
+                myAdapter.notifyDataSetChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
         }
     }
 

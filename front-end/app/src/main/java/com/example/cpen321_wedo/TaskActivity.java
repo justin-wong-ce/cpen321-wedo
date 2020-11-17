@@ -5,35 +5,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.cpen321_wedo.Models.Task;
+import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.fragments.UserFragment;
 import com.example.cpen321_wedo.fragments.TaskFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 
 public class TaskActivity extends AppCompatActivity {
 
     private TaskFragment taskFragment;
+    private Menu taskMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +58,9 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.task_activity_menu, menu);
+        taskMenu = menu;
+        menu.setGroupVisible(R.id.taskDefaultMenu, true);
+        menu.setGroupVisible(R.id.taskDeleteMenu, false);
         return true;
     }
 
@@ -79,6 +76,24 @@ public class TaskActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AddTaskActivity.class);
                 startActivityForResult(intent, 1);
                 return true;
+            case R.id.delete:
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, false);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, true);
+                taskFragment.toggleItemViewType();
+                return true;
+            case R.id.trash:
+                taskFragment.deleteTasksSelected();
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
+                taskFragment.toggleItemViewType();
+                return true;
+            case R.id.cancel_delete:
+                taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
+                taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
+                taskFragment.toggleItemViewType();
+                return true;
+            default:
+                break;
         }
         return false;
     }
@@ -86,13 +101,12 @@ public class TaskActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                String[] reply = data.getStringArrayExtra("task");
+        if (requestCode == 1 && resultCode == RESULT_OK) {
 
-                Task task = new Task(reply[0], reply[1], reply[2]);
-                taskFragment.addTask(task);
-            }
+            String[] reply = data.getStringArrayExtra("task");
+
+            Task task = new Task(reply[0], reply[1], reply[2]);
+            taskFragment.addTask(task);
         }
     }
 

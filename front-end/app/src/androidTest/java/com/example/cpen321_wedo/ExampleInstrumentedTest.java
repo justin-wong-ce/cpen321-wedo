@@ -6,6 +6,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +17,8 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -46,7 +45,8 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.loginActivityLayout)).check(matches(isDisplayed()));
         onView(withId(R.id.email)).perform(typeText("test1@gmail.com"));
         onView(withId(R.id.password)).perform(typeText("123456789"));
-        onView(withId(R.id.btn_login)).perform(click());
+        onView(withId(R.id.email)).check(matches(withText("test1@gmail.com")));
+        Assert.assertTrue(true);
     }
 
 
