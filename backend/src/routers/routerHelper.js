@@ -1,8 +1,8 @@
 // Does error checking for MySQL callback and sends responses
 function callbackHandler(err, results, res) {
-    // DELETE LATER
     if (!err) {
-        doesNotExist = results.length === 0 || results.affectedRows === 0;
+        let doesNotExist = (results.length === 0 && typeof (results.affectedRows) === "undefined")
+            || (typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0);
         if (!doesNotExist) {
             res.status(200).send(results);
         }
@@ -14,6 +14,7 @@ function callbackHandler(err, results, res) {
 
         //let alreadyExists = err.code === "ER_DUP_ENTRY";
 
+        let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2"
         let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" ||
             err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
             err.code === "ER_WARN_DATA_TRUNCATED" ||
@@ -23,6 +24,9 @@ function callbackHandler(err, results, res) {
 
         if (badDataType) {
             res.status(400).send({ msg: "bad data format or type" });
+        }
+        else if (doesNotExist) {
+            res.status(404).send({ msg: "entry does not exist" });
         }
         else {
             res.status(406).send({ msg: "user/task/tasklist already exists" });
