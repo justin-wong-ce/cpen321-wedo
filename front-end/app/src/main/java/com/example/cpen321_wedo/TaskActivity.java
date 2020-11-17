@@ -61,6 +61,7 @@ public class TaskActivity extends AppCompatActivity {
         taskMenu = menu;
         menu.setGroupVisible(R.id.taskDefaultMenu, true);
         menu.setGroupVisible(R.id.taskDeleteMenu, false);
+        taskFragment.setMenu(menu);
         return true;
     }
 

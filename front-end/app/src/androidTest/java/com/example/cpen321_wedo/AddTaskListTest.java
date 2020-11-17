@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
@@ -75,7 +76,7 @@ public class AddTaskListTest {
         onView(withText("Must fill required fields")).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
 
-        onView(withId(R.id.tasklist_name)).perform(typeText("test2"));
+        onView(withId(R.id.tasklist_name)).perform(typeText("test3"));
         onView(withId(R.id.tasklist_description)).perform(typeText("Description"));
 
         onView(withId(R.id.btn_add_tasklist)).perform(click());
@@ -88,7 +89,7 @@ public class AddTaskListTest {
 
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
-        onView(allOf(withId(R.id.tasklist_title_id), withText("test2"))).check(matches(isDisplayed()));
+        onView(allOf(withId(R.id.tasklist_title_id), withText("test3"))).check(matches(isDisplayed()));
     }
 
     /**
