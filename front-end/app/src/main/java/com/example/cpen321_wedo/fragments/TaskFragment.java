@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,7 +44,6 @@ public class TaskFragment extends Fragment {
 
         ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(new Task("Buy eggs", "Save on Foods, UBC" , "Go to the nearest store to buy eggs"));
-        tasks.add(new Task("Finish Homework", "Koerner Library, UBC", "There is a math homework due tomorrow"));
 
         taskAdapter = new TaskAdapter();
         taskAdapter.setTasks(tasks);
@@ -60,4 +60,8 @@ public class TaskFragment extends Fragment {
     public void toggleItemViewType () { taskAdapter.toggleItemViewType(); }
 
     public void deleteTasksSelected() { taskAdapter.deleteTasksSelected(); }
+
+    public void setMenu(Menu menu) {
+        this.taskAdapter.setMenu(menu);
+    }
 }

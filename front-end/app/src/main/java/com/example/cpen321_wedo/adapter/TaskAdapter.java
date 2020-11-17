@@ -3,6 +3,7 @@ package com.example.cpen321_wedo.adapter;
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,11 +30,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private ArrayList<Task> tasks;
     private final ArrayList<Task> toDelete;
     private int currentView;
+    private int taskSelected;
+    private Menu menu;
 
     public TaskAdapter() {
         tasks = new ArrayList<>();
         currentView = TASK_ITEM;
         toDelete = new ArrayList<>();
+        taskSelected = 0;
     }
 
     @NonNull
@@ -78,15 +82,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             }
             holder.checkbox.setChecked(false);
+            menu.findItem(R.id.trash).setEnabled(false);
+
 
             holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (b) {
                         toDelete.add(tasks.get(position));
+                        taskSelected++;
                     } else {
                         toDelete.remove(tasks.get(position));
+                        taskSelected--;
                     }
+
+                    if (taskSelected == 0) {
+                        menu.findItem(R.id.trash).setEnabled(false);
+                    } else {
+                        menu.findItem(R.id.trash).setEnabled(true);
+                    }
+
+
                 }
             });
 
@@ -140,6 +156,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         toDelete.clear();
         notifyDataSetChanged();
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
