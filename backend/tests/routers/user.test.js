@@ -10,6 +10,58 @@ beforeAll(() => {
     server.listen(3001);
 });
 
+describe("Create user tests", () => {
+    it("Normal operation", () => {
+        databaseInterface.insert
+            .mockImplementationOnce((table, entry, callback) => {
+                callback(null, {
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+
+        return request(app)
+            .post("/user/new")
+            .send({ userID: "tester" })
+            .then(res => {
+                expect(res.status).toStrictEqual(200);
+                expect(res.body).toStrictEqual({
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+    });
+
+    it("Already exists", () => {
+        databaseInterface.insert
+            .mockImplementationOnce((table, entry, callback) => {
+                callback({ code: "ER_DUP_ENTRY" }, null);
+            });
+
+        return request(app)
+            .post("/user/new")
+            .send({ userID: "tester" })
+            .then(res => {
+                expect(res.status).toStrictEqual(406);
+                expect(res.body).toStrictEqual({ msg: "user/task/tasklist already exists" });
+            });
+    });
+
+    // Bad data format not possible
+});
+
 describe("Update user token tests", () => {
     it("Normal operation", () => {
         databaseInterface.update

@@ -29,7 +29,6 @@ router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
 // typeof body.taskListDescription == "string"
 router.post("/tasklist/create", (req, res) => {
     const newTaskList = req.body;
-    console.log(newTaskList)
     taskListFunctions.createTaskList(newTaskList, (err, results) => {
         routerHelper.callbackHandler(err, results, res);
     });
@@ -45,6 +44,7 @@ router.post("/tasklist/create", (req, res) => {
 // Optional attributes: ***************************************************
 // typeof body.newOwner == "string"
 // typeof body.taskListName == "string"
+// typeof body.taskListDescription == "string"
 router.put("/tasklist/update", (req, res) => {
     const taskList = req.body;
 
@@ -62,10 +62,14 @@ router.put("/tasklist/update", (req, res) => {
 // typeof entry.addUser == "string"
 router.post("/tasklist/adduser", (req, res) => {
     const entry = req.body;
-
-    taskListFunctions.addUser(entry.userID, entry.taskListID, entry.addUser, (err, results, perms) => {
-        routerHelper.permHandler(err, results, perms, res);
-    });
+    if (entry.userID === entry.addUser) {
+        res.status(406).send({ msg: "cannot add yourself" });
+    }
+    else {
+        taskListFunctions.addUser(entry.userID, entry.taskListID, entry.addUser, (err, results, perms) => {
+            routerHelper.permHandler(err, results, perms, res);
+        });
+    }
 });
 
 // Remove a user"s access to the task list + push notifications to user with access
@@ -74,12 +78,16 @@ router.post("/tasklist/adduser", (req, res) => {
 // typeof entry.userID == "string"
 // typeof entry.taskListID == "string"
 // typeof entry.toKick == "string"
-router.delete("tasklist/removeuser", (req, res) => {
+router.delete("/tasklist/kickuser", (req, res) => {
     const entry = req.body;
-
-    taskListFunctions.removeUser(entry.userID, entry.taskListID, entry.toKick, (err, results, perms) => {
-        routerHelper.permHandler(err, results, perms, res);
-    });
+    if (entry.userID === entry.toKick) {
+        res.status(406).send({ msg: "cannot kick yourself" });
+    }
+    else {
+        taskListFunctions.removeUser(entry.userID, entry.taskListID, entry.toKick, (err, results, perms) => {
+            routerHelper.permHandler(err, results, perms, res);
+        });
+    }
 });
 
 // Delete task list and sends push notification to all users with access
@@ -87,7 +95,7 @@ router.delete("tasklist/removeuser", (req, res) => {
 // Body JSON attribute types
 // typeof entry.userID == "string"
 // typeof entry.taskListID == "string"
-router.delete("tasklist/delete", (req, res) => {
+router.delete("/tasklist/delete", (req, res) => {
     const userID = req.body.userID;
     const taskListID = req.body.taskListID;
 

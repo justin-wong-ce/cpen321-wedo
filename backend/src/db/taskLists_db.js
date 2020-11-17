@@ -4,12 +4,14 @@ const userFunctions = require("./users_db");
 
 var taskListFunctions = {
     getTasksInList(taskListID, userID, callback) {
+        userID = userID.substring(1, userID.length - 1);
+        taskListID = taskListID.substring(1, taskListID.length - 1)
         userFunctions.checkPermission(userID, taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
-                database.get("*", "TaskHasTaskList", { taskListID } + " ORDER BY priorityLevel DESC", (err, results) => {
+                database.get("*", "TaskHasTaskList", { taskListID }, " ORDER BY priorityLevel DESC", (err, results) => {
                     // var list = recManager.sortTasks(results, userID);
                     // callback(err, list, true);
 
@@ -34,7 +36,7 @@ var taskListFunctions = {
     },
     updateTaskList(entry, callback) {
         userFunctions.isListOwner(entry.userID, entry.taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
@@ -51,7 +53,7 @@ var taskListFunctions = {
     },
     deleteTaskList(userID, taskListID, callback) {
         userFunctions.isListOwner(userID, taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
@@ -67,7 +69,7 @@ var taskListFunctions = {
     },
     addUser(userID, taskListID, addUser, callback) {
         userFunctions.isListOwner(userID, taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
@@ -83,7 +85,7 @@ var taskListFunctions = {
     },
     removeUser(userID, taskListID, toKick, callback) {
         userFunctions.isListOwner(userID, taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {

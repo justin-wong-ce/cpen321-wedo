@@ -25,7 +25,7 @@ var taskFunctions = {
     },
     updateTask(entry, callback) {
         userFunctions.checkPermission(entry.userID, entry.taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
@@ -50,7 +50,7 @@ var taskFunctions = {
     },
     deleteTask(taskID, userID, taskListID, callback) {
         userFunctions.checkPermission(userID, taskListID, (err, results) => {
-            if (!results) {
+            if (results.length === 0) {
                 callback(null, null, false);
             }
             else {
@@ -58,7 +58,7 @@ var taskFunctions = {
                 // NEED TO SEND PUSH NOTIFICATION HERE
                 // ************************************
 
-                database.delete("TaskHasTaskList", taskID, (err, results) => {
+                database.delete("TaskHasTaskList", { taskID }, (err, results) => {
                     callback(err, results, true);
                 });
             }

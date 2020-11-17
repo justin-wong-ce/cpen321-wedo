@@ -1,5 +1,4 @@
 const database = require("./databaseInterface");
-const taskListFunctions = require("./taskLists_db");
 
 var userFunctions = {
     checkPermission(userID, taskListID, callback) {
@@ -22,7 +21,6 @@ var userFunctions = {
             callback(err, results);
         });
     },
-    // RETURN TASKLIST BODY AS WELL! (join/second db call)
     getUserLists(userID, callback) {
         database.getJoin("*", "HasAccess", "TaskListWithOwner", "HasAccess.userID = " + userID + " AND HasAccess.taskListID = TaskListWithOwner.taskListID", (err, results) => {
             callback(err, results);
