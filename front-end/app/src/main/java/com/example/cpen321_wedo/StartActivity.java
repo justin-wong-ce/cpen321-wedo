@@ -6,12 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.cpen321_wedo.notifications.Token;
+import com.example.cpen321_wedo.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 public class StartActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
