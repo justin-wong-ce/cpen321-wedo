@@ -71,8 +71,6 @@ async function makeFinalCalls(closeByGroups, transitRoutes) {
     var results = [];
 
     for (let closeGroup of closeByGroups) {
-        var pointGroup = [];
-
         // Create waypoints list for close by coordinates
         if (closeGroup.length !== 0) {
             let response = await route(closeGroup, "walking");
@@ -121,9 +119,8 @@ function groupByDistance(farApartCoor, closeByGroups, route, walkDistanceThresho
         }
         else {
             currCloseBy.push(route.legs[parseInt(legIter, 10)].start_location);
-
             // Make sure to add final destination to group
-            if (legIter === route.length - 1) {
+            if (legIter === route.legs.length - 1) {
                 currCloseBy.push(route.legs[parseInt(legIter, 10)].end_location);
                 closeByGroups.push(currCloseBy);
             }
@@ -170,7 +167,7 @@ function setUpTspLocs(locations, noStartingLocation, startEndLocs) {
 
 }
 
-function tspIteration(permutations, tspIterResults, minPath, startingLoc, endingLoc, locationGraph, responsesMap) {
+function tspIteration(permutations, tspIterResults, startingLoc, endingLoc, locationGraph, responsesMap) {
     let currPerm = permutations[parseInt(tspIterResults.onPermutation, 10)];
     tspIterResults.onPermutation++;
 
@@ -190,7 +187,7 @@ function tspIteration(permutations, tspIterResults, minPath, startingLoc, ending
 
     if (currWeight < tspIterResults.minDistance) {
         tspIterResults.minDistance = currWeight;
-        minPath = currPath;
+        tspIterResults.minPath = currPath;
     }
 }
 
@@ -217,16 +214,16 @@ async function getBestTransitRoutes(locations) {
     // Find optimal path (travelling post man problem)
     let tspIterResults = {
         minDistance: Number.MAX_VALUE,
-        onPermutation: 0
+        onPermutation: 0,
+        minPath: []
     };
-    var minPath = [];
 
     // Find best path by brute force for now, may change to more optimal algorithm later
     do {
-        tspIteration(permutations, tspIterResults, minPath, startingLoc, endingLoc, locationGraph, responsesMap);
-    } while (tspIteration.onPermutation < permutations.length);
+        tspIteration(permutations, tspIterResults, startingLoc, endingLoc, locationGraph, responsesMap);
+    } while (tspIterResults.onPermutation < permutations.length);
 
-    return minPath;
+    return tspIterResults.minPath;
 }
 
 // Transforms a list of locations into an array of routes
@@ -239,15 +236,22 @@ async function transitRoute(locations, distanceThreshold) {
 
     // Get preliminary route in driving route form
     var response = await route(locations, "driving");
+    if (response.data.status !== "OK") {
+        return [];
+    }
+    else {
+        var farApartCoor = [];
+        var closeByGroups = [];
+        groupByDistance(farApartCoor, closeByGroups, response.data.routes[0], distanceThreshold);
 
-    var farApartCoor = [];
-    var closeByGroups = [];
-    groupByDistance(farApartCoor, closeByGroups, response.data.routes[0], distanceThreshold);
-
-    // Get best transit path and route
-    var transitRoutes = await getBestTransitRoutes(farApartCoor);
-    var results = await makeFinalCalls(closeByGroups, transitRoutes);
-    return results;
+        // Get best transit path and route
+        var transitRoutes = [];
+        if (farApartCoor.length !== 0) {
+            transitRoutes = await getBestTransitRoutes(farApartCoor);
+        }
+        var results = await makeFinalCalls(closeByGroups, transitRoutes);
+        return results;
+    }
 }
 
 const routeFunctions = {
