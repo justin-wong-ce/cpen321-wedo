@@ -42,7 +42,7 @@ var userFunctions = {
     },
     getTokensInList(userID, taskListID, callback) {
         database.getJoin("token", "Users", "HasAccess", "Users.userID != '" + userID +
-            "' AND Users.userID = HasAccess.userID AND HasAccess.taskListID = '" + entry.taskListID + "'", (err, tokenObjs) => {
+            "' AND Users.userID = HasAccess.userID AND HasAccess.taskListID = '" + taskListID + "'", (err, tokenObjs) => {
                 let tokens = [];
                 for (index in tokenObjs) {
                     tokens.push(tokenObjs[index].token);

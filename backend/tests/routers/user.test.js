@@ -1,6 +1,7 @@
 //const jest = require("jest");
 const { app, server } = require("../../src/server");
 const request = require("supertest");
+const userFunctions = require("../../src/db/users_db");
 
 jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
@@ -240,4 +241,16 @@ describe("Get user tasklists", () => {
     });
 
     // Bad format not possible
+});
+
+describe("Get tokens of users in a task list", () => {
+    it("Normal operation", () => {
+        databaseInterface.getJoin
+            .mockImplementationOnce((attributesToGet, table0, table1, joinCond, callback) => {
+                callback(null, [{ token: "test0" }, { token: "test1" }, { token: "test2" }]);
+            });
+        userFunctions.getTokensInList("filler", "filler", (err, tokens) => {
+            expect(tokens).toEqual(["test0", "test1", "test2"]);
+        });
+    });
 });
