@@ -3,7 +3,11 @@ const request = require("supertest");
 
 jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
+jest.mock("../../src/db/recommendationsManager");
+jest.mock("../../src/db/users_db");
 const databaseInterface = require("../../src/db/databaseInterface");
+const recManager = require("../../src/db/recommendationsManager");
+const userFunctions = require("../../src/db/users_db");
 
 beforeAll(() => {
     server.listen(3002);
@@ -11,10 +15,16 @@ beforeAll(() => {
 
 describe("Create task", () => {
     it("Normal operation", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
-            })
+                callback(null, [{ isPremium: 1 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 1 }]);
+            });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
                 callback(null, {
@@ -58,8 +68,8 @@ describe("Create task", () => {
     });
 
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -83,9 +93,15 @@ describe("Create task", () => {
     });
 
     it("Bad format", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
+                callback(null, [{ isPremium: 1 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 1 }]);
             });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
@@ -112,9 +128,15 @@ describe("Create task", () => {
     });
 
     it("Already exists", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
+                callback(null, [{ isPremium: 1 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 1 }]);
             });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
@@ -140,15 +162,16 @@ describe("Create task", () => {
             });
     });
 
-    // SHOULD FAIL: NOT IMPLEMENTED YET
     it("Number of tasks limit reached", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }, { pad: 2 }, { pad: 3 }, { pad: 4 }, { pad: 5 }]);
             });
-        databaseInterface.insert
-            .mockImplementationOnce((table, entry, callback) => {
-                callback({ code: "ER_DUP_ENTRY" }, null);
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ isPremium: 0 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 10 }]);
             });
 
         return request(app)
@@ -166,7 +189,60 @@ describe("Create task", () => {
             })
             .then(res => {
                 expect(res.status).toBe(401);
-                expect(res.body).toEqual({ msg: "user/task/tasklist already exists" });
+                expect(res.body).toEqual({ msg: "user needs to buy premium" });
+            });
+    });
+
+    it("Number of tasks limit reached but user has premium", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ isPremium: 1 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 10 }]);
+            });
+        databaseInterface.insert
+            .mockImplementationOnce((table, entry, callback) => {
+                callback(null, {
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+
+        return request(app)
+            .post('/task/create')
+            .send({
+                "userID": "tester",
+                "taskID": "12322_task1",
+                "taskListID": "12322",
+                "taskName": "test_task_1",
+                "taskType": "transport",
+                "createdTime": "2020-11-01 02:10:23",
+                "taskDescription": "task for testing",
+                "taskBudget": 123,
+                "address": "UBC, Vancouver"
+            })
+            .then(res => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual({
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
             });
     });
 
@@ -174,9 +250,9 @@ describe("Create task", () => {
 });
 
 describe("Update task", () => {
-    it("Normal operation", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+    it("Normal operation (task is not done)", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
@@ -221,9 +297,71 @@ describe("Update task", () => {
             });
     });
 
+    it("Normal operation (task is done)", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.update
+            .mockImplementationOnce((table, values, condition, callback) => {
+                callback(null, {
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+        recManager.updatePreferences
+            .mockImplementationOnce((userID, points, taskID, callback) => {
+                callback(null, {
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+
+        return request(app)
+            .put('/task/update')
+            .send({
+                "userID": "tester",
+                "taskID": "12322_task1",
+                "taskListID": "12322",
+                "taskName": "test_task_1",
+                "taskType": "transport",
+                "createdTime": "2020-11-01 02:10:23",
+                "taskDescription": "task for testing",
+                "taskBudget": 123,
+                "address": "UBC, Vancouver",
+                "done": true,
+                "taskRating": 4
+            })
+            .then(res => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual({
+                    "fieldCount": 0,
+                    "affectedRows": 1,
+                    "insertId": 0,
+                    "serverStatus": 2,
+                    "warningCount": 0,
+                    "message": "",
+                    "protocol41": true,
+                    "changedRows": 0
+                });
+            });
+    });
+
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -247,8 +385,8 @@ describe("Update task", () => {
     });
 
     it("Bad format", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
@@ -276,8 +414,8 @@ describe("Update task", () => {
     });
 
     it("Task does not exist", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
@@ -307,8 +445,8 @@ describe("Update task", () => {
 
 describe("Delete task", () => {
     it("Normal operation", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.delete
@@ -348,8 +486,8 @@ describe("Delete task", () => {
     });
 
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -367,8 +505,8 @@ describe("Delete task", () => {
     });
 
     it("Does not exist", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.delete
@@ -390,8 +528,8 @@ describe("Delete task", () => {
     });
 
     it("Bad data format", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.delete

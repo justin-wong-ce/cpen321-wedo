@@ -16,7 +16,7 @@ function insertObj(obj, delimiter) {
 
 var database = {
     get(attributesToGet, table, condition, additional, callback) {
-        connection.query("SELECT " + attributesToGet + " FROM " + table + " WHERE " + insertObj(condition, " AND "), + additional, (err, results) => {
+        connection.query("SELECT " + attributesToGet + " FROM " + table + " WHERE " + insertObj(condition, " AND ") + additional, (err, results) => {
             callback(err, results);
         });
     },

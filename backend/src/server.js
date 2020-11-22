@@ -3,7 +3,6 @@ const userRouter = require("./routers/user");
 const taskRouter = require("./routers/task");
 const taskListRouter = require("./routers/taskList");
 const routeRouter = require("./routers/routes");
-const pushnotification = require("./routers/pushNotification");
 
 const socketio = require("socket.io");
 const http = require("http");
@@ -17,7 +16,6 @@ app.use(userRouter);
 app.use(taskRouter);
 app.use(taskListRouter);
 app.use(routeRouter);
-app.use(pushnotification);
 
 app.get("/", function (req, res) {
     res.send("hello");

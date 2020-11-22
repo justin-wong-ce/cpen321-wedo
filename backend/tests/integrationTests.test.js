@@ -79,7 +79,7 @@ describe("Integration test 1: User doing a bunch of task and task list operation
                                                                             "createdBy": "IntegrationTester",
                                                                             "taskBudget": 123,
                                                                             "taskDescription": "task for testing",
-                                                                            "taskType": "transport",
+                                                                            "taskType": "fun",
                                                                             "priorityLevel": 0,
                                                                             "address": "Save-on-foods, dunbar, vancouver",
                                                                             "done": null,
@@ -116,7 +116,7 @@ describe("Integration test 2: Getting a route", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body.length !== 0).toStrictEqual(true);
+                expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
     });
 });
@@ -128,7 +128,7 @@ describe("Integration test 3: Registrating user and premium status", () => {
             .send({ userID: "m9tester" })
             .then(res => {
                 request(app)
-                    .putt("/user/premium")
+                    .put("/user/premium")
                     .send({ userID: "m9tester", isPremium: true })
                     .then(res => {
                         expect(res.status).toBe(200);
@@ -138,9 +138,9 @@ describe("Integration test 3: Registrating user and premium status", () => {
                             "insertId": 0,
                             "serverStatus": 2,
                             "warningCount": 0,
-                            "message": "(Rows matched: 1  Changed: 1  Warnings: 0",
+                            "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
                             "protocol41": true,
-                            "changedRows": 1
+                            "changedRows": 0
                         })
                     })
             })

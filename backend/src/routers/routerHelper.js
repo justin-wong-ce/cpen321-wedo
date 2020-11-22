@@ -3,6 +3,7 @@ function callbackHandler(err, results, res) {
     if (!err) {
         let doesNotExist = (results.length === 0 && typeof (results.affectedRows) === "undefined")
             || (typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0);
+
         if (!doesNotExist) {
             res.status(200).send(results);
         }
@@ -11,10 +12,7 @@ function callbackHandler(err, results, res) {
         }
     }
     else {
-
-        //let alreadyExists = err.code === "ER_DUP_ENTRY";
-
-        let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2"
+        let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
         let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" ||
             err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
             err.code === "ER_WARN_DATA_TRUNCATED" ||
@@ -36,7 +34,12 @@ function callbackHandler(err, results, res) {
 
 function permHandler(err, results, perms, res) {
     if (!perms) {
-        res.status(401).send({ msg: "user does not have permissions" });
+        if (err === "get premium") {
+            res.status(401).send({ msg: "user needs to buy premium" })
+        }
+        else {
+            res.status(401).send({ msg: "user does not have permissions" });
+        }
     }
     else {
         callbackHandler(err, results, res);

@@ -3,7 +3,47 @@ const request = require("supertest");
 
 jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
+jest.mock("../../src/db/recommendationsManager");
+jest.mock("../../src/db/users_db");
 const databaseInterface = require("../../src/db/databaseInterface");
+const recManager = require("../../src/db/recommendationsManager");
+const userFunctions = require("../../src/db/users_db");
+
+const updateResponse = {
+    "fieldCount": 0,
+    "affectedRows": 1,
+    "insertId": 0,
+    "serverStatus": 2,
+    "warningCount": 0,
+    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
+    "protocol41": true,
+    "changedRows": 0
+};
+
+const insertResponse = {
+    "fieldCount": 0,
+    "affectedRows": 1,
+    "insertId": 0,
+    "serverStatus": 2,
+    "warningCount": 0,
+    "message": "",
+    "protocol41": true,
+    "changedRows": 0
+};
+
+const standardTasklist = {
+    "userID": "throwAway",
+    "taskListName": "testing tasklist",
+    "taskListID": "testing_2",
+    "taskListDescription": "test test test"
+};
+
+const standardUpdate = {
+    "userID": "throwAway",
+    "taskListID": "testing",
+    "modifiedTime": "2020-11-01 02:10:23",
+    "taskListDescription": "alsdkjalskd"
+};
 
 beforeAll(() => {
     server.listen(3003);
@@ -11,11 +51,16 @@ beforeAll(() => {
 
 describe("Get tasks in task list", () => {
     it("Normal operation", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
-            })
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ filler: "filler" }]);
+            });
+        recManager.sortTasks
+            .mockImplementationOnce((tasks, userID, callback) => {
                 callback(null, [
                     {
                         "taskID": "testing_task1",
@@ -32,7 +77,7 @@ describe("Get tasks in task list", () => {
                         "modifiedTime": null,
                         "taskName": "test_task_0",
                         "taskListID": "testing"
-                    }]);
+                    }])
             });
 
         return request(app)
@@ -60,8 +105,8 @@ describe("Get tasks in task list", () => {
     });
 
     it("No permissions", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -81,50 +126,18 @@ describe("Create task list", () => {
     it("Normal operation", () => {
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             })
             .mockImplementationOnce((table, entry, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             });
 
         return request(app)
             .post('/tasklist/create')
-            .send({
-                "userID": "throwAway",
-                "taskListName": "testing tasklist",
-                "taskListID": "testing_2",
-                "taskListDescription": "test test test"
-            })
+            .send(standardTasklist)
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(insertResponse);
             });
     });
 
@@ -173,64 +186,32 @@ describe("Create task list", () => {
 
 describe("Update task list", () => {
     it("Normal operation", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
             .mockImplementationOnce((table, values, condition, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, updateResponse);
             });
 
         return request(app)
             .put('/tasklist/update')
-            .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "modifiedTime": "2020-11-01 02:10:23",
-                "taskListDescription": "alsdkjalskd"
-            })
+            .send(standardUpdate)
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(updateResponse);
             });
     });
 
     it("Switch owner", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
             .mockImplementationOnce((table, values, condition, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, updateResponse);
             });
 
         return request(app)
@@ -244,22 +225,13 @@ describe("Update task list", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(updateResponse);
             });
     });
 
     it("Bad data format", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.update
@@ -269,12 +241,7 @@ describe("Update task list", () => {
 
         return request(app)
             .put('/tasklist/update')
-            .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "modifiedTime": "2020-11-01 02:10:23",
-                "taskListDescription": "alsdkjalskd"
-            })
+            .send(standardUpdate)
             .then(res => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });
@@ -282,19 +249,14 @@ describe("Update task list", () => {
     });
 
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
         return request(app)
             .put('/tasklist/update')
-            .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "modifiedTime": "2020-11-01 02:10:23",
-                "taskListDescription": "alsdkjalskd"
-            })
+            .send(standardUpdate)
             .then(res => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
@@ -306,22 +268,20 @@ describe("Update task list", () => {
 
 describe("Add user to task list", () => {
     it("Normal operation", () => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
+                callback(null, [{ isPremium: 1 }]);
+            })
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 2 }]);
             });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             });
 
 
@@ -334,16 +294,7 @@ describe("Add user to task list", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(insertResponse);
             });
     });
 
@@ -362,8 +313,8 @@ describe("Add user to task list", () => {
     });
 
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -379,25 +330,21 @@ describe("Add user to task list", () => {
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
     });
-
-    // SHOULD FAIL: NOT IMPLEMENTED YET
     it("Limit reached", () => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ pad: 1 }]);
+                callback(null, [{ isPremium: 0 }]);
+            })
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 5 }]);
             });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             });
 
         return request(app)
@@ -408,8 +355,8 @@ describe("Add user to task list", () => {
                 "addUser": "throwAway2"
             })
             .then(res => {
-                expect(res.status).toBe(402);
-                expect(res.body).toEqual({ msg: "user does not have permissions" });
+                expect(res.status).toBe(401);
+                expect(res.body).toEqual({ msg: "user needs to buy premium" });
             });
     });
     // Bad data format not possible
@@ -417,22 +364,13 @@ describe("Add user to task list", () => {
 
 describe("Kick user from task list", () => {
     it("Normal operation", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.delete
             .mockImplementationOnce((table, condition, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             });
 
         return request(app)
@@ -444,22 +382,13 @@ describe("Kick user from task list", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(insertResponse);
             });
     });
 
     it("No permission", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
@@ -495,22 +424,13 @@ describe("Kick user from task list", () => {
 
 describe("Delete task list", () => {
     it("Normal operation", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
             });
         databaseInterface.delete
             .mockImplementationOnce((table, condition, callback) => {
-                callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                callback(null, insertResponse);
             });
 
         return request(app)
@@ -521,22 +441,13 @@ describe("Delete task list", () => {
             })
             .then(res => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual({
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "",
-                    "protocol41": true,
-                    "changedRows": 0
-                });
+                expect(res.body).toEqual(insertResponse);
             });
     });
 
     it("No permissions", () => {
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, []);
             });
 
