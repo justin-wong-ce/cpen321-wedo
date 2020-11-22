@@ -1,7 +1,7 @@
 const database = require("./databaseInterface");
 const userFunctions = require("./users_db");
 const recManager = require("./recommendationsManager");
-const { pushnotification } = require("../routers/pushNotification");
+const pushNotification = require("../routers/pushNotification");
 const FREE_USER_MAX_TASKS = 10;
 
 var taskFunctions = {
@@ -27,10 +27,15 @@ var taskFunctions = {
                             // ************************************
 
                             database.insert("TaskHasTaskList", entry, (err, results) => {
-                                userFunctions.getTokensInList(userID, entry.taskListID, (err, tokens) => {
-                                    pushNotification("Task added!", entry.taskName + " has been added!", tokens);
+                                if (!err) {
+                                    userFunctions.getTokensInList(userID, entry.taskListID, (err, tokens) => {
+                                        pushNotification("Task added!", entry.taskName + " has been added!", tokens);
+                                        callback(err, results, true);
+                                    });
+                                }
+                                else {
                                     callback(err, results, true);
-                                });
+                                }
                             });
                         }
                         else {
@@ -85,10 +90,18 @@ var taskFunctions = {
                 // Message: <task> has been removed from <tasklist>!
                 // To: All users in task list
                 // ************************************
-                database.delete("TaskHasTaskList", { taskID }, (err, results) => {
-                    userFunctions.getTokensInList(userID, entry.taskListID, (err, tokens) => {
-                        pushNotification("Task deleted!", entry.taskName + " has been deleted!", tokens);
-                        callback(err, results, true);
+                database.get("taskName", "TaskHasTaskList", { taskID }, "", (err, taskNameResponse) => {
+                    let taskName = taskNameResponse[0].taskName;
+                    database.delete("TaskHasTaskList", { taskID }, (err, results) => {
+                        if (!err && results.affectedRows !== 0) {
+                            userFunctions.getTokensInList(userID, taskListID, (err, tokens) => {
+                                pushNotification("Task deleted!", taskName + " has been deleted!", tokens);
+                                callback(err, results, true);
+                            });
+                        }
+                        else {
+                            callback(err, results, true);
+                        }
                     });
                 });
             }

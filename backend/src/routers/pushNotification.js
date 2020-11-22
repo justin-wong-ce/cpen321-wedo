@@ -39,8 +39,4 @@ function pushNotification(title, body, tokens) {
 //         });
 // });
 
-var notificationEngine = {
-    pushNotification
-};
-
-module.exports = notificationEngine;
+module.exports = pushNotification;

@@ -1,6 +1,7 @@
 const database = require("./databaseInterface");
 const recManager = require("./recommendationsManager");
 const userFunctions = require("./users_db");
+const pushNotification = require("../routers/pushNotification");
 const MAX_USERS_IN_FREE_TASKLIST = 5;
 
 var taskListFunctions = {
@@ -64,10 +65,21 @@ var taskListFunctions = {
                 // Message: Task list has been deleted
                 // To: All users with access to that task list
                 // ************************************
+                database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, nameResponse) => {
+                    let taskListName = nameResponse[0].taskListName;
+                    database.delete("TaskListWithOwner", { taskListID }, (err, results) => {
+                        if (!err) {
+                            userFunctions.getTokensInList(userID, taskListID, (err, tokens) => {
+                                pushNotification("Tasklist deleted!", taskListName + " has been deleted!", tokens);
+                                callback(err, results, true);
+                            });
+                        }
+                        else {
+                            callback(err, results, true);
+                        }
+                    });
+                })
 
-                database.delete("TaskListWithOwner", { taskListID }, (err, results) => {
-                    callback(err, results, true);
-                });
             }
         });
     },
@@ -82,13 +94,26 @@ var taskListFunctions = {
                 // Message: You have been added to the task list
                 // To: The user added to the task list
                 // ************************************
-                database.get("isPremium", "Users", { userID }, "", (err, premium) => {
+                database.get("isPremium", "Users", { userID }, "", (err, userInfo) => {
                     database.get("COUNT(*)", "HasAccess", { taskListID }, "", (err, retUsers) => {
-                        let premiumStatus = premium[0].isPremium;
+                        let premiumStatus = userInfo[0].isPremium;
                         let numUsers = retUsers[0]["COUNT(*)"];
+
                         if (numUsers < MAX_USERS_IN_FREE_TASKLIST || premiumStatus !== 0) {
                             database.insert("HasAccess", { userID: addUser, taskListID }, (err, results) => {
-                                callback(err, results, true);
+                                if (!err) {
+                                    database.get("token", "Users", { userID: addUser }, "", (err, tokenResponse) => {
+                                        let token = tokenResponse[0].token;
+                                        database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, listNameResponse) => {
+                                            let taskListName = listNameResponse[0].taskListName;
+                                            pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
+                                            callback(err, results, true);
+                                        });
+                                    });
+                                }
+                                else {
+                                    callback(err, results, true);
+                                }
                             });
                         }
                         else {
@@ -112,7 +137,19 @@ var taskListFunctions = {
                 // To: The user that has been removed
                 // ************************************
                 database.delete("HasAccess", { userID: toKick, taskListID }, (err, results) => {
-                    callback(err, results, true);
+                    if (!err) {
+                        database.get("token", "Users", { userID: toKick }, "", (err, tokenResponse) => {
+                            let token = tokenResponse[0].token;
+                            database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, listNameResponse) => {
+                                let taskListName = listNameResponse[0].taskListName;
+                                pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
+                                callback(err, results, true);
+                            });
+                        });
+                    }
+                    else {
+                        callback(err, results, true);
+                    }
                 });
             }
         });

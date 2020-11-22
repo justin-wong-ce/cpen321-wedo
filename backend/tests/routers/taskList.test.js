@@ -5,9 +5,21 @@ jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
 jest.mock("../../src/db/recommendationsManager");
 jest.mock("../../src/db/users_db");
+jest.mock("../../src/routers/pushNotification");
+jest.mock("firebase-admin");
 const databaseInterface = require("../../src/db/databaseInterface");
 const recManager = require("../../src/db/recommendationsManager");
 const userFunctions = require("../../src/db/users_db");
+const pushNotification = require("../../src/routers/pushNotification");
+
+userFunctions.getTokensInList
+    .mockImplementation((userID, taskListID, callback) => {
+        callback(null, ['test1', 'test2', 'test3', 'test4']);
+    });
+pushNotification
+    .mockImplementation((title, body, tokens) => {
+        return;
+    });
 
 const updateResponse = {
     "fieldCount": 0,
@@ -278,6 +290,12 @@ describe("Add user to task list", () => {
             })
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
                 callback(null, [{ "COUNT(*)": 2 }]);
+            })
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ token: "" }]);
+            })
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListName: "" }]);
             });
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
@@ -372,6 +390,13 @@ describe("Kick user from task list", () => {
             .mockImplementationOnce((table, condition, callback) => {
                 callback(null, insertResponse);
             });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ token: "" }]);
+            })
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListName: "" }]);
+            });
 
         return request(app)
             .delete('/tasklist/kickuser')
@@ -431,6 +456,10 @@ describe("Delete task list", () => {
         databaseInterface.delete
             .mockImplementationOnce((table, condition, callback) => {
                 callback(null, insertResponse);
+            });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListName: "" }]);
             });
 
         return request(app)
