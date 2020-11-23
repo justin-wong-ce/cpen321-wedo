@@ -1,3 +1,4 @@
+/* global jest */
 const { app, server } = require("../../src/server");
 const request = require("supertest");
 
@@ -13,7 +14,7 @@ describe("Driving tests", () => {
         return request(app)
             .post("/routes/driving")
             .send({ locations: "something" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toStrictEqual({ "routes": ["PLACEHOLDER"] });
             });
@@ -23,9 +24,9 @@ describe("Driving tests", () => {
         return request(app)
             .post("/routes/driving")
             .send({ locations: "BADLOCS" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
-                expect(res.body).toStrictEqual({ msg: "route not found" })
+                expect(res.body).toStrictEqual({ msg: "route not found" });
             });
     });
 
@@ -33,7 +34,7 @@ describe("Driving tests", () => {
         return request(app)
             .post("/routes/driving")
             .send({ locations: "THROW" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toStrictEqual({ msg: "bad data format" });
             });
@@ -45,7 +46,7 @@ describe("Walking tests", () => {
         return request(app)
             .post("/routes/walking")
             .send({ locations: "something" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toStrictEqual({ "routes": ["PLACEHOLDER"] });
             });
@@ -55,7 +56,7 @@ describe("Walking tests", () => {
         return request(app)
             .post("/routes/walking")
             .send({ locations: "BADLOCS" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toStrictEqual({ msg: "route not found" })
             });
@@ -65,7 +66,7 @@ describe("Walking tests", () => {
         return request(app)
             .post("/routes/walking")
             .send({ locations: "THROW" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toStrictEqual({ msg: "bad data format" });
             });
@@ -77,7 +78,7 @@ describe("Biking tests", () => {
         return request(app)
             .post("/routes/biking")
             .send({ locations: "something" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toStrictEqual({ "routes": ["PLACEHOLDER"] });
             });
@@ -87,7 +88,7 @@ describe("Biking tests", () => {
         return request(app)
             .post("/routes/biking")
             .send({ locations: "BADLOCS" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toStrictEqual({ msg: "route not found" })
             });
@@ -97,7 +98,7 @@ describe("Biking tests", () => {
         return request(app)
             .post("/routes/biking")
             .send({ locations: "THROW" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toStrictEqual({ msg: "bad data format" });
             });
@@ -109,7 +110,7 @@ describe("Transit tests", () => {
         return request(app)
             .post("/routes/transit")
             .send({ locations: "something", distanceThreshold: 100 })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toStrictEqual({ "routes": ["PLACEHOLDER", "PLACEHOLDER"] });
             });
@@ -119,7 +120,7 @@ describe("Transit tests", () => {
         return request(app)
             .post("/routes/transit")
             .send({ locations: "BADLOCS", distanceThreshold: 100 })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toStrictEqual({ msg: "route not found" })
             });
@@ -129,7 +130,7 @@ describe("Transit tests", () => {
         return request(app)
             .post("/routes/transit")
             .send({ locations: "THROW", distanceThreshold: 100 })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toStrictEqual({ msg: "bad data format" });
             });
