@@ -1,3 +1,4 @@
+/* global jest */
 const admin = jest.createMockFromModule("firebase-admin");
 
 function messaging() {

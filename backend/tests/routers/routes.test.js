@@ -90,7 +90,7 @@ describe("Biking tests", () => {
             .send({ locations: "BADLOCS" })
             .then((res) => {
                 expect(res.status).toBe(404);
-                expect(res.body).toStrictEqual({ msg: "route not found" })
+                expect(res.body).toStrictEqual({ msg: "route not found" });
             });
     });
 

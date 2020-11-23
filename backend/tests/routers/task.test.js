@@ -374,5 +374,5 @@ describe("Delete task", () => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });
             });
-    })
+    });
 });

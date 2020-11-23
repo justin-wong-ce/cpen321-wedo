@@ -29,6 +29,6 @@ function pushNotification(title, body, tokens) {
         }).catch((err) => {
             return;
         });
-};
+}
 
 module.exports = pushNotification;

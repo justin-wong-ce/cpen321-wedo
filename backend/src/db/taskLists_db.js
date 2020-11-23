@@ -28,10 +28,8 @@ var taskListFunctions = {
             if (err) {
                 callback(err, results);
             }
+            else database.insert("HasAccess", { userID: entry.userID, taskListID: entry.taskListID }, (err, results) => callback(err, results));
 
-            else {
-                database.insert("HasAccess", { userID: entry.userID, taskListID: entry.taskListID }, (err, results) => callback(err, results));
-            }
         });
     },
     updateTaskList(entry, callback) {
