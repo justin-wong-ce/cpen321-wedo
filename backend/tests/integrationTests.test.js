@@ -14,7 +14,7 @@ describe("Integration test 1: Task and task list operations", () => {
     it("Getting task list without permission", () => {
         return request(app)
             .get("/tasklist/get/'throwAway'/'NO_SUCH_TASKLIST'")
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
@@ -23,11 +23,9 @@ describe("Integration test 1: Task and task list operations", () => {
         return request(app)
             .post("/tasklist/create")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "taskListName": "filler"
+                "userID": "IntegrationTester", "taskListID": "integration", "taskListName": "filler"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
             });
     });
@@ -36,11 +34,9 @@ describe("Integration test 1: Task and task list operations", () => {
         return request(app)
             .put("/tasklist/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "a task list",
-                "taskListName": "filler"
+                "userID": "IntegrationTester", "taskListID": "a task list", "taskListName": "filler"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
@@ -49,37 +45,31 @@ describe("Integration test 1: Task and task list operations", () => {
         return request(app)
             .put("/tasklist/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "some field that does not exist": 2234234
+                "userID": "IntegrationTester", "taskListID": "integration", "some field that does not exist": 2234234
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
             });
     });
 
     it("User adding himself to list", () => {
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "addUser": "IntegrationTester"
+                "userID": "IntegrationTester", "taskListID": "integration", "addUser": "IntegrationTester"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
             });
     });
 
     it("User kicking himself from list", () => {
         return request(app)
-            .delete('/tasklist/kickuser')
+            .delete("/tasklist/kickuser")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "toKick": "IntegrationTester"
+                "userID": "IntegrationTester", "taskListID": "integration", "toKick": "IntegrationTester"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
             });
     });
@@ -88,58 +78,49 @@ describe("Integration test 1: Task and task list operations", () => {
         return request(app)
             .delete("/tasklist/delete")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "no permissions",
+                "userID": "IntegrationTester", "taskListID": "no permissions",
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User adding someone to list, but does not have permission", () => {
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "testing",
-                "addUser": "his friend"
+                "userID": "IntegrationTester", "taskListID": "testing", "addUser": "his friend"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User adding someone to list, but does not have premium", () => {
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "addUser": "his friend"
+                "userID": "IntegrationTester", "taskListID": "integration", "addUser": "his friend"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User swapping list owner", () => {
         return request(app)
-            .put('/tasklist/update')
+            .put("/tasklist/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "swapping",
-                "newOwner": "throwAway"
+                "userID": "IntegrationTester", "taskListID": "swapping", "newOwner": "throwAway"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 request(app)
-                    .put('/tasklist/update')
+                    .put("/tasklist/update")
                     .send({
-                        "userID": "throwAway",
-                        "taskListID": "swapping",
-                        "newOwner": "IntegrationTester"
+                        "userID": "throwAway", "taskListID": "swapping", "newOwner": "IntegrationTester"
                     })
-                    .then(res => {
+                    .then((res) => {
                         expect(res.status).toBe(200);
                     });
             });
@@ -147,88 +128,73 @@ describe("Integration test 1: Task and task list operations", () => {
 
     it("User create task without permission", () => {
         return request(app)
-            .post('/task/create')
+            .post("/task/create")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "no perm"
+                "userID": "IntegrationTester", "taskListID": "no perm"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User create task without premium and cap reached", () => {
         return request(app)
-            .post('/task/create')
+            .post("/task/create")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "taskID": "should not matter"
+                "userID": "IntegrationTester", "taskListID": "integration", "taskID": "should not matter"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User update task without permission", () => {
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "should not matter",
-                "taskID": "should not matter"
+                "userID": "IntegrationTester", "taskListID": "should not matter", "taskID": "should not matter"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User update task but task does not exist", () => {
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "taskID": "does not exist"
+                "userID": "IntegrationTester", "taskListID": "integration", "taskID": "does not exist"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
             });
     });
 
     it("User delete task without permission", () => {
         return request(app)
-            .delete('/task/delete')
+            .delete("/task/delete")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "should not matter"
+                "userID": "IntegrationTester", "taskListID": "should not matter"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
             });
     });
 
     it("User completes task", () => {
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send({
-                "userID": "IntegrationTester",
-                "taskListID": "integration",
-                "taskID": "integration9",
-                "done": true,
-                "taskRating": 4
+                "userID": "IntegrationTester", "taskListID": "integration", "taskID": "integration9", "done": true, "taskRating": 4
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 request(app)
-                    .put('/task/update')
+                    .put("/task/update")
                     .send({
-                        "userID": "IntegrationTester",
-                        "taskListID": "integration",
-                        "taskID": "integration9",
-                        "done": false
+                        "userID": "IntegrationTester", "taskListID": "integration", "taskID": "integration9", "done": false
                     })
-                    .then(res => {
+                    .then((res) => {
                         expect(res.status).toBe(200);
                     });
             });
@@ -238,116 +204,76 @@ describe("Integration test 1: Task and task list operations", () => {
         return request(app)
             .post("/tasklist/create")
             .send({
-                "userID": "IntegrationTester",
-                "taskListName": "My first list",
-                "taskListID": "M9testing",
-                "taskListDescription": "M9testing"
+                "userID": "IntegrationTester", "taskListName": "My first list", "taskListID": "M9testing", "taskListDescription": "M9testing"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 request(app)
                     .post("/tasklist/adduser")
                     .send({
-                        "userID": "IntegrationTester",
-                        "taskListID": "M9testing",
-                        "addUser": "fill0"
+                        "userID": "IntegrationTester", "taskListID": "M9testing", "addUser": "fill0"
                     })
-                    .then(res => {
+                    .then((res) => {
                         expect(res.status).toBe(200);
                         request(app)
                             .put("/tasklist/update")
                             .send({
-                                "userID": "IntegrationTester",
-                                "taskListName": "Groceries",
-                                "taskListID": "M9testing",
-                                "modifiedTime": "2020-11-01 02:10:23"
+                                "userID": "IntegrationTester", "taskListName": "Groceries", "taskListID": "M9testing", "modifiedTime": "2020-11-01 02:10:23"
                             })
-                            .then(res => {
+                            .then((res) => {
                                 expect(res.status).toBe(200);
                                 request(app)
                                     .post("/tasklist/adduser")
                                     .send({
-                                        "userID": "IntegrationTester",
-                                        "taskListID": "M9testing",
-                                        "addUser": "throwAway"
+                                        "userID": "IntegrationTester", "taskListID": "M9testing", "addUser": "throwAway"
                                     })
-                                    .then(res => {
+                                    .then((res) => {
                                         expect(res.status).toBe(200);
                                         request(app)
                                             .delete("/tasklist/kickuser")
                                             .send({
-                                                "userID": "IntegrationTester",
-                                                "taskListID": "M9testing",
-                                                "toKick": "throwAway"
+                                                "userID": "IntegrationTester", "taskListID": "M9testing", "toKick": "throwAway"
                                             })
-                                            .then(res => {
+                                            .then((res) => {
                                                 expect(res.status).toBe(200);
                                                 request(app)
                                                     .post("/task/create")
                                                     .send({
-                                                        "userID": "IntegrationTester",
-                                                        "taskID": "task1",
-                                                        "taskListID": "M9testing",
-                                                        "taskName": "Buy bread",
-                                                        "taskType": "transport",
-                                                        "createdTime": "2020-11-01 02:10:23",
-                                                        "taskDescription": "task for testing",
-                                                        "taskBudget": 123,
-                                                        "address": "Save-on-foods, dunbar, vancouver"
+                                                        "userID": "IntegrationTester", "taskID": "task1", "taskListID": "M9testing", "taskName": "Buy bread", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "Save-on-foods, dunbar, vancouver"
                                                     })
-                                                    .then(res => {
+                                                    .then((res) => {
                                                         expect(res.status).toBe(200);
                                                         request(app)
                                                             .put("/task/update")
                                                             .send({
-                                                                "userID": "IntegrationTester",
-                                                                "taskID": "task1",
-                                                                "taskListID": "M9testing",
-                                                                "taskName": "Buy milk",
-                                                                "modifiedTime": "2020-11-01 02:10:24"
+                                                                "userID": "IntegrationTester", "taskID": "task1", "taskListID": "M9testing", "taskName": "Buy milk", "modifiedTime": "2020-11-01 02:10:24"
                                                             })
-                                                            .then(res => {
+                                                            .then((res) => {
                                                                 expect(res.status).toBe(200);
                                                                 request(app)
                                                                     .get("/tasklist/get/'IntegrationTester'/'M9testing'")
-                                                                    .then(res => {
+                                                                    .then((res) => {
                                                                         expect(res.status).toBe(200);
                                                                         expect(res.body).toStrictEqual(
                                                                             [
                                                                                 {
-                                                                                    "taskID": "task1",
-                                                                                    "createdBy": "IntegrationTester",
-                                                                                    "taskBudget": 123,
-                                                                                    "taskDescription": "task for testing",
-                                                                                    "taskType": "transport",
-                                                                                    "priorityLevel": 0,
-                                                                                    "address": "Save-on-foods, dunbar, vancouver",
-                                                                                    "done": null,
-                                                                                    "assignedTo": null,
-                                                                                    "taskRating": null,
-                                                                                    "createdTime": "2020-11-01T02:10:23.000Z",
-                                                                                    "modifiedTime": "2020-11-01T02:10:24.000Z",
-                                                                                    "taskName": "Buy milk",
-                                                                                    "taskListID": "M9testing"
+                                                                                    "taskID": "task1", "createdBy": "IntegrationTester", "taskBudget": 123, "taskDescription": "task for testing", "taskType": "transport", "priorityLevel": 0, "address": "Save-on-foods, dunbar, vancouver", "done": null, "assignedTo": null, "taskRating": null, "createdTime": "2020-11-01T02:10:23.000Z", "modifiedTime": "2020-11-01T02:10:24.000Z", "taskName": "Buy milk", "taskListID": "M9testing"
                                                                                 }
                                                                             ]
                                                                         );
                                                                         request(app)
                                                                             .delete("/task/delete")
                                                                             .send({
-                                                                                "userID": "IntegrationTester",
-                                                                                "taskID": "task1",
-                                                                                "taskListID": "M9testing"
+                                                                                "userID": "IntegrationTester", "taskID": "task1", "taskListID": "M9testing"
                                                                             })
-                                                                            .then(res => {
+                                                                            .then((res) => {
                                                                                 expect(res.status).toBe(200);
                                                                                 request(app)
                                                                                     .delete("/tasklist/delete")
                                                                                     .send({
-                                                                                        "userID": "IntegrationTester",
-                                                                                        "taskListID": "M9testing"
+                                                                                        "userID": "IntegrationTester", "taskListID": "M9testing"
                                                                                     })
-                                                                                    .then(res => {
+                                                                                    .then((res) => {
                                                                                         expect(res.status).toBe(200);
                                                                                     });
                                                                             });
@@ -367,15 +293,10 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/transit")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "landsdowne, vancouver"],
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "landsdowne, vancouver"],
                 distanceThreshold: 1000
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -385,12 +306,10 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/transit")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "yoyogi, tokyo",
-                    "london, england"],
+                locations: ["ubc life building, vancouver", "yoyogi, tokyo", "london, england"],
                 distanceThreshold: 1000
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
             });
     });
@@ -399,11 +318,10 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/transit")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "west broadway, vancouver"],
+                locations: ["ubc life building, vancouver", "west broadway, vancouver"],
                 distanceThreshold: 1000
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
             });
     });
@@ -412,16 +330,10 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/transit")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "ubc farm, vancouver",
-                    "ubc stadium, vancouver"],
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "ubc farm, vancouver", "ubc stadium, vancouver"],
                 distanceThreshold: 100
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -431,18 +343,10 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/transit")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "save-on-foods, wesbrook village, vancouver",
-                    "shoppers drug mart, wesbrook village, vancouver",
-                    "ubc farm, vancouver",
-                    "ubc stadium, vancouver"],
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "save-on-foods, wesbrook village, vancouver", "shoppers drug mart, wesbrook village, vancouver", "ubc farm, vancouver", "ubc stadium, vancouver"],
                 distanceThreshold: 10000
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -452,14 +356,9 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/driving")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "landsdowne, vancouver"]
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "landsdowne, vancouver"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -469,10 +368,9 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/driving")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "yoyogi, tokyo"]
+                locations: ["ubc life building, vancouver", "yoyogi, tokyo"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
             });
     });
@@ -481,14 +379,9 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/biking")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "landsdowne, vancouver"]
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "landsdowne, vancouver"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -501,7 +394,7 @@ describe("Integration test 2: Getting routes", () => {
                 locations: ["ubc life building, vancouver",
                     "yoyogi, tokyo"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
             });
     });
@@ -510,14 +403,9 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/walking")
             .send({
-                locations: ["ubc life building, vancouver",
-                    "ubc bus loop, vancouver",
-                    "ubc bookstore, vancouver",
-                    "ubc chemistry building, vancvouer",
-                    "3033 w42nd avenue, vancouver",
-                    "landsdowne, vancouver"]
+                locations: ["ubc life building, vancouver", "ubc bus loop, vancouver", "ubc bookstore, vancouver", "ubc chemistry building, vancvouer", "3033 w42nd avenue, vancouver", "landsdowne, vancouver"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.routes.length !== 0).toStrictEqual(true);
             });
@@ -530,7 +418,7 @@ describe("Integration test 2: Getting routes", () => {
                 locations: ["ubc life building, vancouver",
                     "yoyogi, tokyo"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
             });
     });
@@ -539,10 +427,9 @@ describe("Integration test 2: Getting routes", () => {
         return request(app)
             .post("/routes/driving")
             .send({
-                locations: ["しぶやえきまえ、とうきょう",
-                    "代々木、東京"]
+                locations: ["しぶやえきまえ、とうきょう", "代々木、東京"]
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
             });
     });
@@ -553,22 +440,15 @@ describe("Integration test 3: User operations", () => {
         return request(app)
             .post("/user/new")
             .send({ userID: "m9tester" })
-            .then(res => {
+            .then((res) => {
                 request(app)
                     .put("/user/premium")
                     .send({ userID: "m9tester", isPremium: true })
-                    .then(res => {
+                    .then((res) => {
                         expect(res.status).toBe(200);
                         expect(res.body).toStrictEqual({
-                            "fieldCount": 0,
-                            "affectedRows": 1,
-                            "insertId": 0,
-                            "serverStatus": 2,
-                            "warningCount": 0,
-                            "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                            "protocol41": true,
-                            "changedRows": 0
-                        })
+                            "fieldCount": 0, "affectedRows": 1, "insertId": 0, "serverStatus": 2, "warningCount": 0, "message": "(Rows matched: 1  Changed: 0  Warnings: 0", "protocol41": true, "changedRows": 0
+                        });
                     });
             });
     });
@@ -577,12 +457,12 @@ describe("Integration test 3: User operations", () => {
         return request(app)
             .put("/user/token")
             .send({ userID: "integrationToken", token: "integrationToken" })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 request(app)
                     .put("/user/token")
                     .send({ userID: "integrationToken", token: "revert" })
-                    .then(res => {
+                    .then((res) => {
                         expect(res.status).toBe(200);
                     });
             });
@@ -591,7 +471,7 @@ describe("Integration test 3: User operations", () => {
     it("Get user lists", () => {
         return request(app)
             .get("/user/tasklists/'IntegrationTester'")
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.length).toBe(2);
             });
