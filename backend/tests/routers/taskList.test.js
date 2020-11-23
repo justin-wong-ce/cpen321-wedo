@@ -72,7 +72,7 @@ beforeAll(() => {
 });
 
 describe("Get tasks in task list", () => {
-    it("Normal operation", () => {
+    it("Successfully get tasks", () => {
         userFunctions.checkPermission
             .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
@@ -113,7 +113,7 @@ describe("Get tasks in task list", () => {
 });
 
 describe("Create task list", () => {
-    it("Normal operation", () => {
+    it("Successfully create task list", () => {
         databaseInterface.insert
             .mockImplementationOnce((table, entry, callback) => {
                 callback(null, insertResponse);
@@ -167,7 +167,7 @@ describe("Create task list", () => {
             })
             .then((res) => {
                 expect(res.status).toBe(406);
-                expect(res.body).toEqual({ msg: "user/task/tasklist already exists" })
+                expect(res.body).toEqual({ msg: "user/task/tasklist already exists" });
             });
     });
 
@@ -175,7 +175,7 @@ describe("Create task list", () => {
 });
 
 describe("Update task list", () => {
-    it("Normal operation", () => {
+    it("Successfully update task list", () => {
         userFunctions.isListOwner
             .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
@@ -257,7 +257,7 @@ describe("Update task list", () => {
 });
 
 describe("Add user to task list", () => {
-    it("Normal operation", () => {
+    it("Successfully add user to task list", () => {
         userFunctions.isListOwner
             .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
@@ -359,7 +359,7 @@ describe("Add user to task list", () => {
 });
 
 describe("Kick user from task list", () => {
-    it("Normal operation", () => {
+    it("Successfully kick user from task list", () => {
         userFunctions.isListOwner
             .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
@@ -426,7 +426,7 @@ describe("Kick user from task list", () => {
 });
 
 describe("Delete task list", () => {
-    it("Normal operation", () => {
+    it("Successfully delete task list", () => {
         userFunctions.isListOwner
             .mockImplementationOnce((userID, taskListID, callback) => {
                 callback(null, [{ pad: 1 }]);
