@@ -1,3 +1,4 @@
+/* global jest */
 const { app, server } = require("../src/server");
 const request = require("supertest");
 

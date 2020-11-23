@@ -1,4 +1,4 @@
-//const jest = require("jest");
+/* global jest */
 const { app, server } = require("../../src/server");
 const request = require("supertest");
 const userFunctions = require("../../src/db/users_db");
