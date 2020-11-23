@@ -17,10 +17,6 @@ app.use(taskRouter);
 app.use(taskListRouter);
 app.use(routeRouter);
 
-app.get("/", function (req, res) {
-    res.send("hello");
-});
-
 io.on("connection", (socket) => {
     socket.emit("You\"v successfully received the push notifications");
 

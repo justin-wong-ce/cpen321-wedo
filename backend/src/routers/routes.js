@@ -28,6 +28,7 @@ router.post("/routes/transit", (req, res) => {
             }
         })
         .catch((err) => {
+            console.log(err);
             res.status(400).send({ msg: "bad data format" });
         });
 });

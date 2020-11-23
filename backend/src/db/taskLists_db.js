@@ -22,7 +22,6 @@ var taskListFunctions = {
                 });
             }
         });
-
     },
     createTaskList(entry, callback) {
         database.insert("TaskListWithOwner", entry, (err, results) => {
@@ -67,12 +66,15 @@ var taskListFunctions = {
                 // ************************************
                 database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, nameResponse) => {
                     let taskListName = nameResponse[0].taskListName;
-                    database.delete("TaskListWithOwner", { taskListID }, (err, results) => {
-                        userFunctions.getTokensInList(userID, taskListID, (err, tokens) => {
+                    userFunctions.getTokensInList(userID, taskListID, (err, tokens) => {
+                        if (tokens.length !== 0) {
                             pushNotification("Tasklist deleted!", taskListName + " has been deleted!", tokens);
+                        }
+                        database.delete("TaskListWithOwner", { taskListID }, (err, results) => {
                             callback(err, results, true);
                         });
                     });
+
                 });
             }
         });
@@ -99,7 +101,9 @@ var taskListFunctions = {
                                     let token = tokenResponse[0].token;
                                     database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, listNameResponse) => {
                                         let taskListName = listNameResponse[0].taskListName;
-                                        pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
+                                        if (!err) {
+                                            pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
+                                        }
                                         callback(err, results, true);
                                     });
                                 });

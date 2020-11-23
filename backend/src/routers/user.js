@@ -59,17 +59,4 @@ router.get("/user/tasklists/:userID", async (req, res) => {
     });
 });
 
-// // Bias user preferences (add 10 "points" to type)
-// //
-// // Body JSON attribute types
-// // typeof body.userID == "string"
-// // typeof body.taskType == "string"
-// router.put("/user/biaspreferences", async (req, res) => {
-//     const userID = req.body.userID;
-//     const taskType = req.body.taskType;
-//     recManager.updatePreferences(userID, taskType, 10, (err, results) => {
-//         routerHelper.callbackHandler(err, results, res);
-//     });
-// });
-
 module.exports = router;

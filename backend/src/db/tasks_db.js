@@ -29,7 +29,9 @@ var taskFunctions = {
                             database.insert("TaskHasTaskList", entry, (err, results) => {
                                 if (!err) {
                                     userFunctions.getTokensInList(userID, entry.taskListID, (err, tokens) => {
-                                        pushNotification("Task added!", entry.taskName + " has been added!", tokens);
+                                        if (tokens.length !== 0) {
+                                            pushNotification("Task added!", entry.taskName + " has been added!", tokens);
+                                        }
                                         callback(err, results, true);
                                     });
                                 }
@@ -70,7 +72,9 @@ var taskFunctions = {
                         // ************************************
                         recManager.updatePreferences(userID, entry.taskRating, entry.taskID, (err, results) => {
                             userFunctions.getTokensInList(userID, entry.taskListID, (err, tokens) => {
-                                pushNotification("Task done!", entry.taskName + " has been done!", tokens);
+                                if (tokens.length !== 0) {
+                                    pushNotification("Task done!", entry.taskName + " has been done!", tokens);
+                                }
                                 callback(err, results, true);
                             });
                         });
@@ -95,7 +99,9 @@ var taskFunctions = {
                     database.delete("TaskHasTaskList", { taskID }, (err, results) => {
                         if (!err && results.affectedRows !== 0) {
                             userFunctions.getTokensInList(userID, taskListID, (err, tokens) => {
-                                pushNotification("Task deleted!", taskName + " has been deleted!", tokens);
+                                if (tokens.length !== 0) {
+                                    pushNotification("Task deleted!", taskName + " has been deleted!", tokens);
+                                }
                                 callback(err, results, true);
                             });
                         }

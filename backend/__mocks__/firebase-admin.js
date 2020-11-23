@@ -2,13 +2,18 @@ const admin = jest.createMockFromModule("firebase-admin");
 
 function messaging() {
     return {
-        send: (message) => {
+        sendMulticast: async (message) => {
             let msgInfo = {
                 title: message.notification.title,
                 body: message.notification.body,
                 tokens: message.tokens
             };
-            return msgInfo;
+            if (message.tokens.length === 0) {
+                throw Error("bad");
+            }
+            else {
+                return msgInfo;
+            }
         }
     };
 }
