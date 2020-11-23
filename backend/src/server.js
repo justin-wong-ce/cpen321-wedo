@@ -17,19 +17,4 @@ app.use(taskRouter);
 app.use(taskListRouter);
 app.use(routeRouter);
 
-io.on("connection", (socket) => {
-    socket.emit("You\"v successfully received the push notifications");
-
-    // before doing something, join the user to every room they should be:
-    socket.on("join", (chatID) => {
-        socket.join(chatID);
-    });
-
-    // TODO: if a user send message, get the user ID, send to the other user who is in the chat room
-    // with chatID:
-    socket.on("sendMessages", (chatID, message) => {
-        io.to(chatID).emit(message);
-    });
-});
-
 module.exports = { app, server };

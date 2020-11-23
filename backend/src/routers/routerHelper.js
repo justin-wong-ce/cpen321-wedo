@@ -22,7 +22,7 @@ function noResCheck(err, res) {
     //     err.code === "ER_PARSE_ERROR";
 
     if (alrExists) {
-        res.status(400).send({ msg: "user/task/tasklist already exists" });
+        res.status(406).send({ msg: "user/task/tasklist already exists" });
     }
     else {
         let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
@@ -30,7 +30,7 @@ function noResCheck(err, res) {
             res.status(404).send({ msg: "entry does not exist" });
         }
         else {
-            res.status(406).send({ msg: "bad data format or type" });
+            res.status(400).send({ msg: "bad data format or type" });
         }
     }
 }
