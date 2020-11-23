@@ -105,7 +105,9 @@ var taskFunctions = {
                                 callback(err, results, true);
                             });
                         }
-                        else callback(err, results, true);
+                        else {
+                            callback(err, results, true);
+                        }
                     });
                 });
             }

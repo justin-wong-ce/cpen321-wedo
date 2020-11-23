@@ -1,6 +1,7 @@
 function noErrCheck(results, res) {
-    let doesNotExist = (results.length === 0 && typeof (results.affectedRows) === "undefined")
-        || (typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0);
+    let nochange = typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0;
+    let noResult = results.length === 0 && typeof (results.affectedRows) === "undefined";
+    let doesNotExist = noChange || noResult;
 
     if (!doesNotExist) {
         res.status(200).send(results);
