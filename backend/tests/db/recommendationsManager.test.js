@@ -1,6 +1,7 @@
+/* global jest */
 jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
-const database = require("../../src/db/databaseInterface");
+jest.unmock("../../src/db/recommendationsManager");
 const databaseInterface = require("../../src/db/databaseInterface");
 const recManager = require("../../src/db/recommendationsManager");
 
@@ -103,7 +104,7 @@ describe("Test sorting tasks", () => {
                 ]);
             });
 
-        recManager.updatePreferences(tasks, "tester", (err, results) => {
+        recManager.sortTasks(tasks, "tester", (err, results) => {
             expect(results).toStrictEqual(sortedTasks);
         });
     });

@@ -1,3 +1,4 @@
+/* global jest */
 const { app, server } = require("../../src/server");
 const request = require("supertest");
 
@@ -14,7 +15,7 @@ const pushNotification = require("../../src/routers/pushNotification");
 
 userFunctions.getTokensInList
     .mockImplementation((userID, taskListID, callback) => {
-        callback(null, ['test1', 'test2', 'test3', 'test4']);
+        callback(null, ["test1", "test2", "test4", "test5"]);
     });
 pushNotification
     .mockImplementation((title, body, tokens) => {
@@ -22,26 +23,11 @@ pushNotification
     });
 
 const modifyResponse = {
-    "fieldCount": 0,
-    "affectedRows": 1,
-    "insertId": 0,
-    "serverStatus": 2,
-    "warningCount": 0,
-    "message": "",
-    "protocol41": true,
-    "changedRows": 0
+    "affectedRows": 1, "insertId": 0, "fieldCount": 0, "serverStatus": 2, "warningCount": 0, "message": "", "protocol41": true, "changedRows": 0
 };
 
 const standardTask = {
-    "userID": "tester",
-    "taskID": "12322_task1",
-    "taskListID": "12322",
-    "taskName": "test_task_1",
-    "taskType": "transport",
-    "createdTime": "2020-11-01 02:10:23",
-    "taskDescription": "task for testing",
-    "taskBudget": 123,
-    "address": "UBC, Vancouver"
+    "userID": "tester", "taskID": "12322_task1", "taskListID": "12322", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver"
 };
 
 beforeAll(() => {
@@ -233,17 +219,7 @@ describe("Update task", () => {
         return request(app)
             .put('/task/update')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "12322",
-                "taskName": "test_task_1",
-                "taskType": "transport",
-                "createdTime": "2020-11-01 02:10:23",
-                "taskDescription": "task for testing",
-                "taskBudget": 123,
-                "address": "UBC, Vancouver",
-                "done": true,
-                "taskRating": 4
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver", "done": true, "taskRating": 4
             })
             .then(res => {
                 expect(res.status).toBe(200);
@@ -260,15 +236,7 @@ describe("Update task", () => {
         return request(app)
             .put('/task/update')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "someOtherTask",
-                "taskName": "test_task_1",
-                "taskType": "transport",
-                "createdTime": "2020-11-01 02:10:23",
-                "taskDescription": "task for testing",
-                "taskBudget": 123,
-                "address": "UBC, Vancouver"
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "someOtherTask", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver"
             })
             .then(res => {
                 expect(res.status).toBe(401);
@@ -333,9 +301,7 @@ describe("Delete task", () => {
         return request(app)
             .delete('/task/delete')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "12322"
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
             })
             .then(res => {
                 expect(res.status).toBe(200);
@@ -352,9 +318,7 @@ describe("Delete task", () => {
         return request(app)
             .delete('/task/delete')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "12322"
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
             })
             .then(res => {
                 expect(res.status).toBe(401);
@@ -379,9 +343,7 @@ describe("Delete task", () => {
         return request(app)
             .delete('/task/delete')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "12322"
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
             })
             .then(res => {
                 expect(res.status).toBe(404);
@@ -406,9 +368,7 @@ describe("Delete task", () => {
         return request(app)
             .delete('/task/delete')
             .send({
-                "userID": "tester",
-                "taskID": "12322_task1",
-                "taskListID": "12322"
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
             })
             .then(res => {
                 expect(res.status).toBe(400);
