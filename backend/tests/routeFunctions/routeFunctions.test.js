@@ -1,4 +1,5 @@
-let routeFunctions = require("../../src/routeFunctions/routeFunctions")
+/* global jest */
+let routeFunctions = require("../../src/routeFunctions/routeFunctions");
 jest.setTimeout(10000);
 
 describe("Route functions tests", () => {
@@ -9,14 +10,14 @@ describe("Route functions tests", () => {
             "ubc chemistry building, vancvouer",
             "3033 w42nd avenue, vancouver",
             "landsdowne, vancouver"], "driving")
-            .then(res => {
+            .then((res) => {
                 expect(res.data.status === "OK").toBe(true);
             });
     });
 
     it("Normal route, route not found", () => {
         return routeFunctions.getRoute(["vancouver, canada", "tokyo, japan"], "walking")
-            .then(res => {
+            .then((res) => {
                 expect(res.data.status === "ZERO_RESULTS" || res.data.status === "NOT_FOUND").toBe(true);
             });
     });
@@ -28,7 +29,7 @@ describe("Route functions tests", () => {
             "ubc chemistry building, vancvouer",
             "3033 w42nd avenue, vancouver",
             "landsdowne, vancouver"], 500)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
@@ -38,7 +39,7 @@ describe("Route functions tests", () => {
             "totem park, ubc, vancouver",
             "3033 w42nd avenue, vancouver",
             "landsdowne, vancouver"], 500)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
@@ -47,7 +48,7 @@ describe("Route functions tests", () => {
         return routeFunctions.getTransitRoute([
             "ubc bus loop, vancouver",
             "landsdowne, vancouver"], 1000)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
@@ -59,7 +60,7 @@ describe("Route functions tests", () => {
             "ubc chemistry building, vancvouer",
             "3033 w42nd avenue, vancouver",
             "landsdowne, vancouver"], 10000)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
@@ -74,7 +75,7 @@ describe("Route functions tests", () => {
             "shoppers drug mart, wesbrook village, vancouver",
             "ubc farm, vancouver",
             "ubc stadium, vancouver"], 10000)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
@@ -89,14 +90,14 @@ describe("Route functions tests", () => {
             "shoppers drug mart, wesbrook village, vancouver",
             "ubc farm, vancouver",
             "ubc stadium, vancouver"], 10)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(false);
             });
     });
 
     it("Transit route, route not found", () => {
         return routeFunctions.getTransitRoute(["vancouver, canada", "arctic, north pole", "tokyo, japan"], 1000)
-            .then(res => {
+            .then((res) => {
                 expect(res.length === 0).toBe(true);
             });
     });

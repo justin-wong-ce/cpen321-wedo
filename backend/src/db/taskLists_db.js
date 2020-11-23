@@ -8,7 +8,7 @@ var taskListFunctions = {
     getTasksInList(taskListID, userID, callback) {
         // Remove double quotes at the end
         userID = userID.substring(1, userID.length - 1);
-        taskListID = taskListID.substring(1, taskListID.length - 1)
+        taskListID = taskListID.substring(1, taskListID.length - 1);
 
         userFunctions.checkPermission(userID, taskListID, (err, results) => {
             if (results.length === 0) {
@@ -30,9 +30,7 @@ var taskListFunctions = {
             }
 
             else {
-                database.insert("HasAccess", { userID: entry.userID, taskListID: entry.taskListID }, (err, results) => {
-                    callback(err, results);
-                });
+                database.insert("HasAccess", { userID: entry.userID, taskListID: entry.taskListID }, (err, results) => callback(err, results));
             }
         });
     },

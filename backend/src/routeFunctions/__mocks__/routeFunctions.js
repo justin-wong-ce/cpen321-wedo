@@ -2,18 +2,20 @@
 const routeFunctions = {
     getRoute: jest.fn(async (inputLocs, travelMode) => {
         if (inputLocs === "BADLOCS") {
-            return { data: { status: "ZERO_RESULTS" } };
+            let retObj = { data: { status: "ZERO_RESULTS" } }
+            return retObj;
         }
         else if (inputLocs === "THROW") {
             throw Error("THROW");
         }
         else {
-            return {
+            let retObj = {
                 data: {
                     status: "OK",
                     routes: ["PLACEHOLDER", "PLACEHOLDER"]
                 }
-            };
+            }
+            return retObj;
         }
     }),
     getTransitRoute: jest.fn(async (locations, distanceThreshold) => {
@@ -29,4 +31,4 @@ const routeFunctions = {
     })
 };
 
-module.exports = routeFunctions
+module.exports = routeFunctions;
