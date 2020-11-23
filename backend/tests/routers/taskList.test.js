@@ -23,48 +23,22 @@ pushNotification
     });
 
 const updateResponse = {
-    "fieldCount": 0,
-    "affectedRows": 1,
-    "insertId": 0,
-    "serverStatus": 2,
-    "warningCount": 0,
-    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-    "protocol41": true,
-    "changedRows": 0
+    "fieldCount": 0, "affectedRows": 1, "insertId": 0, "serverStatus": 2, "warningCount": 0, "message": "(Rows matched: 1  Changed: 0  Warnings: 0", "protocol41": true, "changedRows": 0
 };
 
 const insertResponse = updateResponse;
 
 const standardTasklist = {
-    "userID": "throwAway",
-    "taskListName": "testing tasklist",
-    "taskListID": "testing_2",
-    "taskListDescription": "test test test"
+    "userID": "throwAway", "taskListName": "testing tasklist", "taskListID": "testing_2", "taskListDescription": "test test test"
 };
 
 const standardUpdate = {
-    "userID": "throwAway",
-    "taskListID": "testing",
-    "modifiedTime": "2020-11-01 02:10:23",
-    "taskListDescription": "alsdkjalskd"
+    "userID": "throwAway", "taskListID": "testing", "modifiedTime": "2020-11-01 02:10:23", "taskListDescription": "alsdkjalskd"
 };
 
 const tasksResponse = [
     {
-        "taskID": "testing_task1",
-        "createdBy": "throwAway",
-        "taskBudget": 123,
-        "taskDescription": "task for testing MODIFIED",
-        "taskType": "transport",
-        "priorityLevel": 0,
-        "address": "UBC, Vancouver",
-        "done": null,
-        "assignedTo": null,
-        "taskRating": null,
-        "createdTime": "2020-11-01T02:10:23.000Z",
-        "modifiedTime": null,
-        "taskName": "test_task_0",
-        "taskListID": "testing"
+        "taskID": "testing_task1", "createdBy": "throwAway", "taskBudget": 123, "taskDescription": "task for testing MODIFIED", "taskType": "transport", "priorityLevel": 0, "address": "UBC, Vancouver", "done": null, "assignedTo": null, "taskRating": null, "createdTime": "2020-11-01T02:10:23.000Z", "modifiedTime": null, "taskName": "test_task_0", "taskListID": "testing"
     }];
 
 beforeAll(() => {
@@ -207,11 +181,7 @@ describe("Update task list", () => {
         return request(app)
             .put("/tasklist/update")
             .send({
-                "userID": "throwAway",
-                "newOwner": "throwAway2",
-                "taskListID": "testing",
-                "modifiedTime": "2020-11-01 02:10:23",
-                "taskListDescription": "alsdkjalskd"
+                "userID": "throwAway", "newOwner": "throwAway2", "taskListID": "testing", "modifiedTime": "2020-11-01 02:10:23", "taskListDescription": "alsdkjalskd"
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -284,9 +254,7 @@ describe("Add user to task list", () => {
         return request(app)
             .post("/tasklist/adduser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "addUser": "throwAway2"
+                "userID": "throwAway", "taskListID": "testing", "addUser": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -298,9 +266,7 @@ describe("Add user to task list", () => {
         return request(app)
             .post("/tasklist/adduser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "addUser": "throwAway"
+                "userID": "throwAway", "taskListID": "testing", "addUser": "throwAway"
             })
             .then((res) => {
                 expect(res.status).toBe(406);
@@ -317,9 +283,7 @@ describe("Add user to task list", () => {
         return request(app)
             .post("/tasklist/adduser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "otherlist",
-                "addUser": "throwAway2"
+                "userID": "throwAway", "taskListID": "otherlist", "addUser": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(401);
@@ -346,9 +310,7 @@ describe("Add user to task list", () => {
         return request(app)
             .post("/tasklist/adduser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "addUser": "throwAway2"
+                "userID": "throwAway", "taskListID": "testing", "addUser": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(401);
@@ -379,9 +341,7 @@ describe("Kick user from task list", () => {
         return request(app)
             .delete("/tasklist/kickuser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing",
-                "toKick": "throwAway2"
+                "userID": "throwAway", "taskListID": "testing", "toKick": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -398,9 +358,7 @@ describe("Kick user from task list", () => {
         return request(app)
             .delete("/tasklist/kickuser")
             .send({
-                "userID": "throwAway",
-                "taskListID": "nosuchlist",
-                "toKick": "throwAway2"
+                "userID": "throwAway", "taskListID": "nosuchlist", "toKick": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(401);
@@ -412,9 +370,7 @@ describe("Kick user from task list", () => {
         return request(app)
             .delete("/tasklist/kickuser")
             .send({
-                "userID": "throwAway2",
-                "taskListID": "nosuchlist",
-                "toKick": "throwAway2"
+                "userID": "throwAway2", "taskListID": "nosuchlist", "toKick": "throwAway2"
             })
             .then((res) => {
                 expect(res.status).toBe(406);
@@ -443,8 +399,7 @@ describe("Delete task list", () => {
         return request(app)
             .delete("/tasklist/delete")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing"
+                "userID": "throwAway", "taskListID": "testing"
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -461,8 +416,7 @@ describe("Delete task list", () => {
         return request(app)
             .delete("/tasklist/delete")
             .send({
-                "userID": "throwAway",
-                "taskListID": "testing"
+                "userID": "throwAway", "taskListID": "testing"
             })
             .then((res) => {
                 expect(res.status).toBe(401);
