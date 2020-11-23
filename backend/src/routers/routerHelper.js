@@ -1,8 +1,9 @@
-function noErrCheck(results, res) {
-    let noChange = typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0;
-    let noResult = results.length === 0 && typeof (results.affectedRows) === "undefined";
-    let doesNotExist = noChange || noResult;
+function computeExistCheck(results) {
+    return (typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0) || (results.length === 0 && typeof (results.affectedRows) === "undefined");
+}
 
+function noErrCheck(results, res) {
+    let doesNotExist = computeExistCheck(results);
     if (!doesNotExist) {
         res.status(200).send(results);
     }
@@ -12,15 +13,16 @@ function noErrCheck(results, res) {
 }
 
 function noResCheck(err, res) {
-    let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" ||
-        err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
-        err.code === "ER_WARN_DATA_TRUNCATED" ||
-        err.code === "ER_TRUNCATED_WRONG_VALUE" ||
-        err.code === "ER_BAD_FIELD_ERROR" ||
-        err.code === "ER_PARSE_ERROR";
+    let alrExists = err.code === "ER_DUP_ENTRY" || err.code === "ER_DUP_KEY";
+    // err.code === "ER_WARN_NULL_TO_NOTNULL" ||
+    //     err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
+    //     err.code === "ER_WARN_DATA_TRUNCATED" ||
+    //     err.code === "ER_TRUNCATED_WRONG_VALUE" ||
+    //     err.code === "ER_BAD_FIELD_ERROR" ||
+    //     err.code === "ER_PARSE_ERROR";
 
-    if (badDataType) {
-        res.status(400).send({ msg: "bad data format or type" });
+    if (alrExists) {
+        res.status(400).send({ msg: "user/task/tasklist already exists" });
     }
     else {
         let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
@@ -28,7 +30,7 @@ function noResCheck(err, res) {
             res.status(404).send({ msg: "entry does not exist" });
         }
         else {
-            res.status(406).send({ msg: "user/task/tasklist already exists" });
+            res.status(406).send({ msg: "bad data format or type" });
         }
     }
 }
