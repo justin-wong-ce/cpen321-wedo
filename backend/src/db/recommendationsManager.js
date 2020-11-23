@@ -15,7 +15,7 @@ function updatePreferences(userID, points, taskID, callback) {
             let taskType = retType[0].taskType;
 
             let preferences = JSON.parse(pref);
-            preferences[taskType] = preferences[`${taskType}`] + points;
+            preferences[`${taskType}`] = preferences[`${taskType}`] + points;
 
             let newPreferences = JSON.stringify(preferences);
             database.update("Users", { preferences: newPreferences }, { userID }, (err, pref) => {
@@ -23,6 +23,19 @@ function updatePreferences(userID, points, taskID, callback) {
             });
         });
     });
+}
+
+function sortPreferencesOrder(preferences, prefInOrder) {
+    // Sort preferences first
+    for (let type in preferences) {
+        if (typeof (type) === "string") { prefInOrder.push([type, preferences[`${type}`]]); }
+    }
+    prefInOrder.sort(function (comp0, comp1) {
+        return comp1[1] - comp0[1];
+    });
+    for (let i = 0; i < prefInOrder.length; i++) {
+        prefInOrder[parseInt(i, 10)] = prefInOrder[parseInt(i, 10)][0];
+    }
 }
 
 // Adjust order of tasks according to user preferences
@@ -44,16 +57,7 @@ function sortTasks(tasks, userID, callback) {
         let prefInOrder = [];
         let preferences = JSON.parse(results);
 
-        // Sort preferences first
-        for (let type in preferences) {
-            if (typeof (type) === "string") { prefInOrder.push([type, preferences[`${type}`]]); }
-        }
-        prefInOrder.sort(function (comp0, comp1) {
-            return comp1[1] - comp0[1];
-        });
-        for (let i = 0; i < prefInOrder.length; i++) {
-            prefInOrder[parseInt(i, 10)] = prefInOrder[parseInt(i, 10)][0];
-        }
+        sortPreferencesOrder(preferences, prefInOrder);
 
         // Order by preference for every priority level
         let sortedTasks = [];
