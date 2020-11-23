@@ -15,7 +15,7 @@ const pushNotification = require("../../src/routers/pushNotification");
 
 userFunctions.getTokensInList
     .mockImplementation((userID, taskListID, callback) => {
-        callback(null, ['test1', 'test2', 'test3', 'test4']);
+        callback(null, ["test1", "test2", "test3", "test4"]);
     });
 pushNotification
     .mockImplementation((title, body, tokens) => {
@@ -33,16 +33,7 @@ const updateResponse = {
     "changedRows": 0
 };
 
-const insertResponse = {
-    "fieldCount": 0,
-    "affectedRows": 1,
-    "insertId": 0,
-    "serverStatus": 2,
-    "warningCount": 0,
-    "message": "",
-    "protocol41": true,
-    "changedRows": 0
-};
+const insertResponse = updateResponse;
 
 const standardTasklist = {
     "userID": "throwAway",
@@ -57,6 +48,24 @@ const standardUpdate = {
     "modifiedTime": "2020-11-01 02:10:23",
     "taskListDescription": "alsdkjalskd"
 };
+
+const tasksResponse = [
+    {
+        "taskID": "testing_task1",
+        "createdBy": "throwAway",
+        "taskBudget": 123,
+        "taskDescription": "task for testing MODIFIED",
+        "taskType": "transport",
+        "priorityLevel": 0,
+        "address": "UBC, Vancouver",
+        "done": null,
+        "assignedTo": null,
+        "taskRating": null,
+        "createdTime": "2020-11-01T02:10:23.000Z",
+        "modifiedTime": null,
+        "taskName": "test_task_0",
+        "taskListID": "testing"
+    }];
 
 beforeAll(() => {
     server.listen(3003);
@@ -74,46 +83,14 @@ describe("Get tasks in task list", () => {
             });
         recManager.sortTasks
             .mockImplementationOnce((tasks, userID, callback) => {
-                callback(null, [
-                    {
-                        "taskID": "testing_task1",
-                        "createdBy": "throwAway",
-                        "taskBudget": 123,
-                        "taskDescription": "task for testing MODIFIED",
-                        "taskType": "transport",
-                        "priorityLevel": 0,
-                        "address": "UBC, Vancouver",
-                        "done": null,
-                        "assignedTo": null,
-                        "taskRating": null,
-                        "createdTime": "2020-11-01T02:10:23.000Z",
-                        "modifiedTime": null,
-                        "taskName": "test_task_0",
-                        "taskListID": "testing"
-                    }])
+                callback(null, tasksResponse);
             });
 
         return request(app)
             .get("/tasklist/get/'throwAway'/'testing'")
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
-                expect(res.body).toEqual([
-                    {
-                        "taskID": "testing_task1",
-                        "createdBy": "throwAway",
-                        "taskBudget": 123,
-                        "taskDescription": "task for testing MODIFIED",
-                        "taskType": "transport",
-                        "priorityLevel": 0,
-                        "address": "UBC, Vancouver",
-                        "done": null,
-                        "assignedTo": null,
-                        "taskRating": null,
-                        "createdTime": "2020-11-01T02:10:23.000Z",
-                        "modifiedTime": null,
-                        "taskName": "test_task_0",
-                        "taskListID": "testing"
-                    }]);
+                expect(res.body).toEqual(tasksResponse);
             });
     });
 
@@ -125,7 +102,7 @@ describe("Get tasks in task list", () => {
 
         return request(app)
             .get("/tasklist/get/'throwAway'/'testing'")
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
@@ -146,9 +123,9 @@ describe("Create task list", () => {
             });
 
         return request(app)
-            .post('/tasklist/create')
+            .post("/tasklist/create")
             .send(standardTasklist)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
             });
@@ -161,14 +138,14 @@ describe("Create task list", () => {
             });
 
         return request(app)
-            .post('/tasklist/create')
+            .post("/tasklist/create")
             .send({
                 "userID": "nosuchid",
                 "taskListName": "testing tasklist",
                 "taskListID": "testing_2",
                 "taskListDescription": "test test test"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toEqual({ msg: "entry does not exist" });
             });
@@ -181,14 +158,14 @@ describe("Create task list", () => {
             });
 
         return request(app)
-            .post('/tasklist/create')
+            .post("/tasklist/create")
             .send({
                 "userID": "nosuchid",
                 "taskListName": "testing tasklist",
                 "taskListID": "testing_2",
                 "taskListDescription": "test test test"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
                 expect(res.body).toEqual({ msg: "user/task/tasklist already exists" })
             });
@@ -209,9 +186,9 @@ describe("Update task list", () => {
             });
 
         return request(app)
-            .put('/tasklist/update')
+            .put("/tasklist/update")
             .send(standardUpdate)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(updateResponse);
             });
@@ -228,7 +205,7 @@ describe("Update task list", () => {
             });
 
         return request(app)
-            .put('/tasklist/update')
+            .put("/tasklist/update")
             .send({
                 "userID": "throwAway",
                 "newOwner": "throwAway2",
@@ -236,7 +213,7 @@ describe("Update task list", () => {
                 "modifiedTime": "2020-11-01 02:10:23",
                 "taskListDescription": "alsdkjalskd"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(updateResponse);
             });
@@ -253,9 +230,9 @@ describe("Update task list", () => {
             });
 
         return request(app)
-            .put('/tasklist/update')
+            .put("/tasklist/update")
             .send(standardUpdate)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });
             });
@@ -268,9 +245,9 @@ describe("Update task list", () => {
             });
 
         return request(app)
-            .put('/tasklist/update')
+            .put("/tasklist/update")
             .send(standardUpdate)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
@@ -305,13 +282,13 @@ describe("Add user to task list", () => {
 
 
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing",
                 "addUser": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
             });
@@ -319,13 +296,13 @@ describe("Add user to task list", () => {
 
     it("User adding himself", () => {
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing",
                 "addUser": "throwAway"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
                 expect(res.body).toEqual({ msg: "cannot add yourself" });
             });
@@ -338,13 +315,13 @@ describe("Add user to task list", () => {
             });
 
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "otherlist",
                 "addUser": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
@@ -367,13 +344,13 @@ describe("Add user to task list", () => {
             });
 
         return request(app)
-            .post('/tasklist/adduser')
+            .post("/tasklist/adduser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing",
                 "addUser": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user needs to buy premium" });
             });
@@ -400,13 +377,13 @@ describe("Kick user from task list", () => {
             });
 
         return request(app)
-            .delete('/tasklist/kickuser')
+            .delete("/tasklist/kickuser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing",
                 "toKick": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
             });
@@ -419,13 +396,13 @@ describe("Kick user from task list", () => {
             });
 
         return request(app)
-            .delete('/tasklist/kickuser')
+            .delete("/tasklist/kickuser")
             .send({
                 "userID": "throwAway",
                 "taskListID": "nosuchlist",
                 "toKick": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
@@ -433,13 +410,13 @@ describe("Kick user from task list", () => {
 
     it("User removing him/herself", () => {
         return request(app)
-            .delete('/tasklist/kickuser')
+            .delete("/tasklist/kickuser")
             .send({
                 "userID": "throwAway2",
                 "taskListID": "nosuchlist",
                 "toKick": "throwAway2"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(406);
                 expect(res.body).toEqual({ msg: "cannot kick yourself" });
             });
@@ -464,12 +441,12 @@ describe("Delete task list", () => {
             });
 
         return request(app)
-            .delete('/tasklist/delete')
+            .delete("/tasklist/delete")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
             });
@@ -482,12 +459,12 @@ describe("Delete task list", () => {
             });
 
         return request(app)
-            .delete('/tasklist/delete')
+            .delete("/tasklist/delete")
             .send({
                 "userID": "throwAway",
                 "taskListID": "testing"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
