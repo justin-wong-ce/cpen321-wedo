@@ -1,16 +1,10 @@
 const database = require("./databaseInterface");
 
-var recManager = {
-    updatePreferences,
-    sortTasks,
-    getPreferences
-};
-
 function getPreferences(userID, callback) {
     database.get("preferences", "Users", { userID }, "", (err, results) => {
         callback(err, results[0].preferences);
     });
-};
+}
 
 function updatePreferences(userID, points, taskID, callback) {
     // 1. Get preferences of user
@@ -21,7 +15,7 @@ function updatePreferences(userID, points, taskID, callback) {
             let taskType = retType[0].taskType;
 
             let preferences = JSON.parse(pref);
-            preferences[taskType] = preferences[taskType] + points;
+            preferences[taskType] = preferences[`${taskType}`] + points;
 
             let newPreferences = JSON.stringify(preferences);
             database.update("Users", { preferences: newPreferences }, { userID }, (err, pref) => {
@@ -29,7 +23,7 @@ function updatePreferences(userID, points, taskID, callback) {
             });
         });
     });
-};
+}
 
 // Adjust order of tasks according to user preferences
 function sortTasks(tasks, userID, callback) {
@@ -52,13 +46,13 @@ function sortTasks(tasks, userID, callback) {
 
         // Sort preferences first
         for (let type in preferences) {
-            prefInOrder.push([type, preferences[type]]);
+            if (typeof (type) === "string") { prefInOrder.push([type, preferences[`${type}`]]); }
         }
         prefInOrder.sort(function (comp0, comp1) {
             return comp1[1] - comp0[1];
         });
         for (let i = 0; i < prefInOrder.length; i++) {
-            prefInOrder[i] = prefInOrder[i][0];
+            prefInOrder[parseInt(i, 10)] = prefInOrder[parseInt(i, 10)][0];
         }
 
         // Order by preference for every priority level
@@ -68,9 +62,9 @@ function sortTasks(tasks, userID, callback) {
             let tempList = [];
 
             // Add all tasks with same priority level
-            let currPriority = tasks[iter].priorityLevel;
-            while (iter < tasks.length && tasks[iter].priorityLevel === currPriority) {
-                tempList.push(tasks[iter]);
+            let currPriority = tasks[parseInt(iter, 10)].priorityLevel;
+            while (iter < tasks.length && tasks[parseInt(iter, 10)].priorityLevel === currPriority) {
+                tempList.push(tasks[parseInt(iter, 10)]);
                 iter++;
             }
 
@@ -83,5 +77,12 @@ function sortTasks(tasks, userID, callback) {
         }
         callback(err, sortedTasks);
     });
+}
+
+var recManager = {
+    updatePreferences,
+    sortTasks,
+    getPreferences
 };
+
 module.exports = recManager;
