@@ -100,7 +100,7 @@ describe("Test sorting tasks", () => {
     it("Normal operation", () => {
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ preferences: '{"shopping": 0, "transport": 0, "setup": 0, "repair": 0, "study": 0, "work": 1, "fun": 2}' }
+                callback(null, [{ preferences: "{\"shopping\": 0, \"transport\": 0, \"setup\": 0, \"repair\": 0, \"study\": 0, \"work\": 1, \"fun\": 2}" }
                 ]);
             });
 

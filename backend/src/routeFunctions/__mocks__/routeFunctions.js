@@ -2,7 +2,7 @@
 const routeFunctions = {
     getRoute: jest.fn(async (inputLocs, travelMode) => {
         if (inputLocs === "BADLOCS") {
-            let retObj = { data: { status: "ZERO_RESULTS" } }
+            let retObj = { data: { status: "ZERO_RESULTS" } };
             return retObj;
         }
         else if (inputLocs === "THROW") {
@@ -14,7 +14,7 @@ const routeFunctions = {
                     status: "OK",
                     routes: ["PLACEHOLDER", "PLACEHOLDER"]
                 }
-            }
+            };
             return retObj;
         }
     }),
