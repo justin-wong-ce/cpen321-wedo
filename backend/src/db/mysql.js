@@ -7,10 +7,4 @@ const connection = mysql.createConnection({
     database: "cpen321_wedo"
 });
 
-connection.connect((err) => {
-    if (err) {
-        throw "Error connecting to DB";
-    }
-});
-
 module.exports = connection;
