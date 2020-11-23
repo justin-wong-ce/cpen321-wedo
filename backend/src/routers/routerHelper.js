@@ -12,17 +12,24 @@ function noErrCheck(results, res) {
 }
 
 function noResCheck(err, res) {
-    let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
-    let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" || err.code === "ER_WARN_DATA_OUT_OF_RANGE" || err.code === "ER_WARN_DATA_TRUNCATED" || err.code === "ER_TRUNCATED_WRONG_VALUE" || err.code === "ER_BAD_FIELD_ERROR" || err.code === "ER_PARSE_ERROR";
+    let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" ||
+        err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
+        err.code === "ER_WARN_DATA_TRUNCATED" ||
+        err.code === "ER_TRUNCATED_WRONG_VALUE" ||
+        err.code === "ER_BAD_FIELD_ERROR" ||
+        err.code === "ER_PARSE_ERROR";
 
     if (badDataType) {
         res.status(400).send({ msg: "bad data format or type" });
     }
-    else if (doesNotExist) {
-        res.status(404).send({ msg: "entry does not exist" });
-    }
     else {
-        res.status(406).send({ msg: "user/task/tasklist already exists" });
+        let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
+        if (doesNotExist) {
+            res.status(404).send({ msg: "entry does not exist" });
+        }
+        else {
+            res.status(406).send({ msg: "user/task/tasklist already exists" });
+        }
     }
 }
 
