@@ -9,12 +9,12 @@ describe("Test getting preferences", () => {
     it("Normal operation", () => {
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ preferences: '{"shopping": 0, "transport": 0, "setup": 0, "repair": 0, "study": 0, "work": 1, "fun": 2}' }
+                callback(null, [{ preferences: "{\"shopping\": 0, \"transport\": 0, \"setup\": 0, \"repair\": 0, \"study\": 0, \"work\": 1, \"fun\": 2}" }
                 ]);
             });
 
         recManager.getPreferences("tester", (err, results) => {
-            expect(results).toEqual('{"shopping": 0, "transport": 0, "setup": 0, "repair": 0, "study": 0, "work": 1, "fun": 2}');
+            expect(results).toEqual("{\"shopping\": 0, \"transport\": 0, \"setup\": 0, \"repair\": 0, \"study\": 0, \"work\": 1, \"fun\": 2}");
         });
     });
 });
@@ -23,7 +23,7 @@ describe("Test updating preferences", () => {
     it("Normal operation", () => {
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ preferences: '{"shopping": 0, "transport": 0, "setup": 0, "repair": 0, "study": 0, "work": 1, "fun": 2}' }
+                callback(null, [{ preferences: "{\"shopping\": 0, \"transport\": 0, \"setup\": 0, \"repair\": 0, \"study\": 0, \"work\": 1, \"fun\": 2}" }
                 ]);
             })
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {

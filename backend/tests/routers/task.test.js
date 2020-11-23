@@ -52,132 +52,132 @@ describe("Create task", () => {
             });
         userFunctions.getTokensInList
             .mockImplementation((userID, taskListID, callback) => {
-                callback(null, ['test1', 'test2', 'test3', 'test4']);
-            });
-        pushNotification
-            .mockImplementation((title, body, tokens) => {
-                return;
-            });
-
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(200);
-                expect(res.body).toEqual(modifyResponse);
-            });
+                callback(null, ["test1", "test2", "test4", "test5"]));
     });
+    pushNotification
+        .mockImplementation((title, body, tokens) => {
+            return;
+        });
 
-    it("No permission", () => {
-        userFunctions.checkPermission
-            .mockImplementationOnce((userID, taskListID, callback) => {
-                callback(null, []);
-            });
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual(modifyResponse);
+        });
+});
 
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(401);
-                expect(res.body).toEqual({ msg: "user does not have permissions" });
-            });
-    });
+it("No permission", () => {
+    userFunctions.checkPermission
+        .mockImplementationOnce((userID, taskListID, callback) => {
+            callback(null, []);
+        });
 
-    it("Bad format", () => {
-        userFunctions.checkPermission
-            .mockImplementationOnce((userID, taskListID, callback) => {
-                callback(null, [{ pad: 1 }]);
-            });
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ isPremium: 1 }]);
-            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ "COUNT(*)": 1 }]);
-            });
-        databaseInterface.insert
-            .mockImplementationOnce((table, entry, callback) => {
-                callback({ code: "ER_TRUNCATED_WRONG_VALUE" }, null);
-            });
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(401);
+            expect(res.body).toEqual({ msg: "user does not have permissions" });
+        });
+});
 
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(400);
-                expect(res.body).toEqual({ msg: "bad data format or type" });
-            });
-    });
+it("Bad format", () => {
+    userFunctions.checkPermission
+        .mockImplementationOnce((userID, taskListID, callback) => {
+            callback(null, [{ pad: 1 }]);
+        });
+    databaseInterface.get
+        .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ isPremium: 1 }]);
+        }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ "COUNT(*)": 1 }]);
+        });
+    databaseInterface.insert
+        .mockImplementationOnce((table, entry, callback) => {
+            callback({ code: "ER_TRUNCATED_WRONG_VALUE" }, null);
+        });
 
-    it("Already exists", () => {
-        userFunctions.checkPermission
-            .mockImplementationOnce((userID, taskListID, callback) => {
-                callback(null, [{ pad: 1 }]);
-            });
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ isPremium: 1 }]);
-            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ "COUNT(*)": 1 }]);
-            });
-        databaseInterface.insert
-            .mockImplementationOnce((table, entry, callback) => {
-                callback({ code: "ER_DUP_ENTRY" }, null);
-            });
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(400);
+            expect(res.body).toEqual({ msg: "bad data format or type" });
+        });
+});
 
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(406);
-                expect(res.body).toEqual({ msg: "user/task/tasklist already exists" });
-            });
-    });
+it("Already exists", () => {
+    userFunctions.checkPermission
+        .mockImplementationOnce((userID, taskListID, callback) => {
+            callback(null, [{ pad: 1 }]);
+        });
+    databaseInterface.get
+        .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ isPremium: 1 }]);
+        }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ "COUNT(*)": 1 }]);
+        });
+    databaseInterface.insert
+        .mockImplementationOnce((table, entry, callback) => {
+            callback({ code: "ER_DUP_ENTRY" }, null);
+        });
 
-    it("Number of tasks limit reached", () => {
-        userFunctions.checkPermission
-            .mockImplementationOnce((userID, taskListID, callback) => {
-                callback(null, [{ pad: 1 }, { pad: 2 }, { pad: 3 }, { pad: 4 }, { pad: 5 }]);
-            });
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ isPremium: 0 }]);
-            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ "COUNT(*)": 10 }]);
-            });
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(406);
+            expect(res.body).toEqual({ msg: "user/task/tasklist already exists" });
+        });
+});
 
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(401);
-                expect(res.body).toEqual({ msg: "user needs to buy premium" });
-            });
-    });
+it("Number of tasks limit reached", () => {
+    userFunctions.checkPermission
+        .mockImplementationOnce((userID, taskListID, callback) => {
+            callback(null, [{ pad: 1 }, { pad: 2 }, { pad: 3 }, { pad: 4 }, { pad: 5 }]);
+        });
+    databaseInterface.get
+        .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ isPremium: 0 }]);
+        }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ "COUNT(*)": 10 }]);
+        });
 
-    it("Number of tasks limit reached but user has premium", () => {
-        userFunctions.checkPermission
-            .mockImplementationOnce((userID, taskListID, callback) => {
-                callback(null, [{ pad: 1 }]);
-            });
-        databaseInterface.get
-            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ isPremium: 1 }]);
-            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
-                callback(null, [{ "COUNT(*)": 10 }]);
-            });
-        databaseInterface.insert
-            .mockImplementationOnce((table, entry, callback) => {
-                callback(null, modifyResponse);
-            });
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(401);
+            expect(res.body).toEqual({ msg: "user needs to buy premium" });
+        });
+});
 
-        return request(app)
-            .post('/task/create')
-            .send(standardTask)
-            .then(res => {
-                expect(res.status).toBe(200);
-                expect(res.body).toEqual(modifyResponse);
-            });
-    });
+it("Number of tasks limit reached but user has premium", () => {
+    userFunctions.checkPermission
+        .mockImplementationOnce((userID, taskListID, callback) => {
+            callback(null, [{ pad: 1 }]);
+        });
+    databaseInterface.get
+        .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ isPremium: 1 }]);
+        }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+            callback(null, [{ "COUNT(*)": 10 }]);
+        });
+    databaseInterface.insert
+        .mockImplementationOnce((table, entry, callback) => {
+            callback(null, modifyResponse);
+        });
+
+    return request(app)
+        .post("/task/create")
+        .send(standardTask)
+        .then((res) => {
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual(modifyResponse);
+        });
+});
 
     // "Does not exist" not possible (no perms/does not exist same return value from DB)
 });
@@ -194,9 +194,9 @@ describe("Update task", () => {
             });
 
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send(standardTask)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(modifyResponse);
             });
@@ -217,11 +217,11 @@ describe("Update task", () => {
             });
 
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send({
                 "userID": "tester", "taskID": "12322_task1", "taskListID": "12322", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver", "done": true, "taskRating": 4
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(modifyResponse);
             });
@@ -234,11 +234,11 @@ describe("Update task", () => {
             });
 
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send({
                 "userID": "tester", "taskID": "12322_task1", "taskListID": "someOtherTask", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver"
             })
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
             });
@@ -255,9 +255,9 @@ describe("Update task", () => {
             });
 
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send(standardTask)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });
             });
@@ -274,13 +274,13 @@ describe("Update task", () => {
             });
 
         return request(app)
-            .put('/task/update')
+            .put("/task/update")
             .send(standardTask)
-            .then(res => {
+            .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toEqual({ msg: "entry does not exist" });
             });
-    })
+    });
 });
 
 describe("Delete task", () => {
@@ -299,14 +299,14 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete('/task/delete')
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
-            .then(res => {
-                expect(res.status).toBe(200);
-                expect(res.body).toEqual(modifyResponse);
-            });
+            .delete("/task/delete"')
+                .send({
+                    "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
+                })
+                .then((res) => {
+                    expect(res.status).toBe(200);
+                    expect(res.body).toEqual(modifyResponse);
+                });
     });
 
     it("No permission", () => {
@@ -316,14 +316,14 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete('/task/delete')
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
-            .then(res => {
-                expect(res.status).toBe(401);
-                expect(res.body).toEqual({ msg: "user does not have permissions" });
-            });
+            .delete("/task/delete"')
+                .send({
+                    "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
+                })
+                .then((res) => {
+                    expect(res.status).toBe(401);
+                    expect(res.body).toEqual({ msg: "user does not have permissions" });
+                });
     });
 
     it("Does not exist", () => {
@@ -341,14 +341,14 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete('/task/delete')
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
-            .then(res => {
-                expect(res.status).toBe(404);
-                expect(res.body).toEqual({ msg: "entry does not exist" });
-            });
+            .delete("/task/delete"')
+                .send({
+                    "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
+                })
+                .then((res) => {
+                    expect(res.status).toBe(404);
+                    expect(res.body).toEqual({ msg: "entry does not exist" });
+                });
     });
 
     it("Bad data format", () => {
@@ -366,13 +366,13 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete('/task/delete')
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
-            .then(res => {
-                expect(res.status).toBe(400);
-                expect(res.body).toEqual({ msg: "bad data format or type" });
-            });
+            .delete("/task/delete"')
+                .send({
+                    "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
+                })
+                .then((res) => {
+                    expect(res.status).toBe(400);
+                    expect(res.body).toEqual({ msg: "bad data format or type" });
+                });
     })
 });
