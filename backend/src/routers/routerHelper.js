@@ -1,5 +1,5 @@
 function noErrCheck(results, res) {
-    let nochange = typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0;
+    let noChange = typeof (results.affectedRows) !== "undefined" && results.affectedRows === 0;
     let noResult = results.length === 0 && typeof (results.affectedRows) === "undefined";
     let doesNotExist = noChange || noResult;
 
@@ -13,12 +13,7 @@ function noErrCheck(results, res) {
 
 function noResCheck(err, res) {
     let doesNotExist = err.code === "ER_NO_REFERENCED_ROW_2";
-    let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" ||
-        err.code === "ER_WARN_DATA_OUT_OF_RANGE" ||
-        err.code === "ER_WARN_DATA_TRUNCATED" ||
-        err.code === "ER_TRUNCATED_WRONG_VALUE" ||
-        err.code === "ER_BAD_FIELD_ERROR" ||
-        err.code === "ER_PARSE_ERROR";
+    let badDataType = err.code === "ER_WARN_NULL_TO_NOTNULL" || err.code === "ER_WARN_DATA_OUT_OF_RANGE" || err.code === "ER_WARN_DATA_TRUNCATED" || err.code === "ER_TRUNCATED_WRONG_VALUE" || err.code === "ER_BAD_FIELD_ERROR" || err.code === "ER_PARSE_ERROR";
 
     if (badDataType) {
         res.status(400).send({ msg: "bad data format or type" });
