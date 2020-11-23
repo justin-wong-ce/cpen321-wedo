@@ -3,9 +3,7 @@ const { app, server } = require("../src/server");
 const request = require("supertest");
 
 jest.setTimeout(10000);
-jest.unmock("firebase-admin");
-jest.unmock("../src/routeFunctions/routeFunctions");
-jest.unmock("../src/db/databaseInterface");
+jest.disableAutomock();
 
 beforeAll(() => {
     server.listen(3005);
