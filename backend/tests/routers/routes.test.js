@@ -4,6 +4,10 @@ const request = require("supertest");
 
 jest.setTimeout(5000);
 jest.mock("../../src/routeFunctions/routeFunctions");
+jest.mock("../../src/routers/pushNotification");
+jest.mock("../../src/routers/user.js");
+jest.mock("../../src/routers/task.js");
+jest.mock("../../src/routers/taskList.js");
 
 beforeAll(() => {
     server.listen(3004);

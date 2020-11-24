@@ -1,7 +1,6 @@
 /* global jest */
 jest.setTimeout(5000);
 jest.mock("../../src/db/databaseInterface");
-jest.unmock("../../src/db/recommendationsManager");
 const databaseInterface = require("../../src/db/databaseInterface");
 const recManager = require("../../src/db/recommendationsManager");
 
@@ -32,69 +31,21 @@ describe("Test updating preferences", () => {
         databaseInterface.update
             .mockImplementationOnce((table, values, condition, callback) => {
                 callback(null, {
-                    "fieldCount": 0,
-                    "affectedRows": 1,
-                    "insertId": 0,
-                    "serverStatus": 2,
-                    "warningCount": 0,
-                    "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                    "protocol41": true,
-                    "changedRows": 0
+                    "fieldCount": 0, "affectedRows": 1, "insertId": 0, "serverStatus": 2, "warningCount": 0, "message": "(Rows matched: 1  Changed: 0  Warnings: 0", "protocol41": true, "changedRows": 0
                 });
             });
 
         recManager.updatePreferences("tester", 4, "task0", (err, results) => {
             expect(results).toStrictEqual({
-                "fieldCount": 0,
-                "affectedRows": 1,
-                "insertId": 0,
-                "serverStatus": 2,
-                "warningCount": 0,
-                "message": "(Rows matched: 1  Changed: 0  Warnings: 0",
-                "protocol41": true,
-                "changedRows": 0
+                "fieldCount": 0, "affectedRows": 1, "insertId": 0, "serverStatus": 2, "warningCount": 0, "message": "(Rows matched: 1  Changed: 0  Warnings: 0", "protocol41": true, "changedRows": 0
             });
         });
     });
 });
 
-let tasks = [
-    {
-        "priorityLevel": 1,
-        "taskType": "shopping"
-    }, {
-        "priorityLevel": 1,
-        "taskType": "fun"
-    }, {
-        "priorityLevel": 1,
-        "taskType": "work"
-    }, {
-        "priorityLevel": 0,
-        "taskType": "work"
-    }, {
-        "priorityLevel": 0,
-        "taskType": "fun"
-    }
-];
+let tasks = [{ "priorityLevel": 1, "taskType": "shopping" }, { "priorityLevel": 1, "taskType": "fun" }, { "priorityLevel": 1, "taskType": "work" }, { "priorityLevel": 0, "taskType": "work" }, { "priorityLevel": 0, "taskType": "fun" }];
 
-let sortedTasks = [
-    {
-        "priorityLevel": 1,
-        "taskType": "fun"
-    }, {
-        "priorityLevel": 1,
-        "taskType": "work"
-    }, {
-        "priorityLevel": 1,
-        "taskType": "shopping"
-    }, {
-        "priorityLevel": 0,
-        "taskType": "fun"
-    }, {
-        "priorityLevel": 0,
-        "taskType": "work"
-    }
-];
+let sortedTasks = [{ "priorityLevel": 1, "taskType": "fun" }, { "priorityLevel": 1, "taskType": "work" }, { "priorityLevel": 1, "taskType": "shopping" }, { "priorityLevel": 0, "taskType": "fun" }, { "priorityLevel": 0, "taskType": "work" }];
 
 describe("Test sorting tasks", () => {
     it("Normal operation", () => {

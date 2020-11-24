@@ -2,7 +2,6 @@ const express = require("express");
 const userFunctions = require("../db/users_db");
 const router = new express.Router();
 const routerHelper = require("./routerHelper");
-const recManager = require("../db/recommendationsManager");
 
 // Register new user
 //

@@ -7,6 +7,8 @@ jest.mock("../../src/db/databaseInterface");
 jest.mock("../../src/db/recommendationsManager");
 jest.mock("../../src/db/users_db");
 jest.mock("../../src/routers/pushNotification");
+jest.mock("../../src/routers/user.js");
+jest.mock("../../src/routers/routes.js");
 jest.mock("firebase-admin");
 const databaseInterface = require("../../src/db/databaseInterface");
 const recManager = require("../../src/db/recommendationsManager");
