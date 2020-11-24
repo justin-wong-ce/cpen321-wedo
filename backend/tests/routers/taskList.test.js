@@ -9,6 +9,7 @@ jest.mock("../../src/db/users_db");
 jest.mock("../../src/routers/pushNotification");
 jest.mock("../../src/routers/user.js");
 jest.mock("../../src/routers/routes.js");
+jest.mock("../../src/routers/task.js");
 jest.mock("firebase-admin");
 const databaseInterface = require("../../src/db/databaseInterface");
 const recManager = require("../../src/db/recommendationsManager");
@@ -396,6 +397,35 @@ describe("Delete task list", () => {
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
                 callback(null, [{ taskListName: "" }]);
+            });
+
+        return request(app)
+            .delete("/tasklist/delete")
+            .send({
+                "userID": "throwAway", "taskListID": "testing"
+            })
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(insertResponse);
+            });
+    });
+
+    it("Successfully delete task list but no other uses in task list", () => {
+        userFunctions.isListOwner
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.delete
+            .mockImplementationOnce((table, condition, callback) => {
+                callback(null, insertResponse);
+            });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListName: "" }]);
+            });
+        userFunctions.getTokensInList
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, []);
             });
 
         return request(app)

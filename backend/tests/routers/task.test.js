@@ -8,6 +8,7 @@ jest.mock("../../src/db/recommendationsManager");
 jest.mock("../../src/db/users_db");
 jest.mock("../../src/routers/pushNotification");
 jest.mock("../../src/routers/user.js");
+jest.mock("../../src/routers/taskList.js");
 jest.mock("../../src/routers/routes.js");
 jest.mock("firebase-admin");
 const databaseInterface = require("../../src/db/databaseInterface");
@@ -52,13 +53,34 @@ describe("Create task", () => {
             .mockImplementationOnce((table, entry, callback) => {
                 callback(null, modifyResponse);
             });
-        userFunctions.getTokensInList
-            .mockImplementation((userID, taskListID, callback) => {
-                callback(null, ["test1", "test2", "test4", "test5"]);
+
+        return request(app)
+            .post("/task/create")
+            .send(standardTask)
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(modifyResponse);
             });
-        pushNotification
-            .mockImplementation((title, body, tokens) => {
-                return;
+    });
+
+    it("Normal operation but no other user in task list", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ isPremium: 1 }]);
+            }).mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ "COUNT(*)": 1 }]);
+            });
+        databaseInterface.insert
+            .mockImplementationOnce((table, entry, callback) => {
+                callback(null, modifyResponse);
+            });
+        userFunctions.getTokensInList
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, []);
             });
 
         return request(app)
@@ -229,6 +251,35 @@ describe("Update task", () => {
             });
     });
 
+    it("Normal operation (task is done but no other user is in task list)", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.update
+            .mockImplementationOnce((table, values, condition, callback) => {
+                callback(null, modifyResponse);
+            });
+        recManager.updatePreferences
+            .mockImplementationOnce((userID, points, taskID, callback) => {
+                callback(null, modifyResponse);
+            });
+        userFunctions.getTokensInList
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, []);
+            });
+
+        return request(app)
+            .put("/task/update")
+            .send({
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322", "taskName": "test_task_1", "taskType": "transport", "createdTime": "2020-11-01 02:10:23", "taskDescription": "task for testing", "taskBudget": 123, "address": "UBC, Vancouver", "done": true, "taskRating": 4
+            })
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(modifyResponse);
+            });
+    });
+
     it("No permission", () => {
         userFunctions.checkPermission
             .mockImplementationOnce((userID, taskListID, callback) => {
@@ -298,6 +349,35 @@ describe("Delete task", () => {
         databaseInterface.get
             .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
                 callback(null, [{ taskName: "" }]);
+            });
+
+        return request(app)
+            .delete("/task/delete")
+            .send({
+                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
+            })
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(modifyResponse);
+            });
+    });
+
+    it("Normal operation, but no other user in task", () => {
+        userFunctions.checkPermission
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, [{ pad: 1 }]);
+            });
+        databaseInterface.delete
+            .mockImplementationOnce((table, condition, callback) => {
+                callback(null, modifyResponse);
+            });
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskName: "" }]);
+            });
+        userFunctions.getTokensInList
+            .mockImplementationOnce((userID, taskListID, callback) => {
+                callback(null, []);
             });
 
         return request(app)

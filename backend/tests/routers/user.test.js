@@ -206,3 +206,27 @@ describe("Get tokens of users in a task list", () => {
         });
     });
 });
+
+describe("Check permissions of a user", () => {
+    it("Normal operation", () => {
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListID: "test0" }]);
+            });
+        userFunctions.checkPermission("filler", "filler", (err, tokens) => {
+            expect(tokens).toEqual([{ taskListID: "test0" }]);
+        });
+    });
+});
+
+describe("Check if user is owner of a list", () => {
+    it("Normal operation", () => {
+        databaseInterface.get
+            .mockImplementationOnce((attributesToGet, table, condition, additional, callback) => {
+                callback(null, [{ taskListID: "test0" }]);
+            });
+        userFunctions.isListOwner("filler", "filler", (err, tokens) => {
+            expect(tokens).toEqual([{ taskListID: "test0" }]);
+        });
+    });
+});

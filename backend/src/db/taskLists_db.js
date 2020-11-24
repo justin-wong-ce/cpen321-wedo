@@ -98,9 +98,7 @@ var taskListFunctions = {
                                     let token = tokenResponse[0].token;
                                     database.get("taskListName", "TaskListWithOwner", { taskListID }, "", (err, listNameResponse) => {
                                         let taskListName = listNameResponse[0].taskListName;
-                                        if (!err) {
-                                            pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
-                                        }
+                                        pushNotification("New task list!", "You have been added to the task list " + taskListName + "!", [token]);
                                         callback(err, results, true);
                                     });
                                 });
