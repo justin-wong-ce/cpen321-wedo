@@ -1,6 +1,6 @@
 /* global jest */
 let routeFunctions = require("../../src/routeFunctions/routeFunctions");
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe("Route functions tests", () => {
     it("Normal route, route found", () => {
