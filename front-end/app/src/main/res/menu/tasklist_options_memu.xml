@@ -8,11 +8,11 @@
 
     <item
         android:id="@+id/menu2"
-        android:title="Menu 2" />
+        android:title="delete tasklist" />
 
     <item
         android:id="@+id/menu3"
-        android:title="Menu 3" />
+        android:title="update tasklist" />
 
 
 </menu>

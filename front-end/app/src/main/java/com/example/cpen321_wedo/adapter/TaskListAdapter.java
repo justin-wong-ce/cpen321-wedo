@@ -10,14 +10,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.cpen321_wedo.AddUserActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.models.TaskList;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Random;
@@ -83,7 +96,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
-                                //handle menu2 click
+                                delteTasklist(position);
                                 break;
                             case R.id.menu3:
                                 //handle menu3 click
@@ -100,6 +113,37 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             }
         });
 
+    }
+
+    public void delteTasklist(final int index){
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        try {
+            String url = "http://40.78.89.252:3000/tasklist/delete/";
+
+            url+="\""+firebaseUser.getUid()+"\"/";
+            url+="\""+mData.get(index).getTaskListID()+"\"";
+
+            Log.d("test", url);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            mData.remove(index);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(mContext, "error deleting tasklist", Toast.LENGTH_LONG).show();
+                    Log.d("test", error.toString());
+                }
+            });
+
+            RequestQueueSingleton.getInstance(mContext).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.cpen321_wedo;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,6 +43,7 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
     private int travelMode;
     private int distanceThreshold;
     private JSONArray coordinates;
+    LatLng start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
 
         double[] latitudes = getIntent().getDoubleArrayExtra("latitudes");
         double[] longitudes = getIntent().getDoubleArrayExtra("longitudes");
+        start = new LatLng(latitudes[0],longitudes[0]);
         travelMode = getIntent().getIntExtra("mode", DRIVING);
         distanceThreshold = getIntent().getIntExtra("distanceThreshold", 0);
 
@@ -77,9 +80,8 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng vancouver = new LatLng(49.2576512,-123.2636425);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(vancouver));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 10));
 
         loadRoutesArray(new VolleyCallBack() {
             @Override

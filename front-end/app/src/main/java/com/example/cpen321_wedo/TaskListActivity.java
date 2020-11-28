@@ -169,7 +169,9 @@ public class TaskListActivity extends AppCompatActivity{
                 startActivity(mapsIntent);
                 return true;
             case R.id.generate_route:
-                startActivity(new Intent(TaskListActivity.this, GenerateRouteActivity.class));
+                Intent newIntent = new Intent(TaskListActivity.this, GenerateRouteActivity.class);
+
+                startActivity(newIntent);
                 return true;
             case R.id.ic_chat:
                 startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
