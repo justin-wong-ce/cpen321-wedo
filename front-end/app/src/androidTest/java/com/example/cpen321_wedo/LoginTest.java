@@ -60,24 +60,32 @@ public class LoginTest {
 
     @Test
     public void checkLogin() {
+        // Check login screen is displayed.
         onView(isRoot()).perform(waitDisplayed(R.id.loginActivityLayout, 5000));
         onView(withId(R.id.loginActivityLayout)).check(matches(isDisplayed()));
 
+        // Check login button is disabled
         onView(withId(R.id.btn_login)).check(matches(not(isEnabled())));
 
+        // Enter any string without @, check if login button is disabled.
         onView(withId(R.id.email)).perform(typeText("test1gmail.com"));
         onView(withId(R.id.btn_login)).check(matches(not(isEnabled())));
 
+        // Enter "whatever" as the password, check that the login button is enabled.
         onView(withId(R.id.password)).perform(typeText("whatever"));
         onView(withId(R.id.btn_login)).check(matches(isEnabled()));
 
+        // Click the login button, check correct toast message is displayed.
         onView(withId(R.id.btn_login)).perform(click());
         onView(withText("Please enter a valid email")).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
 
+        // Enter an unregistered email, check login button is still enabled.
         onView(withId(R.id.email)).perform(clearText());
-        onView(withId(R.id.email)).perform(typeText("1@gmail.com"));
+        onView(withId(R.id.email)).perform(typeText("test1@gmail.com"));
         onView(withId(R.id.btn_login)).check(matches(isEnabled()));
+
+        // Press the login button, check correct toast message is displayed.
         onView(withId(R.id.btn_login)).perform(click());
 
         try {
@@ -89,10 +97,29 @@ public class LoginTest {
         onView(withText("Login failed")).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
 
+        // Enter an correct email, check login button is still enabled.
+        onView(withId(R.id.email)).perform(clearText());
+        onView(withId(R.id.email)).perform(typeText("1@gmail.com"));
+        onView(withId(R.id.btn_login)).check(matches(isEnabled()));
+
+        // Press the login button, check correct toast message is displayed.
+        onView(withId(R.id.btn_login)).perform(click());
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withText("Login failed")).inRoot(withDecorView(not(decorView)))
+                .check(matches(isDisplayed()));
+
+        // Enter the correct password for the corresponding email.  Check that the login button is enabled.
         onView(withId(R.id.password)).perform(clearText());
         onView(withId(R.id.password)).perform(typeText("123456789"));
         onView(withId(R.id.btn_login)).check(matches(isEnabled()));
 
+        // Press login, check that the task list screen is displayed.
         onView(withId(R.id.btn_login)).perform(click());
         try {
             Thread.sleep(2000);

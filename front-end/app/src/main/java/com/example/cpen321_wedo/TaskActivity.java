@@ -12,22 +12,36 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.fragments.UserFragment;
 import com.example.cpen321_wedo.fragments.TaskFragment;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class TaskActivity extends AppCompatActivity {
 
     private TaskFragment taskFragment;
     private Menu taskMenu;
+    private String taskListId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +59,9 @@ public class TaskActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.view_pager);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        taskFragment = new TaskFragment();
+        Intent intent = getIntent();
+        taskListId = intent.getStringExtra("taskListId");
+        taskFragment = new TaskFragment(intent.getStringExtra("taskListId"));
 
         viewPagerAdapter.addFragment(taskFragment, "Tasks");
         viewPagerAdapter.addFragment(new UserFragment(), "Chat");
@@ -84,6 +100,7 @@ public class TaskActivity extends AppCompatActivity {
                 return true;
             case R.id.trash:
                 taskFragment.deleteTasksSelected();
+                taskFragment.getData();
                 taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
                 taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
                 taskFragment.toggleItemViewType();
@@ -104,12 +121,62 @@ public class TaskActivity extends AppCompatActivity {
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
 
-            String[] reply = data.getStringArrayExtra("task");
+            final String[] reply = data.getStringArrayExtra("task");
 
-            Task task = new Task(reply[0], reply[1], reply[2]);
-            taskFragment.addTask(task);
+            postData(reply[0], reply[1], reply[2], reply[3]);
+
+            taskFragment.getData();
         }
     }
+
+    private void postData(final String taskName, final String taskLocation, final String taskDescription, final String taskType) {
+        JSONObject object = new JSONObject();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Task task = new Task(taskListId , taskName, taskLocation, taskDescription, taskType);
+        try {
+            Date date = new Date(task.getDateCreatedInMilliSeconds());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONDAY) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String createdTime = "" + year + month + day;
+            object.put("taskID", task.getTaskId());
+            object.put("taskDescription", task.getTaskDescription());
+            object.put("taskType", task.getTaskType());
+            object.put("taskListID", taskListId);
+            object.put("userID", firebaseUser.getUid());
+            object.put("taskName", task.getTaskName());
+            object.put("createdTime", createdTime);
+            object.put("address", task.getTaskLocation());
+            object.put("modifiedTime", createdTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String url = "http://40.78.89.252:3000/task/create";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Task postTask = new Task(taskListId , taskName, taskLocation, taskDescription, taskType);
+                            taskFragment.addTask(postTask);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Could not create task", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            RequestQueueSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
 

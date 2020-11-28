@@ -49,6 +49,7 @@ public class DeleteTaskTest {
 
     @Test
     public void checkDeleteTask() {
+        // Check that the task activity layout is displayed.
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -56,6 +57,7 @@ public class DeleteTaskTest {
         }
         onView(withId(R.id.taskActivityLayout)).check(matches(isDisplayed()));
 
+        // Check that the menu is displayed.
         onView(withId(R.id.toolbar)).check(matches(isDisplayed()));
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
 
@@ -65,6 +67,8 @@ public class DeleteTaskTest {
             e.printStackTrace();
         }
 
+        // Press the delete option. Check if checkboxes appear beside tasks, Check that the trash
+        // icon is displayed and disabled.
         onView(withText("Delete")).perform(click());
 
         try {
@@ -80,6 +84,9 @@ public class DeleteTaskTest {
         onView(withId(R.id.taskCheckbox)).perform(click());
         onView(withId(R.id.taskCheckbox)).check(matches(isChecked()));
         onView(withId(R.id.trash)).check(matches(isEnabled()));
+
+        // Press the trash icon. Check the number of tasks reduced. In this case there was only
+        // one task.
         onView(withId(R.id.trash)).perform(click());
 
         try {
