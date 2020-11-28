@@ -96,7 +96,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
-                                delteTasklist(position);
+                                mData.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, mData.size());
                                 break;
                             case R.id.menu3:
                                 //handle menu3 click
