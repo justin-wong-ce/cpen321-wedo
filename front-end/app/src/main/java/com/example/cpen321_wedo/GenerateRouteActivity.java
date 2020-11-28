@@ -2,9 +2,12 @@ package com.example.cpen321_wedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -21,8 +24,6 @@ import com.example.cpen321_wedo.models.TaskList;
 import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,14 +32,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
-public class GenerateRouteActivity extends AppCompatActivity {
+public class GenerateRouteActivity extends AppCompatActivity{
 
     private GenerateTaskAdapter myAdapter;
     List<TaskList> lstTaskList = new ArrayList<>();
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     List<Task> tasks = new ArrayList<>();
+    List<Double> latitudes = new ArrayList<>();
+    List<Double> longitudes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,8 @@ public class GenerateRouteActivity extends AppCompatActivity {
             array.put("1319 W 47th AveVancouver, BC V6M 2L7");
             array.put("6335 Thunderbird Crescent, Vancouver, BC V6T 2G9");
             array.put("W Georgia St Unit G031, Vancouver, BC V7Y 1G5");
+            array.put("650 W 41st Ave, Vancouver, BC V5Z 2M9");
+
 
             //input your API parameters
             object.put("locations",array);
@@ -87,12 +93,6 @@ public class GenerateRouteActivity extends AppCompatActivity {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Intent mapsIntent = new Intent(GenerateRouteActivity.this, MapsPlotRouteActivity.class);
-                    List<Double> latitudes = new ArrayList<>();
-                    List<Double> longitudes = new ArrayList<>();
-//                    double[] latitudes = {};
-//                    double[] longitudes = {};
-
                     try {
 //                        JSONObject routes = new JSONObject(new Gson().toJson(response.getJSONArray("routers").get(0)));
                         JSONObject routes = (JSONObject)response.getJSONArray("routes").get(0);
@@ -102,7 +102,9 @@ public class GenerateRouteActivity extends AppCompatActivity {
                             JSONObject legsChild = (JSONObject)legs.get(i);
 
                             JSONArray step = legsChild.getJSONArray("steps");
+//                            Log.d("test",i+"");
                             for(int j = 0;j<step.length();j++){
+//                                Log.d("test",j+"");
                                 JSONObject oneStep = (JSONObject)step.get(j);
                                 JSONObject start = (JSONObject)oneStep.get("start_location");
                                 JSONObject end = (JSONObject)oneStep.get("end_location");
@@ -119,23 +121,12 @@ public class GenerateRouteActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    double[] latitudes_array = new double[latitudes.size()];
-                    double[] longitudes_array = new double[longitudes.size()];
-
-                    for(int i =0; i<latitudes.size(); i++){
-                        latitudes_array[i] = latitudes.get(i).doubleValue();
-                        longitudes_array[i] = longitudes.get(i).doubleValue();
+                    if(latitudes.size()>25){
+                        createAndShowDialog();
+                    }else{
+                        intentCallFunction();
                     }
 
-
-                    mapsIntent.putExtra("latitudes", latitudes_array);
-                    mapsIntent.putExtra("longitudes", longitudes_array);
-                    mapsIntent.putExtra("mode", DRIVING);
-
-                    int distanceThreshold = 100;
-                    mapsIntent.putExtra("distanceThreshold", distanceThreshold);
-
-                    startActivity(mapsIntent);
                 }
 
             }, new Response.ErrorListener() {
@@ -151,6 +142,29 @@ public class GenerateRouteActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private void intentCallFunction(){
+        Intent mapsIntent = new Intent(GenerateRouteActivity.this, MapsPlotRouteActivity.class);
+//                    double[] latitudes_array = new double[latitudes.size()>25?25:latitudes.size()];
+//                    double[] longitudes_array = new double[longitudes.size()>25?25:longitudes.size()];
+        double[] latitudes_array = new double[latitudes.size()];
+        double[] longitudes_array = new double[longitudes.size()];
+
+        for(int i =0; i<latitudes.size(); i++){
+            latitudes_array[i] = latitudes.get(i).doubleValue();
+            longitudes_array[i] = longitudes.get(i).doubleValue();
+        }
+
+        mapsIntent.putExtra("latitudes", latitudes_array);
+        mapsIntent.putExtra("longitudes", longitudes_array);
+        mapsIntent.putExtra("mode", DRIVING);
+
+        int distanceThreshold = 100;
+        mapsIntent.putExtra("distanceThreshold", distanceThreshold);
+
+        startActivity(mapsIntent);
+    }
+
 
     public void getData(){
         try {
@@ -241,4 +255,28 @@ public class GenerateRouteActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    void createAndShowDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.layout_dialog, null);
+        builder.setView(view)
+                .setTitle("Warning")
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        setTargetFragment(fragment, 0);
+                    }
+                })
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        setTargetFragment(fragment, 1);
+                        intentCallFunction();
+                    }
+                });
+        builder.create().show();
+    }
+
 }
