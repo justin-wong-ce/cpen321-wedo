@@ -3,20 +3,20 @@ const connection = require("./mysql");
 function insertObj(obj, delimiter) {
     let retString = "";
     for (var attr in obj) {
-        if (typeof obj[attr] === "string") {
-            retString = retString.concat(attr + " = '" + obj[attr].toString() + "'" + delimiter);
+        if (typeof obj[`${attr}`] === "string") {
+            retString = retString.concat(attr + " = '" + obj[`${attr}`].toString() + "'" + delimiter);
         }
         else {
-            retString = retString.concat(attr + " = " + obj[attr].toString() + delimiter);
+            retString = retString.concat(attr + " = " + obj[`${attr}`].toString() + delimiter);
         }
     }
     retString = retString.slice(0, -1 * delimiter.length);
     return retString;
-};
+}
 
 var database = {
     get(attributesToGet, table, condition, additional, callback) {
-        connection.query("SELECT " + attributesToGet + " FROM " + table + " WHERE " + insertObj(condition, " AND "), + additional, (err, results) => {
+        connection.query("SELECT " + attributesToGet + " FROM " + table + " WHERE " + insertObj(condition, " AND ") + additional, (err, results) => {
             callback(err, results);
         });
     },

@@ -42,6 +42,8 @@ router.post("/task/create", (req, res) => {
 // typeof body.address == "string"
 // typeof body.priorityLevel == "number"
 // typeof body.modifiedTime == "string"
+// typeof body.done == "boolean"
+// typeof body.taskRating == "number" (IMPORTANT: THIS MUST BE DEFINED IF DONE IS DEFINED)
 router.put("/task/update", (req, res) => {
     const task = req.body;
 
