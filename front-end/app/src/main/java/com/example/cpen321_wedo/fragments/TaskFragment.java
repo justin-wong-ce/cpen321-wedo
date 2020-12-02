@@ -104,7 +104,7 @@ public class TaskFragment extends Fragment {
         try {
             String url = "http://40.78.89.252:3000/tasklist/get/\"";
             url+= firebaseUser.getUid();
-            url+= "\"/";
+            url+= "\"/\"";
             url+= this.taskListId + "\"";
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
@@ -122,7 +122,6 @@ public class TaskFragment extends Fragment {
 
                     taskAdapter.setTasks(tasks);
                 }
-
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
@@ -139,10 +138,12 @@ public class TaskFragment extends Fragment {
     private void deleteData(String taskId) {
         try {
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            String url = "http://40.78.89.252:3000/task/delete/";
-            url += firebaseUser.getUid() + "/";
-            url += taskId + "/";
-            url += taskListId;
+            String url = "http://40.78.89.252:3000/task/delete/\"";
+            url += firebaseUser.getUid() + "\"/\"";
+            url += taskId + "\"/\"";
+            url += taskListId + "\"";
+
+            Log.d("deleteURL", url);
 
 
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,

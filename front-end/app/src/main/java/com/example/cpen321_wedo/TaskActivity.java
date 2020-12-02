@@ -100,7 +100,6 @@ public class TaskActivity extends AppCompatActivity {
                 return true;
             case R.id.trash:
                 taskFragment.deleteTasksSelected();
-                taskFragment.getData();
                 taskMenu.setGroupVisible(R.id.taskDefaultMenu, true);
                 taskMenu.setGroupVisible(R.id.taskDeleteMenu, false);
                 taskFragment.toggleItemViewType();
@@ -124,15 +123,15 @@ public class TaskActivity extends AppCompatActivity {
             final String[] reply = data.getStringArrayExtra("task");
 
             postData(reply[0], reply[1], reply[2], reply[3]);
-
-            taskFragment.getData();
         }
     }
 
     private void postData(final String taskName, final String taskLocation, final String taskDescription, final String taskType) {
         JSONObject object = new JSONObject();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        Task task = new Task(taskListId , taskName, taskLocation, taskDescription, taskType);
+        Task task = new Task(firebaseUser.getUid() , taskName, taskLocation, taskDescription, taskType);
+        final String postTaskId = task.getTaskId();
+
         try {
             Date date = new Date(task.getDateCreatedInMilliSeconds());
             Calendar calendar = Calendar.getInstance();
@@ -161,7 +160,9 @@ public class TaskActivity extends AppCompatActivity {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Task postTask = new Task(taskListId , taskName, taskLocation, taskDescription, taskType);
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            Task postTask = new Task(firebaseUser.getUid() , taskName, taskLocation, taskDescription, taskType);
+                            postTask.setTaskId(postTaskId);
                             taskFragment.addTask(postTask);
                         }
                     }, new Response.ErrorListener() {

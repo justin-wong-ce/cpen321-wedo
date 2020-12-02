@@ -54,6 +54,10 @@ public class Task {
 
     public String getTaskId() { return this.taskId; };
 
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
@@ -105,7 +109,6 @@ public class Task {
             return false;
         }
 
-        // typecast o to Complex so that we can compare data members
         Task c = (Task) o;
 
         return this.getTaskId().equals(c.getTaskId());
