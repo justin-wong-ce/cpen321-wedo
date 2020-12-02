@@ -52,11 +52,11 @@
 
 
                 <TextView
-                    android:id="@+id/textViewDesc"
+                    android:id="@+id/tasklist_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tasklist_title_id"
-                    android:text="Task number: 5"
+                    android:text="task description"
                     android:textAppearance="?android:textAppearanceMedium" />
 
 

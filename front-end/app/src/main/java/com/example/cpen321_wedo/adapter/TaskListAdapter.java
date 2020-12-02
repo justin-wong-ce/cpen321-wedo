@@ -18,18 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.cpen321_wedo.AddTaskListActivity;
 import com.example.cpen321_wedo.AddUserActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.models.TaskList;
 import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
+import com.example.cpen321_wedo.UpdateTasklistInterface;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -39,10 +38,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     private final Context mContext;
     private final List<TaskList> mData;
+    private UpdateTasklistInterface updateTasklistInterface;
 
-    public TaskListAdapter(Context mContext, List<TaskList> mData){
+    public TaskListAdapter(Context mContext, List<TaskList> mData, UpdateTasklistInterface updateTasklistInterface){
         this.mContext = mContext;
         this.mData = mData;
+        this.updateTasklistInterface = updateTasklistInterface;
     }
 
     @NonNull
@@ -58,6 +59,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.tv_tasklist.setText(mData.get(position).getTaskListName());
+        holder.tv_taskDescription.setText(mData.get(position).getDescription());
         // if you want image here:
         //holder.img_tasklist_thumbnail.setImageResource(mData.get(position).getThumbnail());
         Random rnd = new Random();
@@ -103,7 +105,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 notifyItemRangeChanged(position, mData.size());
                                 break;
                             case R.id.menu3:
-                                //handle menu3 click
+                                updateTasklistInterface.helper(mData.get(position).getTaskListID());
                                 break;
                             default:
                                 break;
@@ -134,7 +136,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            mData.remove(index);
+//                            mData.remove(index);
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -163,15 +165,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
         private final View cardView;
         private final View colorView;
         private final View menuView;
+        private final TextView tv_taskDescription;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             tv_tasklist = itemView.findViewById(R.id.tasklist_title_id);
+            tv_taskDescription = itemView.findViewById(R.id.tasklist_description);
             //img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
             cardView = itemView.findViewById(R.id.cardview_id);
             colorView = itemView.findViewById(R.id.color_view);
             menuView = itemView.findViewById(R.id.memu_options);
+
         }
     }
 }

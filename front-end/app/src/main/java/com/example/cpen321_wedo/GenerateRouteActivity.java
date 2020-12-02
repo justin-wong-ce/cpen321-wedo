@@ -1,10 +1,12 @@
 package com.example.cpen321_wedo;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +37,7 @@ import java.util.List;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
-public class GenerateRouteActivity extends AppCompatActivity{
+public class GenerateRouteActivity extends AppCompatActivity implements getSelected{
 
     private GenerateTaskAdapter myAdapter;
     List<TaskList> lstTaskList = new ArrayList<>();
@@ -43,6 +45,7 @@ public class GenerateRouteActivity extends AppCompatActivity{
     List<Task> tasks = new ArrayList<>();
     List<Double> latitudes = new ArrayList<>();
     List<Double> longitudes = new ArrayList<>();
+    private JSONArray addresses = new JSONArray();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class GenerateRouteActivity extends AppCompatActivity{
 
         getData();
 
-        myAdapter = new GenerateTaskAdapter(tasks, getLayoutInflater());
+        myAdapter = new GenerateTaskAdapter(tasks, getLayoutInflater(), this);
 
         ListView myrv = findViewById(R.id.ListViewCatalog);
         myrv.setAdapter(myAdapter);
@@ -83,7 +86,7 @@ public class GenerateRouteActivity extends AppCompatActivity{
 
 
             //input your API parameters
-            object.put("locations",array);
+            object.put("locations",addresses);
             object.put("distanceThreshold",100);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -280,4 +283,19 @@ public class GenerateRouteActivity extends AppCompatActivity{
         builder.create().show();
     }
 
+    @Override
+    public void onAdd(String address) {
+        addresses.put(address);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onDelete(String address) throws JSONException {
+        for(int i =0; i<addresses.length(); i++){
+            if(addresses.get(i) == address){
+                addresses.remove(i);
+                break;
+            }
+        }
+    }
 }

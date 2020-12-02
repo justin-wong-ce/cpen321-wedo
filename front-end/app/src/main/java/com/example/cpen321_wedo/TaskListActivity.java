@@ -33,8 +33,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +45,7 @@ import java.util.List;
 
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
-public class TaskListActivity extends AppCompatActivity{
+public class TaskListActivity extends AppCompatActivity implements UpdateTasklistInterface {
     private List<TaskList> lstTaskList;
 
     private FirebaseUser firebaseUser;
@@ -72,7 +70,7 @@ public class TaskListActivity extends AppCompatActivity{
         lstTaskList = new ArrayList<>();
 
         RecyclerView myrv = findViewById(R.id.recyclerview_id);
-        myAdapter = new TaskListAdapter(this, lstTaskList);
+        myAdapter = new TaskListAdapter(this, lstTaskList, this);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -107,6 +105,7 @@ public class TaskListActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TaskListActivity.this, AddTaskListActivity.class);
+                intent.putExtra("add" ,true);
                 startActivityForResult(intent, 2);
             }
         });
@@ -204,7 +203,7 @@ public class TaskListActivity extends AppCompatActivity{
 
                             //TODO: after Justin make change to the backend please don't forget to change here!
 
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", response.getJSONObject(i).get("taskListID").toString());
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),response.getJSONObject(i).get("taskListDescription").toString(), response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -219,7 +218,6 @@ public class TaskListActivity extends AppCompatActivity{
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("test", error.toString());
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -233,6 +231,9 @@ public class TaskListActivity extends AppCompatActivity{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        if(data==null){
+            return;
+        }
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2 && data.hasExtra("json"))
@@ -246,8 +247,17 @@ public class TaskListActivity extends AppCompatActivity{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+        }else if(requestCode == 3){
+            getData();
         }
+    }
+
+    @Override
+    public void helper(String id) {
+        Intent intent = new Intent(TaskListActivity.this, AddTaskListActivity.class);
+        intent.putExtra("add" ,false);
+        intent.putExtra("taskListID", id);
+        startActivityForResult(intent, 3);
     }
 
 }

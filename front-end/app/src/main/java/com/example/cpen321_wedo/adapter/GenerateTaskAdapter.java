@@ -2,6 +2,7 @@ package com.example.cpen321_wedo.adapter;
 
 import java.util.List;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,23 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.cpen321_wedo.GenerateRouteActivity;
 import com.example.cpen321_wedo.R;
+import com.example.cpen321_wedo.getSelected;
 import com.example.cpen321_wedo.models.Task;
+
+import org.json.JSONException;
 
 public class GenerateTaskAdapter extends BaseAdapter {
 
     private List<Task> mData;
     private LayoutInflater mInflater;
+    getSelected getSelectedInterface;
 
-    public GenerateTaskAdapter(List<Task> list, LayoutInflater inflater) {
+    public GenerateTaskAdapter(List<Task> list, LayoutInflater inflater, getSelected getSelectedInterface) {
         mData = list;
         mInflater = inflater;
+        this.getSelectedInterface = getSelectedInterface;
     }
 
     @Override
@@ -72,9 +79,16 @@ public class GenerateTaskAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if(item.task_checkbox.isChecked()){
                     item.task_checkbox.setChecked(true);
-                    }else{
+                    Log.d("test", item.task_address.toString());
+                    getSelectedInterface.onAdd(item.task_address.getText().toString());
+                }else{
                     item.task_checkbox.setChecked(false);
+                    try {
+                        getSelectedInterface.onDelete(item.task_address.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }
             }
         });
 
