@@ -139,7 +139,14 @@ public class TaskActivity extends AppCompatActivity {
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONDAY) + 1;
             int day = calendar.get(Calendar.DAY_OF_MONTH);
-            String createdTime = "" + year + month + day;
+            String dayToString;
+            if (day < 10) {
+                dayToString = "0" + day;
+            } else {
+                dayToString = "" + day;
+            }
+
+            String createdTime = "" + year + "-" + month + "-" + dayToString;
             object.put("taskID", task.getTaskId());
             object.put("taskDescription", task.getTaskDescription());
             object.put("taskType", task.getTaskType());
