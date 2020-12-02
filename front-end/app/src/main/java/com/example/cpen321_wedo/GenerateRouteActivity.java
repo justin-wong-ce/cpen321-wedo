@@ -50,7 +50,7 @@ public class GenerateRouteActivity extends AppCompatActivity{
         setContentView(R.layout.activity_generate_route);
 
 
-        //getData();
+        getData();
 
         myAdapter = new GenerateTaskAdapter(tasks, getLayoutInflater());
 
@@ -203,6 +203,7 @@ public class GenerateRouteActivity extends AppCompatActivity{
                         passurl+="\"";
                         passurl+=lstTaskList.get(i).getTaskListID();
                         passurl+="\"";
+                        Log.d("test", passurl);
                         getTask(passurl);
                     }
 
