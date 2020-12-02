@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TaskDescriptionActivity">
+
+    <include
+        layout="@layout/bar_layout"/>
+
+    <TextView
+        android:id="@+id/taskTypeInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:letterSpacing="0.05"
+        android:text="Task Type"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:typeface="serif" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_below="@+id/taskTypeInfo"
+        android:paddingTop="10dp"
+        android:id="@+id/taskTypeText"/>
+
+    <TextView
+        android:id="@+id/taskLocationInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/taskTypeText"
+        android:letterSpacing="0.05"
+        android:text="Location"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:typeface="serif"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_below="@+id/taskLocationInfo"
+        android:visibility="gone"
+        android:paddingTop="10dp"
+        android:id="@+id/taskLocationText"/>
+
+    <TextView
+        android:id="@+id/taskDescriptionInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/taskLocationText"
+        android:letterSpacing="0.05"
+        android:text="Description"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:typeface="serif" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_below="@+id/taskDescriptionInfo"
+        android:paddingTop="10dp"
+        android:id="@+id/taskDescriptionText"/>
+
+</RelativeLayout>

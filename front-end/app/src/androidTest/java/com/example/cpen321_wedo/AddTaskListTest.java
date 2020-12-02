@@ -59,9 +59,11 @@ public class AddTaskListTest {
 
     @Test
     public void checkAddTaskList() {
+        // Check root layout of task list screen is displayed.
         onView(isRoot()).perform(waitDisplayed(R.id.taskListActivityLayout, 5000));
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
+        // Click the '+' button, check the add task list activity is displayed.
         onView(withId(R.id.fab_tasklist)).perform(click());
 
         try {
@@ -72,10 +74,13 @@ public class AddTaskListTest {
 
         onView(withId(R.id.addTaskListLayout)).check(matches(isDisplayed()));
 
+        // Press the Add Tasklist without filling any fields. Check correct toast message is displayed.
         onView(withId(R.id.btn_add_tasklist)).perform(click());
         onView(withText("Must fill required fields")).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
 
+        // Fill in the required text fields. Press the Add Tasklist button. Check that the
+        // current activity is the task list activity from before.
         onView(withId(R.id.tasklist_name)).perform(typeText("test3"));
         onView(withId(R.id.tasklist_description)).perform(typeText("Description"));
 
@@ -89,6 +94,7 @@ public class AddTaskListTest {
 
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
+        // Check the task list we just added is displayed with the name inputted before.
         onView(allOf(withId(R.id.tasklist_title_id), withText("test3"))).check(matches(isDisplayed()));
     }
 
