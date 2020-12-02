@@ -153,20 +153,20 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 startActivity(new Intent(TaskListActivity.this, StartActivity.class));
                 finish();
                 return true;
-            case R.id.map_test:
-
-                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
-                double[] latitudes = {49.261599, 49.234620, 49.234562};
-                double[] longitudes = {-123.249374, -123.184539, -123.116674};
-                mapsIntent.putExtra("latitudes", latitudes);
-                mapsIntent.putExtra("longitudes", longitudes);
-                mapsIntent.putExtra("mode", DRIVING);
-
-                int distanceThreshold = 100;
-                mapsIntent.putExtra("distanceThreshold", distanceThreshold);
-
-                startActivity(mapsIntent);
-                return true;
+//            case R.id.map_test:
+//
+//                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
+//                double[] latitudes = {49.261599, 49.234620, 49.234562};
+//                double[] longitudes = {-123.249374, -123.184539, -123.116674};
+//                mapsIntent.putExtra("latitudes", latitudes);
+//                mapsIntent.putExtra("longitudes", longitudes);
+//                mapsIntent.putExtra("mode", DRIVING);
+//
+//                int distanceThreshold = 100;
+//                mapsIntent.putExtra("distanceThreshold", distanceThreshold);
+//
+//                startActivity(mapsIntent);
+//                return true;
             case R.id.generate_route:
                 Intent newIntent = new Intent(TaskListActivity.this, GenerateRouteActivity.class);
 

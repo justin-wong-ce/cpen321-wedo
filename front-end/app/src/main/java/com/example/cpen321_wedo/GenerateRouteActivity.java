@@ -136,7 +136,7 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("test", "erro for getting route from backend");
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -217,7 +217,7 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("test", error.toString());
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -236,8 +236,11 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
 
                     for(int i=0;i<response.length();i++){
                         try {
-                            Task task = new Task(response.getJSONObject(i).get("taskName").toString(), response.getJSONObject(i).get("address").toString());
-                            tasks.add(task);
+                            if(!response.getJSONObject(i).get("address").toString().equals("")){
+                                Task task = new Task(response.getJSONObject(i).get("taskName").toString(), response.getJSONObject(i).get("address").toString());
+                                tasks.add(task);
+                            }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -250,7 +253,7 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("test", error.toString());
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
                 }
             });
 
