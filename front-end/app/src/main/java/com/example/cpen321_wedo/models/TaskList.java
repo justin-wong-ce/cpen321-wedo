@@ -59,6 +59,13 @@ public class TaskList {
         this.taskListID = taskListID;
     }
 
+    public TaskList(String taskListName, String taskListDescription, String userID, String taskListID) {
+        this.taskListName = taskListName;
+        this.taskListDescription = taskListDescription;
+        this.userID = userID;
+        this.taskListID = taskListID;
+    }
+
     public TaskList(String taskListName, String description, String taskListID) {
         this.taskListName = taskListName;
         this.taskListDescription = description;

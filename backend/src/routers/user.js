@@ -52,7 +52,7 @@ router.put("/user/premium", async (req, res) => {
 // typeof body.userID == "string"
 router.get("/user/tasklists/:userID", async (req, res) => {
     const userID = req.params.userID;
-
+    
     userFunctions.getUserLists(userID, (err, results) => {
         routerHelper.callbackHandler(err, results, res);
     });

@@ -29,6 +29,7 @@ router.get("/tasklist/get/:userID/:taskListID", (req, res) => {
 // typeof body.taskListDescription == "string"
 router.post("/tasklist/create", (req, res) => {
     const newTaskList = req.body;
+
     taskListFunctions.createTaskList(newTaskList, (err, results) => {
         routerHelper.callbackHandler(err, results, res);
     });
@@ -47,7 +48,6 @@ router.post("/tasklist/create", (req, res) => {
 // typeof body.taskListDescription == "string"
 router.put("/tasklist/update", (req, res) => {
     const taskList = req.body;
-
     taskListFunctions.updateTaskList(taskList, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);
     });
@@ -78,8 +78,12 @@ router.post("/tasklist/adduser", (req, res) => {
 // typeof entry.userID == "string"
 // typeof entry.taskListID == "string"
 // typeof entry.toKick == "string"
-router.delete("/tasklist/kickuser", (req, res) => {
-    const entry = req.body;
+router.delete("/tasklist/kickuser/:userID/:taskListID/:toKick", (req, res) => {
+    const entry = {
+        userID: req.params.userID.substring(1, req.params.userID.length - 1),
+        taskListID: req.params.taskListID.substring(1, req.params.taskListID.length - 1),
+        toKick: req.params.toKick.substring(1, req.params.toKick.length - 1),
+    }
     if (entry.userID === entry.toKick) {
         res.status(406).send({ msg: "cannot kick yourself" });
     }
@@ -95,9 +99,9 @@ router.delete("/tasklist/kickuser", (req, res) => {
 // Body JSON attribute types
 // typeof entry.userID == "string"
 // typeof entry.taskListID == "string"
-router.delete("/tasklist/delete", (req, res) => {
-    const userID = req.body.userID;
-    const taskListID = req.body.taskListID;
+router.delete("/tasklist/delete/:userID/:taskListID", (req, res) => {
+    const userID = req.params.userID.substring(1, req.params.userID.length - 1);
+    const taskListID = req.params.taskListID.substring(1, req.params.taskListID.length - 1);
 
     taskListFunctions.deleteTaskList(userID, taskListID, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);

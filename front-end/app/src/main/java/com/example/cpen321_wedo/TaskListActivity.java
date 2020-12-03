@@ -205,7 +205,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
 
                             //TODO: after Justin make change to the backend please don't forget to change here!
 
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),response.getJSONObject(i).get("taskListDescription").toString(), response.getJSONObject(i).get("taskListID").toString());
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),response.getJSONObject(i).get("taskListDescription").toString(), firebaseUser.getUid(), response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -243,7 +243,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
             try {
                 JSONObject mJsonObject = new JSONObject(data.getStringExtra("json"));
 
-                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"), mJsonObject.getString("taskListID"));
+                TaskList taskList = new TaskList(mJsonObject.getString("taskListName"), mJsonObject.getString("taskListDescription"),mJsonObject.getString("userID"), mJsonObject.getString("taskListID"));
                 lstTaskList.add(taskList);
                 myAdapter.notifyDataSetChanged();
             } catch (JSONException e) {
