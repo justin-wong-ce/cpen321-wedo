@@ -78,7 +78,7 @@ public class AddTaskListTest {
 
         // Fill in the required text fields. Press the Add Tasklist button. Check that the
         // current activity is the task list activity from before.
-        onView(withId(R.id.tasklist_name)).perform(typeText("test3"));
+        onView(withId(R.id.tasklist_name)).perform(typeText("test4"));
         onView(withId(R.id.tasklist_description)).perform(typeText("Description"));
 
         onView(withId(R.id.btn_add_tasklist)).perform(click());
@@ -92,7 +92,7 @@ public class AddTaskListTest {
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
         // Check the task list we just added is displayed with the name inputted before.
-        onView(allOf(withId(R.id.tasklist_title_id), withText("test3"))).check(matches(isDisplayed()));
+        onView(allOf(withId(R.id.tasklist_title_id), withText("test4"))).check(matches(isDisplayed()));
     }
 
     /**

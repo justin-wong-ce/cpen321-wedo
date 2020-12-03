@@ -17,6 +17,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
 /**
@@ -26,14 +27,28 @@ import static org.hamcrest.Matchers.not;
 public class DeleteTaskTest {
 
     @Rule
-    public ActivityScenarioRule<TaskActivity> activityRule =
-            new ActivityScenarioRule<>(TaskActivity.class);
+    public ActivityScenarioRule<TaskListActivity> activityRule =
+            new ActivityScenarioRule<>(TaskListActivity.class);
 
     @Test
     public void checkDeleteTask() {
-        // Check that the task activity layout is displayed.
         try {
             Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(allOf(withId(R.id.tasklist_title_id), withText("Test"))).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Check that the task activity layout is displayed.
+        try {
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -44,7 +59,7 @@ public class DeleteTaskTest {
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().getTargetContext());
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
