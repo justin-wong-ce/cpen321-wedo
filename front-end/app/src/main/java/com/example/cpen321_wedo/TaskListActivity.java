@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -176,7 +175,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
                 return true;
             case R.id.tasklist_invitation:
-                startActivity(new Intent(TaskListActivity.this, AcceptTaskListActivity.class));
+                startActivityForResult(new Intent(TaskListActivity.this, AcceptTaskListActivity.class), 3);
             default:
                 break;
         }

@@ -15,6 +15,38 @@ public class TaskList {
     private Date createdTime;
     private String taskListID;
 
+    public String getTaskListDescription() {
+        return taskListDescription;
+    }
+
+    public void setTaskListDescription(String taskListDescription) {
+        this.taskListDescription = taskListDescription;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public Date getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
     public TaskList(){
 
     }

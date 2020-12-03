@@ -8,18 +8,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.cpen321_wedo.adapter.AcceptFriendRequestAdapter;
-import com.example.cpen321_wedo.adapter.TaskListAdapter;
-import com.example.cpen321_wedo.adapter.UserAdapter;
-import com.example.cpen321_wedo.models.TaskList;
 import com.example.cpen321_wedo.models.User;
-import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,13 +19,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcceptFriendsActivity extends AppCompatActivity {
+public class AcceptFriendsActivity extends AppCompatActivity implements GoBackInterface {
 
     private AcceptFriendRequestAdapter myAdapter;
     private List<User> ToAcceptList;
@@ -51,7 +39,7 @@ public class AcceptFriendsActivity extends AppCompatActivity {
         ToAcceptList = new ArrayList<>();
 
         RecyclerView myrv = findViewById(R.id.recyclerview_view);
-        myAdapter = new AcceptFriendRequestAdapter(this, ToAcceptList);
+        myAdapter = new AcceptFriendRequestAdapter(this, ToAcceptList, this);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -82,10 +70,14 @@ public class AcceptFriendsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", "user has cancelled");
             }
         });
 
     }
 
+    @Override
+    public void goBack() {
+        finish();
+    }
 }

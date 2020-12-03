@@ -8,10 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.cpen321_wedo.GenerateRouteActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.getSelected;
 import com.example.cpen321_wedo.models.Task;
@@ -22,7 +19,7 @@ public class GenerateTaskAdapter extends BaseAdapter {
 
     private List<Task> mData;
     private LayoutInflater mInflater;
-    getSelected getSelectedInterface;
+    public getSelected getSelectedInterface;
 
     public GenerateTaskAdapter(List<Task> list, LayoutInflater inflater, getSelected getSelectedInterface) {
         mData = list;

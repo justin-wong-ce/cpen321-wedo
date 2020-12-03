@@ -22,10 +22,6 @@ import com.example.cpen321_wedo.TaskDescriptionActivity;
 import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
-//<<<<<<< HEAD:front-end/app/src/main/java/com/example/cpen321_wedo/adapter/TaskAdapter.java
-//
-//=======
-//>>>>>>> 5f7b67a229b3ec75749abfcbc9293d1321b2b59c:front-end/app/src/main/java/com/example/cpen321_wedo/Adapter/TaskAdapter.java
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {

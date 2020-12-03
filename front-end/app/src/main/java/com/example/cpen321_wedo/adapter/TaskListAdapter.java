@@ -19,7 +19,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.cpen321_wedo.AddTaskListActivity;
 import com.example.cpen321_wedo.AddUserActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
@@ -39,6 +38,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     private final Context mContext;
     private final List<TaskList> mData;
     private UpdateTasklistInterface updateTasklistInterface;
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     public TaskListAdapter(Context mContext, List<TaskList> mData, UpdateTasklistInterface updateTasklistInterface){
         this.mContext = mContext;
@@ -91,6 +91,10 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can add users", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
                                 Intent intent = new Intent(mContext, AddUserActivity.class);
                                 intent.putExtra("Friends", false);
                                 intent.putExtra("tasklistName", mData.get(position).getTaskListName());
@@ -99,12 +103,20 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can delete tasklist", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
                                 delteTasklist(position);
                                 mData.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, mData.size());
                                 break;
                             case R.id.menu3:
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can update tasklist", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
                                 updateTasklistInterface.helper(mData.get(position).getTaskListID());
                                 break;
                             default:
