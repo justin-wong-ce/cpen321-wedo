@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,17 +33,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
 public class GenerateRouteActivity extends AppCompatActivity implements getSelected{
 
     private GenerateTaskAdapter myAdapter;
-    List<TaskList> lstTaskList = new ArrayList<>();
-    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-    List<Task> tasks = new ArrayList<>();
-    List<Double> latitudes = new ArrayList<>();
-    List<Double> longitudes = new ArrayList<>();
+    private List<TaskList> lstTaskList = new ArrayList<>();
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    private List<Task> tasks = new ArrayList<>();
+    private List<Double> latitudes = new ArrayList<>();
+    private List<Double> longitudes = new ArrayList<>();
     private JSONArray addresses = new JSONArray();
 
     @Override

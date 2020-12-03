@@ -31,7 +31,7 @@ public class FriendListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<User> mUsers;
     private UserAdapter userAdapter;
-    Context mContext;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

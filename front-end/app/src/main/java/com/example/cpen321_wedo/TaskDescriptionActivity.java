@@ -12,10 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import org.w3c.dom.Text;
-
 public class TaskDescriptionActivity extends AppCompatActivity {
 
     private int position;

@@ -170,7 +170,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void updateTask()
+    public void updateTask() {
+        
+    };
 
     public void deleteTasksSelected() {
         for (int i = 0; i < toDelete.size(); i++) {
