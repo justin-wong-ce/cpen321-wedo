@@ -79,7 +79,10 @@ public class TaskFragment extends Fragment {
     public void addTask(Task task) {
         taskAdapter.addTask(task);
     }
-
+    
+    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, int position) {
+        taskAdapter.updateTask(taskName, taskType, taskDescription, taskLocation, position);
+    }
 
     public void toggleItemViewType () { taskAdapter.toggleItemViewType(); }
 
