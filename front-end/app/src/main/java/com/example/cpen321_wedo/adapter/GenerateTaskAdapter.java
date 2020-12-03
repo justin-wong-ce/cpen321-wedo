@@ -45,22 +45,23 @@ public class GenerateTaskAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewItem item;
+        View convertView_View = convertView;
 
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.generate_route_task_item,
+        if (convertView_View == null) {
+            convertView_View = mInflater.inflate(R.layout.generate_route_task_item,
                     null);
             item = new ViewItem();
 
-            item.task_name = (TextView) convertView
+            item.task_name = (TextView) convertView_View
                     .findViewById(R.id.task_name);
 
-            item.task_address = (TextView) convertView.findViewById(R.id.task_address);
+            item.task_address = (TextView) convertView_View.findViewById(R.id.task_address);
 
-            item.task_checkbox = (CheckBox) convertView.findViewById(R.id.CheckBoxSelected);
+            item.task_checkbox = (CheckBox) convertView_View.findViewById(R.id.CheckBoxSelected);
 
-            convertView.setTag(item);
+            convertView_View.setTag(item);
         } else {
-            item = (ViewItem) convertView.getTag();
+            item = (ViewItem) convertView_View.getTag();
         }
 
         Task curProduct = mData.get(position);
@@ -90,7 +91,7 @@ public class GenerateTaskAdapter extends BaseAdapter {
         });
 
 
-        return convertView;
+        return convertView_View;
     }
 
 

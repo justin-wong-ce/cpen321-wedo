@@ -144,11 +144,10 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean logout = false;
         switch (item.getItemId()){
             case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(TaskListActivity.this, StartActivity.class));
-                finish();
+                logout = true;
                 break;
 //            case R.id.map_test:
 //
@@ -176,6 +175,11 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 startActivityForResult(new Intent(TaskListActivity.this, AcceptTaskListActivity.class), 3);
             default:
                 break;
+        }
+        if(logout){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(TaskListActivity.this, StartActivity.class));
+            finish();
         }
         return true;
     }
