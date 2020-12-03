@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,8 +32,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,9 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
-
-public class TaskListActivity extends AppCompatActivity{
+public class TaskListActivity extends AppCompatActivity implements UpdateTasklistInterface {
     private List<TaskList> lstTaskList;
 
     private FirebaseUser firebaseUser;
@@ -72,7 +67,7 @@ public class TaskListActivity extends AppCompatActivity{
         lstTaskList = new ArrayList<>();
 
         RecyclerView myrv = findViewById(R.id.recyclerview_id);
-        myAdapter = new TaskListAdapter(this, lstTaskList);
+        myAdapter = new TaskListAdapter(this, lstTaskList, this);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -107,6 +102,7 @@ public class TaskListActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TaskListActivity.this, AddTaskListActivity.class);
+                intent.putExtra("add" ,true);
                 startActivityForResult(intent, 2);
             }
         });
@@ -148,38 +144,44 @@ public class TaskListActivity extends AppCompatActivity{
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean logout = false;
         switch (item.getItemId()){
             case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(TaskListActivity.this, StartActivity.class));
-                finish();
-                return true;
-            case R.id.map_test:
-
-                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
-                double[] latitudes = {49.261599, 49.234620, 49.234562};
-                double[] longitudes = {-123.249374, -123.184539, -123.116674};
-                mapsIntent.putExtra("latitudes", latitudes);
-                mapsIntent.putExtra("longitudes", longitudes);
-                mapsIntent.putExtra("mode", DRIVING);
-
-                int distanceThreshold = 100;
-                mapsIntent.putExtra("distanceThreshold", distanceThreshold);
-
-                startActivity(mapsIntent);
-                return true;
+                logout = true;
+                break;
+//            case R.id.map_test:
+//
+//                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
+//                double[] latitudes = {49.261599, 49.234620, 49.234562};
+//                double[] longitudes = {-123.249374, -123.184539, -123.116674};
+//                mapsIntent.putExtra("latitudes", latitudes);
+//                mapsIntent.putExtra("longitudes", longitudes);
+//                mapsIntent.putExtra("mode", DRIVING);
+//
+//                int distanceThreshold = 100;
+//                mapsIntent.putExtra("distanceThreshold", distanceThreshold);
+//
+//                startActivity(mapsIntent);
+//                return true;
             case R.id.generate_route:
-                startActivity(new Intent(TaskListActivity.this, GenerateRouteActivity.class));
-                return true;
+                Intent newIntent = new Intent(TaskListActivity.this, GenerateRouteActivity.class);
+
+                startActivity(newIntent);
+                break;
             case R.id.ic_chat:
                 startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
-                return true;
+                break;
             case R.id.tasklist_invitation:
-                startActivity(new Intent(TaskListActivity.this, AcceptTaskListActivity.class));
+                startActivityForResult(new Intent(TaskListActivity.this, AcceptTaskListActivity.class), 3);
             default:
                 break;
         }
-        return false;
+        if(logout){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(TaskListActivity.this, StartActivity.class));
+            finish();
+        }
+        return true;
     }
 
 
@@ -191,7 +193,7 @@ public class TaskListActivity extends AppCompatActivity{
             url+=firebaseUser.getUid();
             Log.d("test", url);
             url+="\"";
-;
+
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
@@ -202,7 +204,7 @@ public class TaskListActivity extends AppCompatActivity{
 
                             //TODO: after Justin make change to the backend please don't forget to change here!
 
-                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),"We should add description attribute to tasklist later on", response.getJSONObject(i).get("taskListID").toString());
+                            TaskList taskList = new TaskList(response.getJSONObject(i).get("taskListName").toString(),response.getJSONObject(i).get("taskListDescription").toString(), response.getJSONObject(i).get("taskListID").toString());
                             lstTaskList.add(taskList);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -217,7 +219,6 @@ public class TaskListActivity extends AppCompatActivity{
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("test", error.toString());
-                    Toast.makeText(getApplicationContext(), "Error"+error, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -231,6 +232,9 @@ public class TaskListActivity extends AppCompatActivity{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        if(data==null){
+            return;
+        }
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2 && data.hasExtra("json"))
@@ -244,8 +248,17 @@ public class TaskListActivity extends AppCompatActivity{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+        }else if(requestCode == 3){
+            getData();
         }
+    }
+
+    @Override
+    public void helper(String id) {
+        Intent intent = new Intent(TaskListActivity.this, AddTaskListActivity.class);
+        intent.putExtra("add" ,false);
+        intent.putExtra("taskListID", id);
+        startActivityForResult(intent, 3);
     }
 
 }

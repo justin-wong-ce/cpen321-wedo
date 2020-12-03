@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddTaskActivity">
+    tools:context=".UpdateTaskActivity">
 
     <include
         layout="@layout/bar_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/taskNameLayout"
+        android:id="@+id/updateTaskNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Name*"
@@ -23,17 +23,17 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/taskNameText"
+            android:id="@+id/updateTaskNameText"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/taskStartLocationLayout"
+        android:id="@+id/updateTaskStartLocationLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Location"
-        android:layout_below="@+id/taskNameLayout"
+        android:layout_below="@+id/updateTaskNameLayout"
         android:layout_margin="10dp"
         app:helperTextEnabled="true"
         app:helperText="Associate a location"
@@ -42,17 +42,17 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/taskStartLocationText"
+            android:id="@+id/updateTaskStartLocationText"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/taskDescriptionLayout"
+        android:id="@+id/updateTaskDescriptionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Task Description"
-        android:layout_below="@+id/taskStartLocationLayout"
+        android:layout_below="@+id/updateTaskStartLocationLayout"
         android:layout_margin="10dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -61,7 +61,7 @@
             android:layout_height="200dp"
             android:scrollHorizontally="false"
             android:inputType="text|textImeMultiLine"
-            android:id="@+id/taskDescriptionText"
+            android:id="@+id/updateTaskDescriptionText"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -70,13 +70,13 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/taskDescriptionLayout"
+        android:layout_below="@+id/updateTaskDescriptionLayout"
         android:layout_margin="10dp"
         android:hint="Choose a Task Type"
-        android:id="@+id/dropdownMenu">
+        android:id="@+id/updateDropdownMenu">
 
         <AutoCompleteTextView
-            android:id="@+id/filled_exposed_dropdown"
+            android:id="@+id/updateFilled_exposed_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"/>
@@ -86,9 +86,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dropdownMenu"
+        android:layout_below="@id/updateDropdownMenu"
         android:layout_centerHorizontal="true"
         android:text="Save"
-        android:id="@+id/addTaskSaveButton"/>
+        android:id="@+id/updateTaskSaveButton"/>
 
 </RelativeLayout>

@@ -10,14 +10,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.cpen321_wedo.AddUserActivity;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.models.TaskList;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
+import com.example.cpen321_wedo.UpdateTasklistInterface;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Random;
@@ -26,10 +37,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     private final Context mContext;
     private final List<TaskList> mData;
+    private UpdateTasklistInterface updateTasklistInterface;
+    private FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    public TaskListAdapter(Context mContext, List<TaskList> mData){
+    public TaskListAdapter(Context mContext, List<TaskList> mData, UpdateTasklistInterface updateTasklistInterface){
         this.mContext = mContext;
         this.mData = mData;
+        this.updateTasklistInterface = updateTasklistInterface;
     }
 
     @NonNull
@@ -45,6 +59,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.tv_tasklist.setText(mData.get(position).getTaskListName());
+        holder.tv_taskDescription.setText(mData.get(position).getDescription());
         // if you want image here:
         //holder.img_tasklist_thumbnail.setImageResource(mData.get(position).getThumbnail());
         Random rnd = new Random();
@@ -55,6 +70,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(mContext, TaskActivity.class);
+                intent.putExtra("taskListId", mData.get(position).getTaskListID());
+                intent.putExtra("taskListName", mData.get(position).getTaskListName());
                 mContext.startActivity(intent);
 
             }
@@ -75,6 +92,10 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can add users", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
                                 Intent intent = new Intent(mContext, AddUserActivity.class);
                                 intent.putExtra("Friends", false);
                                 intent.putExtra("tasklistName", mData.get(position).getTaskListName());
@@ -83,10 +104,21 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
-                                //handle menu2 click
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can delete tasklist", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
+                                delteTasklist(position);
+                                mData.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, mData.size());
                                 break;
                             case R.id.menu3:
-                                //handle menu3 click
+                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                    Toast.makeText(mContext, "Only owner of the tasklist can update tasklist", Toast.LENGTH_LONG).show();
+                                    break;
+                                }
+                                updateTasklistInterface.helper(mData.get(position).getTaskListID());
                                 break;
                             default:
                                 break;
@@ -102,6 +134,35 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     }
 
+    public void delteTasklist(final int index){
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        try {
+            String url = "http://40.78.89.252:3000/tasklist/delete/";
+
+            url+="\""+firebaseUser.getUid()+"\"/";
+            url+="\""+mData.get(index).getTaskListID()+"\"";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+//                            mData.remove(index);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(mContext, "error deleting tasklist", Toast.LENGTH_LONG).show();
+                    Log.d("test", error.toString());
+                }
+            });
+
+            RequestQueueSingleton.getInstance(mContext).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public int getItemCount() {
         Log.d("test", mData.size()+"");
@@ -115,15 +176,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
         private final View cardView;
         private final View colorView;
         private final View menuView;
+        private final TextView tv_taskDescription;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             tv_tasklist = itemView.findViewById(R.id.tasklist_title_id);
+            tv_taskDescription = itemView.findViewById(R.id.tasklist_description);
             //img_tasklist_thumbnail = (ImageView) itemView.findViewById(R.id.tasklist_image_id);
             cardView = itemView.findViewById(R.id.cardview_id);
             colorView = itemView.findViewById(R.id.color_view);
             menuView = itemView.findViewById(R.id.memu_options);
+
         }
     }
 }

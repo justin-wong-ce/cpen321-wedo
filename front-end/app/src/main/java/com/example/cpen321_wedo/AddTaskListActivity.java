@@ -34,6 +34,8 @@ public class AddTaskListActivity extends AppCompatActivity {
     private MaterialEditText tasklistDescription;
 
     private FirebaseUser firebaseUser;
+    private Boolean add;
+    private String id;
 
 
     @Override
@@ -45,6 +47,10 @@ public class AddTaskListActivity extends AppCompatActivity {
         tasklistDescription = findViewById(R.id.tasklist_description);
         Button btn_created = findViewById(R.id.btn_add_tasklist);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        add = getIntent().getBooleanExtra("add", true);
+        if(!add){
+            id = getIntent().getStringExtra("taskListID");
+        }
 
         btn_created.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,39 +91,62 @@ public class AddTaskListActivity extends AppCompatActivity {
             //input your API parameters
             object.put("userID",firebaseUser.getUid());
             object.put("taskListName",txt_tasklistName);
-            object.put("taskListID",taskListID);
             object.put("taskListDescription",txt_description);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         try {
-            String url = "http://40.78.89.252:3000/tasklist/create";
+            if(add){
+                String url = "http://40.78.89.252:3000/tasklist/create";
+                object.put("taskListID",taskListID);
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                postGroupChat(object.get("taskListID").toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    postGroupChat(object.get("taskListID").toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                // TODO: to ask the TasklistActivity to update.
+                                Intent intent=new Intent();
+                                intent.putExtra("json",object.toString());
+                                setResult(2,intent);
+                                finish();
                             }
-                            // TODO: to ask the TasklistActivity to update.
-                            Intent intent=new Intent();
-                            intent.putExtra("json",object.toString());
-                            setResult(2,intent);
-                            finish();
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "description has to be integer rn for testing", Toast.LENGTH_LONG).show();
-                    Log.d("testing", error.toString());
-                }
-            });
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("testing", error.toString());
+                    }
+                });
 
-            RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+                RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+            }else{
+                String url = "http://40.78.89.252:3000/tasklist/update";
+                object.put("taskListID",id);
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                                Intent intent=new Intent();
+                                setResult(3,intent);
+                                finish();
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("testing", error.toString());
+                    }
+                });
+
+                RequestQueueSingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

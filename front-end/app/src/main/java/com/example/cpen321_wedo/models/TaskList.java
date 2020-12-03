@@ -1,7 +1,5 @@
 package com.example.cpen321_wedo.models;
 
-import com.example.cpen321_wedo.notifications.Data;
-
 import java.util.Date;
 
 // TODO: need to modified the Tasklist class if we change backend as well
@@ -14,6 +12,38 @@ public class TaskList {
     private Date modifiedTime;
     private Date createdTime;
     private String taskListID;
+
+    public String getTaskListDescription() {
+        return taskListDescription;
+    }
+
+    public void setTaskListDescription(String taskListDescription) {
+        this.taskListDescription = taskListDescription;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public Date getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
 
     public TaskList(){
 

@@ -13,11 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.cpen321_wedo.GoBackInterface;
 import com.example.cpen321_wedo.R;
 import com.example.cpen321_wedo.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -28,11 +28,13 @@ public class AcceptFriendRequestAdapter extends RecyclerView.Adapter<AcceptFrien
     private final Context mContext;
     private final List<User> mData;
     private final FirebaseUser firebaseUser;
+    private final GoBackInterface goBackInterface;
 
-    public AcceptFriendRequestAdapter(Context mContext, List<User> mData){
+    public AcceptFriendRequestAdapter(Context mContext, List<User> mData, GoBackInterface goBackInterface){
         this.mContext = mContext;
         this.mData = mData;
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        this.goBackInterface = goBackInterface;
     }
 
     @NonNull
@@ -68,6 +70,7 @@ public class AcceptFriendRequestAdapter extends RecyclerView.Adapter<AcceptFrien
                 txt_user_email = txt_user_email.replaceAll("\\.", "\\_");
 
                 FirebaseDatabase.getInstance().getReference().child("FriendRequest").child(txt_user_email).child(holder.userID).removeValue();
+                goBackInterface.goBack();
             }
         });
 
@@ -77,10 +80,10 @@ public class AcceptFriendRequestAdapter extends RecyclerView.Adapter<AcceptFrien
                 FirebaseDatabase.getInstance().getReference().child("UsersFriends").child(firebaseUser.getUid()).child(holder.userID).setValue(holder.userID);
                 FirebaseDatabase.getInstance().getReference().child("UsersFriends").child(holder.userID).child(firebaseUser.getUid()).setValue(firebaseUser.getUid());
 
-                String txt_user_email = firebaseUser.getEmail();
-                txt_user_email = txt_user_email.replaceAll("\\.", "\\_");
+                String firebaseUserUid = firebaseUser.getUid();
 
-                FirebaseDatabase.getInstance().getReference().child("FriendRequest").child(txt_user_email).child(holder.userID).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("FriendRequest").child(firebaseUserUid).child(holder.userID).removeValue();
+                goBackInterface.goBack();
             }
         });
 

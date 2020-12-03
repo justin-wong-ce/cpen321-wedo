@@ -6,12 +6,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.example.cpen321_wedo.adapter.AcceptFriendRequestAdapter;
 import com.example.cpen321_wedo.adapter.AcceptTaskListRequestAdapter;
 import com.example.cpen321_wedo.models.TaskListRequest;
-import com.example.cpen321_wedo.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcceptTaskListActivity extends AppCompatActivity {
+public class AcceptTaskListActivity extends AppCompatActivity implements GoBackInterface {
 
     private AcceptTaskListRequestAdapter myAdapter;
     private List<TaskListRequest> ToAcceptList;
@@ -40,7 +40,7 @@ public class AcceptTaskListActivity extends AppCompatActivity {
         ToAcceptList = new ArrayList<>();
 
         RecyclerView myrv = findViewById(R.id.recyclerview_view);
-        myAdapter = new AcceptTaskListRequestAdapter(this, ToAcceptList);
+        myAdapter = new AcceptTaskListRequestAdapter(this, ToAcceptList, this);
         myrv.setLayoutManager((new StaggeredGridLayoutManager(1, 1)));
 
         myrv.setAdapter(myAdapter);
@@ -71,9 +71,16 @@ public class AcceptTaskListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", "user has cancelled");
             }
         });
 
+    }
+
+    @Override
+    public void goBack() {
+        Intent intent=new Intent();
+        setResult(3,intent);
+        finish();
     }
 }

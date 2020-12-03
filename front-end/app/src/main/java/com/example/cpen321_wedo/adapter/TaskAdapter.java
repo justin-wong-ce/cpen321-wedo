@@ -1,6 +1,9 @@
 package com.example.cpen321_wedo.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,19 +12,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.cpen321_wedo.TaskDescriptionActivity;
 import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
+import com.example.cpen321_wedo.singleton.RequestQueueSingleton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-//<<<<<<< HEAD:front-end/app/src/main/java/com/example/cpen321_wedo/adapter/TaskAdapter.java
-//
-//=======
-//>>>>>>> 5f7b67a229b3ec75749abfcbc9293d1321b2b59c:front-end/app/src/main/java/com/example/cpen321_wedo/Adapter/TaskAdapter.java
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
@@ -32,12 +48,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private int currentView;
     private int taskSelected;
     private Menu menu;
+    private Context context;
+    private Activity taskActivity;
+    private String taskListId;
 
-    public TaskAdapter() {
+    public TaskAdapter(Context context, Activity taskActivity, String taskListId) {
         tasks = new ArrayList<>();
         currentView = TASK_ITEM;
         toDelete = new ArrayList<>();
         taskSelected = 0;
+        this.context = context;
+        this.taskActivity = taskActivity;
+        this.taskListId = taskListId;
     }
 
     @NonNull
@@ -70,9 +92,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             holder.markDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    tasks.get(position).setCompleted(!tasks.get(position).isCompleted());
+                    Boolean isCompleted = !tasks.get(position).isCompleted();
 
-                    notifyItemChanged(position);
+                    if (isCompleted) {
+                        updateCompletionData(isCompleted, 3, taskListId, tasks.get(position).getTaskId(), position, tasks.get(position).getTaskType());
+                    } else {
+                        updateCompletionData(isCompleted, 0, taskListId, tasks.get(position).getTaskId(), position, tasks.get(position).getTaskType());
+                    }
+                }
+            });
+
+            holder.parent.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, TaskDescriptionActivity.class);
+                    intent.putExtra("title", tasks.get(position).getTaskName());
+                    intent.putExtra("taskType", tasks.get(position).getTaskType());
+                    intent.putExtra("taskDescription", tasks.get(position).getTaskDescription());
+                    intent.putExtra("taskLocation", tasks.get(position).getTaskLocation());
+                    intent.putExtra("taskId", tasks.get(position).getTaskId());
+                    intent.putExtra("index", position);
+                    intent.putExtra("taskListId", taskListId);
+                    startActivityForResult(taskActivity, intent, 2, null);
                 }
             });
         } else {
@@ -101,8 +143,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     } else {
                         menu.findItem(R.id.trash).setEnabled(true);
                     }
-
-
                 }
             });
 
@@ -149,6 +189,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, long dateModifiedInMilliSeconds, int position) {
+        Task task = this.tasks.get(position);
+        task.setTaskName(taskName);
+        task.setTaskType(taskType);
+        task.setTaskDescription(taskDescription);
+        task.setTaskLocation(taskLocation);
+        task.setDateModifiedInMilliSeconds(dateModifiedInMilliSeconds);
+        notifyItemChanged(position);
+    };
+
     public void deleteTasksSelected() {
         for (int i = 0; i < toDelete.size(); i++) {
             tasks.remove(toDelete.get(i));
@@ -158,8 +208,68 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public ArrayList<Task> getDeleteTasks() {
+        return this.toDelete;
+    }
+
     public void setMenu(Menu menu) {
         this.menu = menu;
+    }
+
+    private void updateCompletionData(final Boolean isComplete, int rating, String taskListId, String taskId, final int position, String taskType) {
+        JSONObject object = new JSONObject();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        Date tempDate = new Date();
+        final long dateModified = tempDate.getTime();
+
+        try {
+            Date date = new Date(dateModified);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONDAY) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String dayToString;
+            if (day < 10) {
+                dayToString = "0" + day;
+            } else {
+                dayToString = "" + day;
+            }
+
+            String dateModifiedString = "" + year + "-" + month + "-" + dayToString;
+            object.put("taskID", taskId);
+            object.put("taskListID", taskListId);
+            object.put("userID", firebaseUser.getUid());
+            object.put("done", isComplete);
+            object.put("taskRating", rating);
+            object.put("modifiedTime", dateModifiedString);
+            object.put("taskType", taskType);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String url = "http://40.78.89.252:3000/task/update";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            tasks.get(position).setCompleted(isComplete);
+                            notifyItemChanged(position);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Could not mark done/undone: "+ error, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -167,9 +277,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         private final TextView taskName;
         private Button markDone;
         private CheckBox checkbox;
+        private RelativeLayout parent;
+
         public ViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             taskName = itemView.findViewById(R.id.taskName);
+            parent = itemView.findViewById(R.id.taskParent);
             if (viewType == TASK_ITEM) {
                 markDone = itemView.findViewById(R.id.doneBtn);
             } else {

@@ -3,11 +3,14 @@ package com.example.cpen321_wedo.models;
 import java.util.Date;
 
 public class Task {
+    private String taskId;
     private  String taskName;
     private String taskDescription;
     private String taskLocation;
+    private String taskType;
     private boolean completed;
-    private long dateCreatedInSeconds;
+    private long dateCreatedInMilliSeconds;
+    private long dateModifiedInMilliSeconds;
 
     public String getTaskLocation() {
         return taskLocation;
@@ -22,23 +25,37 @@ public class Task {
         this.taskName = taskName;
         this.taskLocation = taskLocation;
         this.completed = false;
+        this.taskType = "";
+        this.taskId = "";
+        this.taskDescription = "";
 
         Date date = new Date();
-        this.dateCreatedInSeconds = date.getTime();
+        this.dateCreatedInMilliSeconds = date.getTime();
+        this.dateModifiedInMilliSeconds = this.dateCreatedInMilliSeconds;
     }
 
-    public Task(String taskName, String taskLocation, String taskDescription) {
+    public Task(String userId, String taskName, String taskLocation, String taskDescription, String taskType) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskLocation = taskLocation;
         this.completed = false;
+        this.taskType = taskType;
 
         Date date = new Date();
-        this.dateCreatedInSeconds = date.getTime();
+        this.dateCreatedInMilliSeconds = date.getTime();
+        this.dateModifiedInMilliSeconds = this.dateCreatedInMilliSeconds;
+
+        this.taskId= userId + dateCreatedInMilliSeconds;
     }
 
     public String getTaskName() {
-        return taskName;
+        return this.taskName;
+    }
+
+    public String getTaskId() { return this.taskId; };
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public void setTaskName(String taskName) {
@@ -61,8 +78,24 @@ public class Task {
         this.completed = completed;
     }
 
-    public long getDateCreatedInSeconds() {
-        return dateCreatedInSeconds;
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
+
+    public long getDateModifiedInMilliSeconds() {
+        return dateModifiedInMilliSeconds;
+    }
+
+    public void setDateModifiedInMilliSeconds(long dateModifiedInMilliSeconds) {
+        this.dateModifiedInMilliSeconds = dateModifiedInMilliSeconds;
+    }
+
+    public long getDateCreatedInMilliSeconds() {
+        return dateCreatedInMilliSeconds;
     }
 
     @Override
@@ -76,9 +109,8 @@ public class Task {
             return false;
         }
 
-        // typecast o to Complex so that we can compare data members
         Task c = (Task) o;
 
-        return this.getTaskName().equals(c.getTaskName());
+        return this.getTaskId().equals(c.getTaskId());
     }
 }

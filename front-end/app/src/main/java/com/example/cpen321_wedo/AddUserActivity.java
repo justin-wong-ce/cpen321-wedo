@@ -17,7 +17,7 @@ import com.example.cpen321_wedo.notifications.MyClientUtil;
 import com.example.cpen321_wedo.notifications.MyResponse;
 import com.example.cpen321_wedo.notifications.Sender;
 import com.example.cpen321_wedo.notifications.Token;
-import com.example.cpen321_wedo.notifications.notificationType;
+import com.example.cpen321_wedo.notifications.NotificationType;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,10 +38,10 @@ public class AddUserActivity extends AppCompatActivity {
     private TextView user_email;
     private FirebaseUser firebaseUser;
     private APIService apiService;
-    boolean friends;
-    String taskListName;
-    String taskListDescription;
-    String taskListID;
+    private boolean friends;
+    private String taskListName;
+    private String taskListDescription;
+    private String taskListID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,32 +89,32 @@ public class AddUserActivity extends AppCompatActivity {
                 }
 
                 if(friends){
-                    AddFriend(email, userID);
+                    addFriend(userID);
                 }else{
-                    AddTaskList(userID);
+                    addTaskList(userID);
                 }
                 sendNotifications(userID, email);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", "user cancelled");
             }
         });
     }
 
-    private void AddFriend(String txt_user_email, String userID){
+    private void addFriend(String userID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("id",firebaseUser.getUid());
-        hashMap.put("username", txt_user_email);
+        hashMap.put("username", firebaseUser.getEmail());
         hashMap.put("imageURL", "default");
 
         reference.child("FriendRequest").child(userID).child(firebaseUser.getUid()).setValue(hashMap);
     }
 
-    private void AddTaskList(String userID){
+    private void addTaskList(String userID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, String> hashMap = new HashMap<>();
@@ -122,6 +122,7 @@ public class AddUserActivity extends AppCompatActivity {
         hashMap.put("username", firebaseUser.getEmail());
         hashMap.put("tasklistName", taskListName);
         hashMap.put("tasklistDescription", taskListDescription);
+        hashMap.put("ownerID",firebaseUser.getUid());
 
         reference.child("TaskListRequest").child(userID).child(taskListID).setValue(hashMap);
     }
@@ -140,9 +141,9 @@ public class AddUserActivity extends AppCompatActivity {
                     assert token != null;
                     Data data;
                     if(friends){
-                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+" send you a friend request ", "Friend Request", receiver, notificationType.ADDFRIEND);
+                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username+" send you a friend request ", "Friend Request", receiver, NotificationType.ADDFRIEND);
                     }else{
-                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, firebaseUser.getEmail()+" ask you to work together on a tasklist ", "Work Together", receiver, notificationType.WORKTOGETHER);
+                        data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, firebaseUser.getEmail()+" ask you to work together on a tasklist ", "Work Together", receiver, NotificationType.WORKTOGETHER);
                     }
                     Sender sender = new Sender(data, token.getToken());
                     Log.d("test", token.getToken());

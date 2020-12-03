@@ -7,9 +7,9 @@ public class Data {
     private String body;
     private String title;
     private String sented;
-    private notificationType type;
+    private NotificationType type;
 
-    public Data(String user, int icon, String body, String title, String sented, notificationType type) {
+    public Data(String user, int icon, String body, String title, String sented, NotificationType type) {
         this.user = user;
         this.icon = icon;
         this.body = body;
@@ -22,7 +22,7 @@ public class Data {
 
     }
 
-    public notificationType getType(){
+    public NotificationType getType(){
         return type;
     }
 

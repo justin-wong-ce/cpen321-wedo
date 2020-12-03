@@ -11,7 +11,6 @@ import androidx.test.espresso.util.TreeIterables;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.cpen321_wedo.login.LoginActivity;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -23,12 +22,10 @@ import java.util.concurrent.TimeoutException;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -59,9 +56,11 @@ public class AddTaskListTest {
 
     @Test
     public void checkAddTaskList() {
+        // Check root layout of task list screen is displayed.
         onView(isRoot()).perform(waitDisplayed(R.id.taskListActivityLayout, 5000));
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
+        // Click the '+' button, check the add task list activity is displayed.
         onView(withId(R.id.fab_tasklist)).perform(click());
 
         try {
@@ -72,10 +71,13 @@ public class AddTaskListTest {
 
         onView(withId(R.id.addTaskListLayout)).check(matches(isDisplayed()));
 
+        // Press the Add Tasklist without filling any fields. Check correct toast message is displayed.
         onView(withId(R.id.btn_add_tasklist)).perform(click());
         onView(withText("Must fill required fields")).inRoot(withDecorView(not(decorView)))
                 .check(matches(isDisplayed()));
 
+        // Fill in the required text fields. Press the Add Tasklist button. Check that the
+        // current activity is the task list activity from before.
         onView(withId(R.id.tasklist_name)).perform(typeText("test3"));
         onView(withId(R.id.tasklist_description)).perform(typeText("Description"));
 
@@ -89,6 +91,7 @@ public class AddTaskListTest {
 
         onView(withId(R.id.taskListActivityLayout)).check(matches(isDisplayed()));
 
+        // Check the task list we just added is displayed with the name inputted before.
         onView(allOf(withId(R.id.tasklist_title_id), withText("test3"))).check(matches(isDisplayed()));
     }
 
