@@ -115,6 +115,14 @@ public class TaskFragment extends Fragment {
                             Task task = new Task(response.getJSONObject(i).get("taskListID").toString(), response.getJSONObject(i).get("taskName").toString(),
                                     location, response.getJSONObject(i).get("taskDescription").toString(), response.getJSONObject(i).get("taskType").toString());
                             task.setTaskId(response.getJSONObject(i).get("taskID").toString());
+                            String isComplete = response.getJSONObject(i).get("done").toString();
+                            boolean complete;
+                            if (isComplete.equals("1")) {
+                                complete = true;
+                            } else {
+                                complete = false;
+                            }
+                            task.setCompleted(complete);
                             tasks.add(task);
                         } catch (JSONException e) {
                             e.printStackTrace();
