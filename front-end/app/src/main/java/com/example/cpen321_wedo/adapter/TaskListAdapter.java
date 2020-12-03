@@ -71,6 +71,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             public void onClick(View v){
                 Intent intent = new Intent(mContext, TaskActivity.class);
                 intent.putExtra("taskListId", mData.get(position).getTaskListID());
+                intent.putExtra("taskListName", mData.get(position).getTaskListName());
                 mContext.startActivity(intent);
 
             }
@@ -141,8 +142,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
             url+="\""+firebaseUser.getUid()+"\"/";
             url+="\""+mData.get(index).getTaskListID()+"\"";
-
-            Log.d("test", url);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
                     new Response.Listener<JSONObject>() {

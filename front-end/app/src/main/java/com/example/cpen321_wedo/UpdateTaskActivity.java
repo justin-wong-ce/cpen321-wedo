@@ -59,7 +59,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
             }
         });
 
-        String[] taskTypes = new String[] {"Shopping", "Transport", "Setup", "Repair", "Study", "Work", "Fun"};
+        String[] taskTypes = new String[] {"shopping", "transport", "setup", "repair", "study", "work", "fun"};
 
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(

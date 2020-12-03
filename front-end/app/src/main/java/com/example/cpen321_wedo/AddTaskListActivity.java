@@ -119,7 +119,6 @@ public class AddTaskListActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "description has to be integer rn for testing", Toast.LENGTH_LONG).show();
                         Log.d("testing", error.toString());
                     }
                 });
@@ -141,7 +140,6 @@ public class AddTaskListActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "description has to be integer rn for testing", Toast.LENGTH_LONG).show();
                         Log.d("testing", error.toString());
                     }
                 });
