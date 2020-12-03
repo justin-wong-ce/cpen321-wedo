@@ -38,6 +38,11 @@ public class TaskDescriptionActivity extends AppCompatActivity {
     private String location;
     private String taskListId;
 
+    private TextView taskType;
+    private TextView taskDescription;
+    private TextView taskLocation;
+    private TextView taskLocationLabel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +55,10 @@ public class TaskDescriptionActivity extends AppCompatActivity {
         position = intent.getIntExtra("index", 0);
         taskListId = intent.getStringExtra("taskListId");
 
-        TextView taskType = findViewById(R.id.taskTypeText);
-        TextView taskDescription = findViewById(R.id.taskDescriptionText);
-        TextView taskLocation = findViewById(R.id.taskLocationText);
-        TextView taskLocationLabel = findViewById(R.id.taskLocationInfo);
+        taskType = findViewById(R.id.taskTypeText);
+        taskDescription = findViewById(R.id.taskDescriptionText);
+        taskLocation = findViewById(R.id.taskLocationText);
+        taskLocationLabel = findViewById(R.id.taskLocationInfo);
 
         title = intent.getStringExtra("title");
         type = intent.getStringExtra("taskType");
@@ -148,22 +153,9 @@ public class TaskDescriptionActivity extends AppCompatActivity {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            TextView taskType = findViewById(R.id.taskTypeText);
-                            TextView taskDescription = findViewById(R.id.taskDescriptionText);
-                            TextView taskLocation = findViewById(R.id.taskLocationText);
-                            TextView taskLocationLabel = findViewById(R.id.taskLocationInfo);
-
-                            if (reply[0] != null && !reply[0].equals("")) {
-                                getSupportActionBar().setTitle(reply[0]);
-                            }
-
-                            if (reply[2] != null && !reply[0].equals("")) {
-                                taskDescription.setText(reply[2]);
-                            }
-
-                            if (reply[3] != null && !reply[0].equals("")) {
-                                taskType.setText(reply[3]);
-                            }
+                            getSupportActionBar().setTitle(reply[0]);
+                            taskDescription.setText(reply[2]);
+                            taskType.setText(reply[3]);
 
                             String location = reply[1];
 
