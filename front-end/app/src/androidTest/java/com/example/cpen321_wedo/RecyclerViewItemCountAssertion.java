@@ -8,8 +8,6 @@ import androidx.test.espresso.ViewAssertion;
 
 import org.junit.Assert;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public class RecyclerViewItemCountAssertion implements ViewAssertion {
     private final int expectedCount;
