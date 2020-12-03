@@ -25,6 +25,7 @@ import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static androidx.core.app.ActivityCompat.startActivityForResult;
 
@@ -170,8 +171,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void updateTask() {
-        
+    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, int position) {
+        Task task = this.tasks.get(position);
+        task.setTaskName(taskName);
+        task.setTaskType(taskType);
+        task.setTaskDescription(taskDescription);
+        task.setTaskLocation(taskLocation);
+
+        Date date = new Date();
+        task.setDateModifiedInMilliSeconds(date.getTime());
+        notifyItemChanged(position);
     };
 
     public void deleteTasksSelected() {

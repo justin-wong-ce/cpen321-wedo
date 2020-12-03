@@ -187,6 +187,65 @@ public class TaskActivity extends AppCompatActivity {
         }
     }
 
+    private void updateData(final String taskName, final String taskLocation, final String taskDescription, final String taskType) {
+        JSONObject object = new JSONObject();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Task task = new Task(firebaseUser.getUid() , taskName, taskLocation, taskDescription, taskType);
+        final String postTaskId = task.getTaskId();
+
+        try {
+            Date date = new Date(task.getDateCreatedInMilliSeconds());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONDAY) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String dayToString;
+            if (day < 10) {
+                dayToString = "0" + day;
+            } else {
+                dayToString = "" + day;
+            }
+
+            String createdTime = "" + year + "-" + month + "-" + dayToString;
+            object.put("taskID", task.getTaskId());
+            object.put("taskDescription", task.getTaskDescription());
+            object.put("taskType", task.getTaskType());
+            object.put("taskListID", taskListId);
+            object.put("userID", firebaseUser.getUid());
+            object.put("taskName", task.getTaskName());
+            object.put("createdTime", createdTime);
+            object.put("address", task.getTaskLocation());
+            object.put("modifiedTime", createdTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String url = "http://40.78.89.252:3000/task/create";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            Task postTask = new Task(firebaseUser.getUid() , taskName, taskLocation, taskDescription, taskType);
+                            postTask.setTaskId(postTaskId);
+                            taskFragment.addTask(postTask);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Could not create task", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            RequestQueueSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
 
