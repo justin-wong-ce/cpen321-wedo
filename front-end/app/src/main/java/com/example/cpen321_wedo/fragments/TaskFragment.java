@@ -68,7 +68,7 @@ public class TaskFragment extends Fragment {
 
         getData();
 
-        taskAdapter = new TaskAdapter(getContext(), getActivity());
+        taskAdapter = new TaskAdapter(getContext(), getActivity(), taskListId);
         taskAdapter.setTasks(tasks);
 
         taskRecyclerView.setAdapter(taskAdapter);
@@ -79,9 +79,9 @@ public class TaskFragment extends Fragment {
     public void addTask(Task task) {
         taskAdapter.addTask(task);
     }
-    
-    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, int position) {
-        taskAdapter.updateTask(taskName, taskType, taskDescription, taskLocation, position);
+
+    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, long dateModifiedInMilliSeconds, int position) {
+        taskAdapter.updateTask(taskName, taskType, taskDescription, taskLocation, dateModifiedInMilliSeconds, position);
     }
 
     public void toggleItemViewType () { taskAdapter.toggleItemViewType(); }
@@ -114,6 +114,7 @@ public class TaskFragment extends Fragment {
                             String location = response.getJSONObject(i).get("address") == null ? "" : response.getJSONObject(i).get("address").toString();
                             Task task = new Task(response.getJSONObject(i).get("taskListID").toString(), response.getJSONObject(i).get("taskName").toString(),
                                     location, response.getJSONObject(i).get("taskDescription").toString(), response.getJSONObject(i).get("taskType").toString());
+                            task.setTaskId(response.getJSONObject(i).get("taskID").toString());
                             tasks.add(task);
                         } catch (JSONException e) {
                             e.printStackTrace();

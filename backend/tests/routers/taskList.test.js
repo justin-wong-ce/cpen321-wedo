@@ -342,10 +342,7 @@ describe("Kick user from task list", () => {
             });
 
         return request(app)
-            .delete("/tasklist/kickuser")
-            .send({
-                "userID": "throwAway", "taskListID": "testing", "toKick": "throwAway2"
-            })
+            .delete("/tasklist/kickuser/'throwAway'/'testing'/'throwAway2'")
             .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
@@ -359,10 +356,7 @@ describe("Kick user from task list", () => {
             });
 
         return request(app)
-            .delete("/tasklist/kickuser")
-            .send({
-                "userID": "throwAway", "taskListID": "nosuchlist", "toKick": "throwAway2"
-            })
+            .delete("/tasklist/kickuser/'throwAway'/'nosuchlist'/'throwAway2'")
             .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
@@ -371,10 +365,7 @@ describe("Kick user from task list", () => {
 
     it("User removing him/herself", () => {
         return request(app)
-            .delete("/tasklist/kickuser")
-            .send({
-                "userID": "throwAway2", "taskListID": "nosuchlist", "toKick": "throwAway2"
-            })
+            .delete("/tasklist/kickuser/'throwAway2'/'nosuchlist'/'throwAway2'")
             .then((res) => {
                 expect(res.status).toBe(406);
                 expect(res.body).toEqual({ msg: "cannot kick yourself" });
@@ -400,10 +391,7 @@ describe("Delete task list", () => {
             });
 
         return request(app)
-            .delete("/tasklist/delete")
-            .send({
-                "userID": "throwAway", "taskListID": "testing"
-            })
+            .delete("/tasklist/delete/'throwAway'/'testing'")
             .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
@@ -429,10 +417,7 @@ describe("Delete task list", () => {
             });
 
         return request(app)
-            .delete("/tasklist/delete")
-            .send({
-                "userID": "throwAway", "taskListID": "testing"
-            })
+            .delete("/tasklist/delete/'throwAway'/'testing'")
             .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(insertResponse);
@@ -446,10 +431,7 @@ describe("Delete task list", () => {
             });
 
         return request(app)
-            .delete("/tasklist/delete")
-            .send({
-                "userID": "throwAway", "taskListID": "testing"
-            })
+            .delete("/tasklist/delete/'throwAway'/'testing'")
             .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });

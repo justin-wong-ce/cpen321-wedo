@@ -60,7 +60,7 @@ var taskFunctions = {
                 delete entry.userID;
 
                 database.update("TaskHasTaskList", entry, { taskID: entry.taskID }, (err, results) => {
-                    if (err || entry.done !== true) {
+                    if (err || results.affectedRows === 0 || entry.done !== true) {
                         callback(err, results, true);
                     }
                     // Increment user's "like" factor to the taskType (by rating) if task is done

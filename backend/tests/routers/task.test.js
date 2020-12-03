@@ -352,10 +352,7 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
+            .delete("/task/delete/'tester'/'12322_task1'/'12322'")
             .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(modifyResponse);
@@ -381,10 +378,7 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
+            .delete("/task/delete/'tester'/'12322_task1'/'12322'")
             .then((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body).toEqual(modifyResponse);
@@ -398,10 +392,7 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
+            .delete("/task/delete/'tester'/'12322_task1'/'12322'")
             .then((res) => {
                 expect(res.status).toBe(401);
                 expect(res.body).toEqual({ msg: "user does not have permissions" });
@@ -423,10 +414,7 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
+            .delete("/task/delete/'tester'/'12322_task1'/'12322'")
             .then((res) => {
                 expect(res.status).toBe(404);
                 expect(res.body).toEqual({ msg: "entry does not exist" });
@@ -448,10 +436,7 @@ describe("Delete task", () => {
             });
 
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "tester", "taskID": "12322_task1", "taskListID": "12322"
-            })
+            .delete("/task/delete/'tester'/'12322_task1'/'12322'")
             .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ msg: "bad data format or type" });

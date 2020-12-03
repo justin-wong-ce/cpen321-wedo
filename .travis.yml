@@ -8,4 +8,4 @@ branches:
   only:
   - master
 script:
-  - cd $TEST_DIR && npm install && npm run test
+  - cd $TEST_DIR && npm install && npm run test -- --testPathIgnorePatterns integrationTests.test.js databaseInterface.test.js
