@@ -91,7 +91,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
-                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                if(!firebaseUser.getUid().equals(mData.get(position).getUserID())){
                                     Toast.makeText(mContext, "Only owner of the tasklist can add users", Toast.LENGTH_LONG).show();
                                     break;
                                 }
@@ -103,7 +103,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 mContext.startActivity(intent);
                                 break;
                             case R.id.menu2:
-                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                if(!firebaseUser.getUid().equals(mData.get(position).getUserID())){
                                     Toast.makeText(mContext, "Only owner of the tasklist can delete tasklist", Toast.LENGTH_LONG).show();
                                     break;
                                 }
@@ -113,7 +113,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                                 notifyItemRangeChanged(position, mData.size());
                                 break;
                             case R.id.menu3:
-                                if(firebaseUser.getUid() != mData.get(position).getUserID()){
+                                if(!firebaseUser.getUid().equals(mData.get(position).getUserID())){
                                     Toast.makeText(mContext, "Only owner of the tasklist can update tasklist", Toast.LENGTH_LONG).show();
                                     break;
                                 }
