@@ -1,7 +1,5 @@
 package com.example.cpen321_wedo.models;
 
-import com.example.cpen321_wedo.notifications.Data;
-
 import java.util.Date;
 
 // TODO: need to modified the Tasklist class if we change backend as well

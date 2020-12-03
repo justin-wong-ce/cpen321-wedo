@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 import com.example.cpen321_wedo.AcceptFriendsActivity;
 import com.example.cpen321_wedo.AcceptTaskListActivity;
 import com.example.cpen321_wedo.MessageActivity;
-import com.example.cpen321_wedo.TaskListActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;

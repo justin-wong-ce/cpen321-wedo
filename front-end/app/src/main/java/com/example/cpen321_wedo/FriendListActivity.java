@@ -28,24 +28,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendListActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
     private List<User> mUsers;
     private UserAdapter userAdapter;
-    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
 
-        mContext = this;
+        Context mContext = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Chat");
 
 
-        recyclerView = findViewById(R.id.recyclerview_view);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         mUsers = new ArrayList<>();
