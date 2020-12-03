@@ -89,7 +89,7 @@ public class AddUserActivity extends AppCompatActivity {
                 }
 
                 if(friends){
-                    addFriend(firebaseUser.getEmail(), userID);
+                    addFriend(userID);
                 }else{
                     addTaskList(userID);
                 }
@@ -98,18 +98,18 @@ public class AddUserActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("test", "user cancelled");
             }
         });
     }
 
-    private void addFriend(String txt_user_email, String userID){
+    private void addFriend(String userID){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("id",firebaseUser.getUid());
         hashMap.put("username", firebaseUser.getEmail());
-;        hashMap.put("imageURL", "default");
+        hashMap.put("imageURL", "default");
 
         reference.child("FriendRequest").child(userID).child(firebaseUser.getUid()).setValue(hashMap);
     }

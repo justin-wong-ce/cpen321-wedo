@@ -35,7 +35,7 @@ import java.util.List;
 
 import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
 
-public class GenerateRouteActivity extends AppCompatActivity implements getSelected{
+public class GenerateRouteActivity extends AppCompatActivity implements GetSelected {
 
     private GenerateTaskAdapter myAdapter;
     private List<TaskList> lstTaskList = new ArrayList<>();
@@ -107,7 +107,6 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
                             for(int j = 0;j<step.length();j++){
 //                                Log.d("test",j+"");
                                 JSONObject oneStep = (JSONObject)step.get(j);
-                                JSONObject start = (JSONObject)oneStep.get("start_location");
                                 JSONObject end = (JSONObject)oneStep.get("end_location");
 //                                latitudes.add((Double)start.get("lat"));
                                 latitudes.add((Double)end.get("lat"));
@@ -261,7 +260,7 @@ public class GenerateRouteActivity extends AppCompatActivity implements getSelec
         }
     }
 
-    void createAndShowDialog() {
+    private void createAndShowDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = this.getLayoutInflater();

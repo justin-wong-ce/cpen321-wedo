@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.example.cpen321_wedo.R;
-import com.example.cpen321_wedo.getSelected;
+import com.example.cpen321_wedo.GetSelected;
 import com.example.cpen321_wedo.models.Task;
 
 import org.json.JSONException;
@@ -19,9 +19,9 @@ public class GenerateTaskAdapter extends BaseAdapter {
 
     private List<Task> mData;
     private LayoutInflater mInflater;
-    public getSelected getSelectedInterface;
+    public GetSelected getSelectedInterface;
 
-    public GenerateTaskAdapter(List<Task> list, LayoutInflater inflater, getSelected getSelectedInterface) {
+    public GenerateTaskAdapter(List<Task> list, LayoutInflater inflater, GetSelected getSelectedInterface) {
         mData = list;
         mInflater = inflater;
         this.getSelectedInterface = getSelectedInterface;
@@ -95,9 +95,9 @@ public class GenerateTaskAdapter extends BaseAdapter {
 
 
     private class ViewItem {
-        TextView task_name;
-        TextView task_address;
-        CheckBox task_checkbox;
+        private TextView task_name;
+        private TextView task_address;
+        private CheckBox task_checkbox;
     }
 
 }

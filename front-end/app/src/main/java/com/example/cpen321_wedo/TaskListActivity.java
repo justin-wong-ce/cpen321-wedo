@@ -42,8 +42,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.cpen321_wedo.MapsPlotRouteActivity.DRIVING;
-
 public class TaskListActivity extends AppCompatActivity implements UpdateTasklistInterface {
     private List<TaskList> lstTaskList;
 
@@ -151,7 +149,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(TaskListActivity.this, StartActivity.class));
                 finish();
-                return true;
+                break;
 //            case R.id.map_test:
 //
 //                Intent mapsIntent = new Intent(TaskListActivity.this, MapsPlotRouteActivity.class);
@@ -170,16 +168,16 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 Intent newIntent = new Intent(TaskListActivity.this, GenerateRouteActivity.class);
 
                 startActivity(newIntent);
-                return true;
+                break;
             case R.id.ic_chat:
                 startActivity(new Intent(TaskListActivity.this, FriendListActivity.class));
-                return true;
+                break;
             case R.id.tasklist_invitation:
                 startActivityForResult(new Intent(TaskListActivity.this, AcceptTaskListActivity.class), 3);
             default:
                 break;
         }
-        return false;
+        return true;
     }
 
 
@@ -191,7 +189,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
             url+=firebaseUser.getUid();
             Log.d("test", url);
             url+="\"";
-;
+
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {

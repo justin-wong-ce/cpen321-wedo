@@ -103,15 +103,15 @@ public class MapsPlotRouteActivity extends FragmentActivity implements OnMapRead
                     Polyline[] polylines = new Polyline[routesArray.length()];
 
                     try {
-                        for (int i = 0; i < routesArray.length(); i++) {
-                            JSONObject route = (JSONObject) routesArray.get(i);
+                        for (int j = 0; j < routesArray.length(); j++) {
+                            JSONObject route = (JSONObject) routesArray.get(j);
                             JSONObject overview_polyline = (JSONObject) route.get("overview_polyline");
 
                             List<LatLng> latLngArraylist = PolyUtil.decode(overview_polyline.getString("points"));
                             LatLng[] plotCoors = new LatLng[latLngArraylist.size()];
                             latLngArraylist.toArray(plotCoors);
 
-                            polylines[i] = mMap.addPolyline(new PolylineOptions().add(plotCoors));
+                            polylines[j] = mMap.addPolyline(new PolylineOptions().add(plotCoors));
                         }
                     }
                     catch (Exception e) {

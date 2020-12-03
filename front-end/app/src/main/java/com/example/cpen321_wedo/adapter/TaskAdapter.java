@@ -16,10 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.TaskDescriptionActivity;
 import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
