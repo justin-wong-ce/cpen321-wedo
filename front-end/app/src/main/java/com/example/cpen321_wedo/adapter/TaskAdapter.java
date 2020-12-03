@@ -1,6 +1,7 @@
 package com.example.cpen321_wedo.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -18,15 +19,14 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cpen321_wedo.TaskActivity;
 import com.example.cpen321_wedo.TaskDescriptionActivity;
 import com.example.cpen321_wedo.models.Task;
 import com.example.cpen321_wedo.R;
 
-//<<<<<<< HEAD:front-end/app/src/main/java/com/example/cpen321_wedo/adapter/TaskAdapter.java
-//
-//=======
-//>>>>>>> 5f7b67a229b3ec75749abfcbc9293d1321b2b59c:front-end/app/src/main/java/com/example/cpen321_wedo/Adapter/TaskAdapter.java
 import java.util.ArrayList;
+
+import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
@@ -38,13 +38,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private int taskSelected;
     private Menu menu;
     private Context context;
+    private Activity taskActivity;
 
-    public TaskAdapter(Context context) {
+    public TaskAdapter(Context context, Activity taskActivity) {
         tasks = new ArrayList<>();
         currentView = TASK_ITEM;
         toDelete = new ArrayList<>();
         taskSelected = 0;
         this.context = context;
+        this.taskActivity = taskActivity;
     }
 
     @NonNull
@@ -92,7 +94,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     intent.putExtra("taskType", tasks.get(position).getTaskType());
                     intent.putExtra("taskDescription", tasks.get(position).getTaskDescription());
                     intent.putExtra("taskLocation", tasks.get(position).getTaskLocation());
-                    ContextCompat.startActivity(context, intent, null);
+                    intent.putExtra("index", position);
+                    startActivityForResult(taskActivity, intent, 2, null);
                 }
             });
         } else {
@@ -166,6 +169,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         this.tasks.add(task);
         notifyDataSetChanged();
     }
+
+    public void updateTask()
 
     public void deleteTasksSelected() {
         for (int i = 0; i < toDelete.size(); i++) {

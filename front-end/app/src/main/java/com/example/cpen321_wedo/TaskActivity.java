@@ -123,6 +123,9 @@ public class TaskActivity extends AppCompatActivity {
             final String[] reply = data.getStringArrayExtra("task");
 
             postData(reply[0], reply[1], reply[2], reply[3]);
+        } else if (requestCode == 2 && resultCode == RESULT_OK) {
+            String[] taskUpdateReply = data.getStringArrayExtra("taskUpdate");
+
         }
     }
 

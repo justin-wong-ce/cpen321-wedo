@@ -72,7 +72,7 @@ public class TaskFragment extends Fragment {
 
         getData();
 
-        taskAdapter = new TaskAdapter(getContext());
+        taskAdapter = new TaskAdapter(getContext(), getActivity());
         taskAdapter.setTasks(tasks);
 
         taskRecyclerView.setAdapter(taskAdapter);
@@ -82,6 +82,10 @@ public class TaskFragment extends Fragment {
 
     public void addTask(Task task) {
         taskAdapter.addTask(task);
+    }
+
+    public void updateTask(String taskName, String taskType, String taskDescription, String taskLocation, int position) {
+        task
     }
 
     public void toggleItemViewType () { taskAdapter.toggleItemViewType(); }

@@ -49,10 +49,16 @@ public class AddTaskActivity extends AppCompatActivity {
                 String desc = description.getText().toString();
                 String taskTypeString = taskType.getText().toString();
 
+                if (loc == null) {
+                    loc = "";
+                }
+
                 if (task_name == null || task_name.equals("")) {
                     Toast.makeText(AddTaskActivity.this, "Please fill the required fields", Toast.LENGTH_SHORT).show();
                 } else if (taskTypeString == null || taskTypeString.equals("")) {
                     Toast.makeText(AddTaskActivity.this, "Please choose a task type", Toast.LENGTH_SHORT).show();
+                } else if (desc == null || desc.equals("")) {
+                    Toast.makeText(AddTaskActivity.this, "Please enter a description", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent();
                     String[] taskInfo = {task_name, loc, desc, taskTypeString};
