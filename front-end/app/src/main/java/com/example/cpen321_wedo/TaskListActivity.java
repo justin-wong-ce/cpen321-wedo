@@ -173,6 +173,7 @@ public class TaskListActivity extends AppCompatActivity implements UpdateTasklis
                 break;
             case R.id.tasklist_invitation:
                 startActivityForResult(new Intent(TaskListActivity.this, AcceptTaskListActivity.class), 3);
+                break;
             default:
                 break;
         }

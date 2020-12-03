@@ -78,35 +78,43 @@ public class LoginActivity extends AppCompatActivity {
         email.addTextChangedListener(new TextValidator(email, btn_login) {
             @Override
             public void validate(TextView textView, String text, Button buttonView) {
-                if (text != null && !text.isEmpty()) {
-                    isEmailFilled = true;
-                } else {
-                    isEmailFilled = false;
-                }
-
-                if (isEmailFilled && isPasswordFilled) {
-                    buttonView.setEnabled(true);
-                } else {
-                    buttonView.setEnabled(false);
-                }
+                validEmail(textView, text, buttonView);
             }
         });
 
         password.addTextChangedListener(new TextValidator(password, btn_login) {
             @Override
             public void validate(TextView textView, String text, Button buttonView) {
-                if (text != null && !text.isEmpty()) {
-                    isPasswordFilled = true;
-                } else {
-                    isPasswordFilled = false;
-                }
-
-                if (isEmailFilled && isPasswordFilled) {
-                    buttonView.setEnabled(true);
-                } else {
-                    buttonView.setEnabled(false);
-                }
+                validPassword(textView, text, buttonView);
             }
         });
+    }
+
+    public void validPassword(TextView textView, String text, Button buttonView) {
+        if (text != null && !text.isEmpty()) {
+            isPasswordFilled = true;
+        } else {
+            isPasswordFilled = false;
+        }
+
+        if (isEmailFilled && isPasswordFilled) {
+            buttonView.setEnabled(true);
+        } else {
+            buttonView.setEnabled(false);
+        }
+    }
+
+    public void validEmail(TextView textView, String text, Button buttonView) {
+        if (text != null && !text.isEmpty()) {
+            isEmailFilled = true;
+        } else {
+            isEmailFilled = false;
+        }
+
+        if (isEmailFilled && isPasswordFilled) {
+            buttonView.setEnabled(true);
+        } else {
+            buttonView.setEnabled(false);
+        }
     }
 }

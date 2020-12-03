@@ -33,18 +33,6 @@ public class DeleteTaskTest {
     public ActivityScenarioRule<TaskActivity> activityRule =
             new ActivityScenarioRule<>(TaskActivity.class);
 
-    private View decorView;
-
-    @Before
-    public void setUp() {
-        activityRule.getScenario().onActivity(new ActivityScenario.ActivityAction<TaskActivity>() {
-            @Override
-            public void perform(TaskActivity activity) {
-                decorView = activity.getWindow().getDecorView();
-            }
-        });
-    }
-
     @Test
     public void checkDeleteTask() {
         // Check that the task activity layout is displayed.

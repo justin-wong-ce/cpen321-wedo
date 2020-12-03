@@ -106,11 +106,11 @@ public class TaskDescriptionActivity extends AppCompatActivity {
             Date date = new Date();
             long dateModified = date.getTime();
 
-            updateData(reply, taskId, reply[0], reply[1], reply[2], reply[3], dateModified);
+            updateData(reply, taskId,  dateModified);
         }
     }
 
-    private void updateData(final String[] reply, String taskId, String taskName, String taskLocation, String taskDescription, String taskType, final long dateModified) {
+    private void updateData(final String[] reply, String taskId, final long dateModified) {
         JSONObject object = new JSONObject();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -130,12 +130,12 @@ public class TaskDescriptionActivity extends AppCompatActivity {
 
             String dateModifiedString = "" + year + "-" + month + "-" + dayToString;
             object.put("taskID", taskId);
-            object.put("taskDescription", taskDescription);
-            object.put("taskType", taskType);
+            object.put("taskDescription", reply[2]);
+            object.put("taskType", reply[3]);
             object.put("taskListID", taskListId);
             object.put("userID", firebaseUser.getUid());
-            object.put("taskName", taskName);
-            object.put("address", taskLocation);
+            object.put("taskName", reply[0]);
+            object.put("address", reply[1]);
             object.put("modifiedTime", dateModifiedString);
         } catch (JSONException e) {
             e.printStackTrace();
