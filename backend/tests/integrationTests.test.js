@@ -65,10 +65,7 @@ describe("Integration test 1: Task and task list operations", () => {
 
     it("User kicking himself from list", () => {
         return request(app)
-            .delete("/tasklist/kickuser")
-            .send({
-                "userID": "IntegrationTester", "taskListID": "integration", "toKick": "IntegrationTester"
-            })
+            .delete("/tasklist/kickuser/'IntegrationTester'/'integration'/'IntegrationTester'")
             .then((res) => {
                 expect(res.status).toBe(406);
             });
@@ -76,10 +73,7 @@ describe("Integration test 1: Task and task list operations", () => {
 
     it("Deleting task list with no permissions", () => {
         return request(app)
-            .delete("/tasklist/delete")
-            .send({
-                "userID": "IntegrationTester", "taskListID": "no permissions",
-            })
+            .delete("/tasklist/delete/'IntegrationTester'/'no permissions'")
             .then((res) => {
                 expect(res.status).toBe(401);
             });
@@ -172,10 +166,7 @@ describe("Integration test 1: Task and task list operations", () => {
 
     it("User delete task without permission", () => {
         return request(app)
-            .delete("/task/delete")
-            .send({
-                "userID": "IntegrationTester", "taskListID": "should not matter"
-            })
+            .delete("/task/delete/'IntegrationTester'/'someotherlist'/'should not matter'")
             .then((res) => {
                 expect(res.status).toBe(401);
             });
@@ -230,10 +221,7 @@ describe("Integration test 1: Task and task list operations", () => {
                                     .then((res) => {
                                         expect(res.status).toBe(200);
                                         request(app)
-                                            .delete("/tasklist/kickuser")
-                                            .send({
-                                                "userID": "IntegrationTester", "taskListID": "M9testing", "toKick": "throwAway"
-                                            })
+                                            .delete("/tasklist/kickuser/'IntegrationTester'/'M9testing'/'throwAway'")
                                             .then((res) => {
                                                 expect(res.status).toBe(200);
                                                 request(app)
@@ -262,17 +250,11 @@ describe("Integration test 1: Task and task list operations", () => {
                                                                             ]
                                                                         );
                                                                         request(app)
-                                                                            .delete("/task/delete")
-                                                                            .send({
-                                                                                "userID": "IntegrationTester", "taskID": "task1", "taskListID": "M9testing"
-                                                                            })
+                                                                            .delete("/task/delete/'IntegrationTester'/'task1'/'M9testing'")
                                                                             .then((res) => {
                                                                                 expect(res.status).toBe(200);
                                                                                 request(app)
-                                                                                    .delete("/tasklist/delete")
-                                                                                    .send({
-                                                                                        "userID": "IntegrationTester", "taskListID": "M9testing"
-                                                                                    })
+                                                                                    .delete("/tasklist/delete/'IntegrationTester'/'M9testing'")
                                                                                     .then((res) => {
                                                                                         expect(res.status).toBe(200);
                                                                                     });

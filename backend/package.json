@@ -4,8 +4,8 @@
   "description": "use some extra framework (download with npm): - mysql - nodemon - express",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node src/start.js",
+    "dev": "nodemon src/start.js",
     "test": "jest --forceExit --collectCoverage --verbose"
   },
   "author": "",

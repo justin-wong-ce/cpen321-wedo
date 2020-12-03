@@ -20,7 +20,6 @@ const routerHelper = require("./routerHelper");
 // typeof body.modifiedTime == "string"
 router.post("/task/create", (req, res) => {
     const task = req.body;
-
     taskFunctions.createTask(task, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);
     });
@@ -46,7 +45,6 @@ router.post("/task/create", (req, res) => {
 // typeof body.taskRating == "number" (IMPORTANT: THIS MUST BE DEFINED IF DONE IS DEFINED)
 router.put("/task/update", (req, res) => {
     const task = req.body;
-
     taskFunctions.updateTask(task, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);
     });
@@ -58,11 +56,10 @@ router.put("/task/update", (req, res) => {
 // typeof body.userID == "string"
 // typeof body.taskID == "string"
 // typeof body.taskListID == "string"
-router.delete("/task/delete", (req, res) => {
-    const taskID = req.body.taskID;
-    const userID = req.body.userID;
-    const taskListID = req.body.taskListID;
-
+router.delete("/task/delete/:userID/:taskID/:taskListID", (req, res) => {
+    const taskID = req.params.taskID.substring(1, req.params.taskID.length - 1);
+    const userID = req.params.userID.substring(1, req.params.userID.length - 1);
+    const taskListID = req.params.taskListID.substring(1, req.params.taskListID.length - 1);
     taskFunctions.deleteTask(taskID, userID, taskListID, (err, results, perms) => {
         routerHelper.permHandler(err, results, perms, res);
     });
